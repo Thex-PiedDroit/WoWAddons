@@ -1,0 +1,16 @@
+## Interface: 70000
+## Title: |cff00ccffKillThemAll|r
+## Version: 1.0
+## Notes: Randomly plays Old Gods whispers audio files
+## Author: Thex
+## DefaultState: enabled
+## SavedVariables: DefaultGods, DefaultMinDelay, DefaultMaxDelay, DefaultSoundChannel, SavedMinDelay, SavedMaxDelay, SavedGods, SavedSoundChannel
+
+Helpers.lua
+SoundLibraryBase.lua
+Yshaarj.lua
+Cthun.lua
+YoggSaron.lua
+IlGynoth.lua
+Core.lua
+SlashCommands.lua

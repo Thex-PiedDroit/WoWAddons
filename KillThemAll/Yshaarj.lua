@@ -1,0 +1,24 @@
+
+yshaarj = SoundLibrary:inherit({ displayName = "Y'Shaarj", dataName = "Yshaarj" }, {});
+yshaarj.general =
+{
+	"sound/CREATURE/Yshaarj/VO_54_ITEM_YSHAARJ_EVENT_01.OGG",
+	"sound/CREATURE/Yshaarj/VO_54_ITEM_YSHAARJ_EVENT_02.OGG",
+	"sound/CREATURE/Yshaarj/VO_54_ITEM_YSHAARJ_EVENT_03.OGG",
+	"sound/CREATURE/Yshaarj/VO_54_ITEM_YSHAARJ_EVENT_04.OGG",
+	"sound/CREATURE/Yshaarj/VO_54_ITEM_YSHAARJ_EVENT_05.OGG",
+	"sound/CREATURE/Yshaarj/VO_54_ITEM_YSHAARJ_EVENT_06.OGG",
+	"sound/CREATURE/Yshaarj/VO_54_ITEM_YSHAARJ_EVENT_07.OGG",
+	"sound/CREATURE/Yshaarj/VO_54_ITEM_YSHAARJ_EVENT_08.OGG",
+	"sound/CREATURE/Yshaarj/VO_54_ITEM_YSHAARJ_EVENT_09.OGG",
+	"sound/CREATURE/Yshaarj/VO_54_ITEM_YSHAARJ_EVENT_10.OGG",
+	"sound/CREATURE/Yshaarj/VO_54_ITEM_YSHAARJ_EVENT_11.OGG",
+	"sound/CREATURE/Yshaarj/VO_54_ITEM_YSHAARJ_EVENT_12.OGG",
+	"sound/CREATURE/Yshaarj/VO_54_ITEM_YSHAARJ_EVENT_13.OGG",
+};
+yshaarj.onDeath =
+{
+	"sound/CREATURE/Yshaarj/VO_54_ITEM_YSHAARJ_DEATH_01.OGG",
+	"sound/CREATURE/Yshaarj/VO_54_ITEM_YSHAARJ_DEATH_02.OGG",
+	"sound/CREATURE/Yshaarj/VO_54_ITEM_YSHAARJ_DEATH_03.OGG",
+};
