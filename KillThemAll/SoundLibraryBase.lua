@@ -27,8 +27,8 @@ mtSoundLibrary.__index =
 	end,
 
 	inherit = function(self, t, methods)
-		local mtnew = {__index = setmetatable(methods, {__index = self})};
-		table.insert(AllSoundLibraries, setmetatable(t or {}, mtnew));
+		local newMetaTable = {__index = setmetatable(methods, {__index = self})};
+		table.insert(AllSoundLibraries, setmetatable(t or {}, newMetaTable));
 		return AllSoundLibraries[#AllSoundLibraries];
 	end,
 }

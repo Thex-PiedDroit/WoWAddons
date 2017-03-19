@@ -93,6 +93,19 @@ function GetPunctuatedString(stringTable)
 	return str;
 end
 
+function GodExists(godName)
+
+	godName = string.upper(godName);
+
+	for i = 1, #AllSoundLibraries, 1 do
+		if string.upper(AllSoundLibraries[i].dataName) == godName then
+			return true, i;
+		end
+	end
+
+	return false;
+end
+
 function TrySetSoundChannel(soundChannel, defaultChannel)
 
 	outSoundChannel = defaultChannel;

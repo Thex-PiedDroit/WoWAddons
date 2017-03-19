@@ -214,7 +214,7 @@ function SlashCmdList.KTA(msg)
 
 	elseif cmd == "ADDGODS" or cmd == "ADDGOD" or cmd == "ADD" then
 
-		SetGods(TableCat(GodsToStringTable(currentGods, false), args));
+		SetGods(TableCat(GodsToStringTable(g_currentGods, false), args));
 		StartWaiting();
 
 	elseif cmd == "REMOVEGODS" or cmd == "REMOVEGOD" or cmd == "REMOVE" then
@@ -233,7 +233,7 @@ function SlashCmdList.KTA(msg)
 		if args[1] == "GODS" or args[1] == "GOD" then
 			SetDefaultGods(SubTable(args, 2));
 		elseif args[1] == "DELAY" then
-			SetDefaultDelay(args[1], args[2]);
+			SetDefaultDelay(args[2], args[3]);
 		elseif args[1] == "SOUNDCHANNEL" or args[1] == "CHANNEL" then
 			SetDefaultSoundChannel(args[2]);
 		else
@@ -281,17 +281,18 @@ function SlashCmdList.KTA(msg)
 
 		elseif args[1] == "NOSAVE" or args[1] == "DONTSAVE" then
 
-			shouldVariablesBeSaved = false;
+			g_shouldVariablesBeSaved = false;
 			KTA_Print("Variables won't be saved on logout (once). This can be reverted with the \"/kta debug save\" command");
 
 		elseif args[1] == "SAVE" then
 
-			shouldVariablesBeSaved = true;
+			g_shouldVariablesBeSaved = true;
 			KTA_Print("Variables will be saved on logout");
 
 		elseif args[1] == "RUN" or args[1] == "RUNCOMMAND" or args[1] == "RUNCMD" or args[1] == "CMD" or args[1] == "R" then
 
-			_, script = GetFirstWordAndRest(strArgs);		-- Get rid of first word in strArgs (since first word here will be "run")
+			_, unCapitalizedCmd = GetFirstWordAndRest(msg);
+			_, script = GetFirstWordAndRest(unCapitalizedCmd);		-- Get rid of first word in strArgs (since first word here will be "run")
 			codeToRun = loadstring(script);
 			if codeToRun ~= nil then
 				codeToRun();
@@ -299,7 +300,6 @@ function SlashCmdList.KTA(msg)
 				KTA_Print("Invalid command");
 			end
 		end
-
 	else
 		KTA_Print("Unknown command: " .. cmd);
 		PrintAllCommands();
