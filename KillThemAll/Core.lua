@@ -414,6 +414,7 @@ function events:ADDON_LOADED(arg)
 	end
 
 	LoadOptions();
+	InitSettingsFrames();
 	g_loading = false;
 end
 
