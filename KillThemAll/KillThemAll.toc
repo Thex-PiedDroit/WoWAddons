@@ -4,7 +4,7 @@
 ## Notes: Randomly plays Old Gods whispers audio files
 ## Author: Thex
 ## DefaultState: enabled
-## SavedVariables: DefaultGods, DefaultMinDelay, DefaultMaxDelay, DefaultSoundChannel, SavedMinDelay, SavedMaxDelay, SavedGods, SavedSoundChannel, S_ktaOptions
+## SavedVariables: DefaultGods, DefaultMinDelay, DefaultMaxDelay, DefaultSoundChannel, SavedMinDelay, SavedMaxDelay, SavedGods, SavedSoundChannel, S_AddonVersion, S_ktaOptions
 
 Options.lua
 SettingsFrame.lua
