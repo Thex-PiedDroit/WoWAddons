@@ -358,7 +358,7 @@ end
 
 function PlayRandomSound(soundType)
 
-	if g_loading then
+	if g_loading or g_ktaOptions.deactivated then
 		return;
 	end
 
@@ -439,7 +439,7 @@ end
 
 local function MyUpdate(self, elapsed)
 
-	if g_dead or #g_currentGods == 0 then
+	if g_dead or #g_currentGods == 0 or g_ktaOptions.deactivated or (g_ktaOptions.muteDuringCombat and InCombatLockdown()) then
 		return;
 	end
 

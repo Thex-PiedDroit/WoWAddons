@@ -21,6 +21,8 @@ function LoadOptions()
 			maxDelay = (S_ktaOptions ~= nil and S_ktaOptions.default ~= nil and S_ktaOptions.default.maxDelay) or 1200,
 		},
 
+		deactivated = (S_ktaOptions ~= nil and S_ktaOptions.deactivated) or (S_ktaOptions == nil and false),
+		muteDuringCombat = (S_ktaOptions ~= nil and S_ktaOptions.muteDuringCombat) or (S_ktaOptions == nil and false),
 		soundChannel = (S_ktaOptions ~= nil and S_ktaOptions.soundChannel) or defaultSoundChannel,
 	}
 

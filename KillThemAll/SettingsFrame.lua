@@ -55,6 +55,30 @@ function InitSettingsFrames()
 	g_interfaceSettingsFrame.panel.name = "KillThemAll Settings";
 
 
+	-- DEACTIVATED
+	g_interfaceSettingsFrame.lab = createLabel(g_interfaceSettingsFrame.panel, "Deactivated");
+	g_interfaceSettingsFrame.lab:SetPoint("TOPLEFT", 80, -48);
+	g_interfaceSettingsFrame.chkDeact = CreateCheck(g_interfaceSettingsFrame.panel, "chkDeactivate", 20, 20);
+	g_interfaceSettingsFrame.chkDeact:SetPoint("TOPLEFT", 60, -45);
+	g_interfaceSettingsFrame.chkDeact:SetChecked(g_ktaOptions.deactivated);
+
+	g_interfaceSettingsFrame.chkDeact:SetScript("OnClick", function()
+		g_ktaOptions.deactivated = not g_ktaOptions.deactivated;
+	end);
+
+
+	-- MUTE DURING COMBAT
+	g_interfaceSettingsFrame.lab = createLabel(g_interfaceSettingsFrame.panel, "Mute during Combat");
+	g_interfaceSettingsFrame.lab:SetPoint("TOPLEFT", 80, -68);
+	g_interfaceSettingsFrame.chkCombat = CreateCheck(g_interfaceSettingsFrame.panel, "chkMuteInCombat", 20, 20);
+	g_interfaceSettingsFrame.chkCombat:SetPoint("TOPLEFT", 60, -65);
+	g_interfaceSettingsFrame.chkCombat:SetChecked(g_ktaOptions.muteDuringCombat);
+
+	g_interfaceSettingsFrame.chkCombat:SetScript("OnClick", function()
+		g_ktaOptions.muteDuringCombat = not g_ktaOptions.muteDuringCombat;
+	end)
+
+
 	-- BIND PANEL TO INTERFACE SETTINGS
 	InterfaceOptions_AddCategory(g_interfaceSettingsFrame.panel);
 end
