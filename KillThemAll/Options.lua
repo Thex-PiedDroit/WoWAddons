@@ -30,30 +30,8 @@ end
 
 PreviousVersionRecovered = function()
 
-	local currentAddonVersion = GetAddOnMetadata("KillThemAll", "Version");
+	-- Previous versions recovery here
 
-	if S_AddonVersion == nil then
-		local defaultSoundChannel = "Dialog";
-
-		g_ktaOptions =
-		{
-			default =
-			{
-				gods = DefaultGods or "YSHAARJ",
-				soundChannel = defaultSoundChannel,
-				minDelay = DefaultMinDelay or 300,
-				maxDelay = DefaultMaxDelay or 1200,
-			},
-
-			soundChannel = SavedSoundChannel or defaultSoundChannel,
-		}
-
-		SetGods(GetWords(SavedGods or g_ktaOptions.default.gods), true);
-		SetDelay(SavedMinDelay or g_ktaOptions.default.minDelay, SavedMaxDelay or g_ktaOptions.default.maxDelay, true);
-
-		return true;
-	end
-
-	S_AddonVersion = currentAddonVersion;
+	S_AddonVersion = GetAddOnMetadata("KillThemAll", "Version");
 	return false;
 end
