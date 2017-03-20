@@ -287,13 +287,13 @@ function SetDelay(minDelayStr, maxDelayStr, silent)
 	if minValue == nil or maxValue == nil then
 		KTA_Print("Invalid use of SetDelay command:");
 		PrintHelp("SETDELAY", nil, "noToolTip");
-		return;
+		return false;
 	elseif minValue < 0 then
 		PrintInvalidParameters("Delay values cannot be negative");
-		return;
+		return false;
 	elseif minValue >= maxValue then
 		PrintInvalidParameters("Max delay must be bigger than min delay");
-		return;
+		return false;
 	end
 
 	g_ktaOptions.minDelay = minValue;
@@ -304,6 +304,9 @@ function SetDelay(minDelayStr, maxDelayStr, silent)
 	end
 
 	StartWaiting();
+	CallEventListener(g_interfaceEventsListener, "OnDelayChanged");
+
+	return true;
 end
 
 function SetDefaultDelay(minDelayStr, maxDelayStr)

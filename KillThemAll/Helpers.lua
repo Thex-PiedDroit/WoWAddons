@@ -93,6 +93,20 @@ function GetPunctuatedString(stringTable)
 	return str;
 end
 
+function AddListenerEvent(eventListener, eventTypeStr, callback)
+
+	eventListener[eventTypeStr] = eventListener[eventTypeStr] or {};
+	table.insert(eventListener[eventTypeStr], callback);
+end
+
+function CallEventListener(eventListener, eventTypeStr)
+
+	listeners = eventListener[eventTypeStr] or {};
+	for i = 1, #listeners, 1 do
+		listeners[i]();
+	end
+end
+
 function GodExists(godName)
 
 	godName = string.upper(godName);

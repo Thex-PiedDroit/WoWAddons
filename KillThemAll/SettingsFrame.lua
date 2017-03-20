@@ -2,6 +2,8 @@
 local g_standAloneSettingsFrame = CreateFrame("Frame", "KTA_StandAloneSettingsFrame", UIParent, "BasicFrameTemplateWithInset");
 local g_interfaceSettingsFrame = {};
 
+g_interfaceEventsListener = {};
+
 
 
 local function CreateLabel(panel, name)
@@ -27,6 +29,27 @@ local function CreateSlider(panel, name, width, height, min, max, step)
 	return sliderOpt;
 end
 
+local function CreateEditBox(panel, name, width, height, onlyNumeric, onEnterPressedCallback)
+	local editBox = CreateFrame("EditBox", "KTA_" .. name, panel, "InputBoxTemplate");
+	editBox:SetAutoFocus(false);
+	editBox:SetWidth(width);
+	editBox:SetHeight(height);
+	editBox:SetNumeric(onlyNumeric);
+
+	editBox:SetScript("OnEnterPressed", function()
+		onEnterPressedCallback();
+
+		editBox:ClearFocus();
+		editBox:HighlightText(100,100);	-- Force highlight removal
+	end);
+	editBox:SetScript("OnEscapePressed", function()
+		editBox:ClearFocus();
+		editBox:HighlightText(100,100);	-- Force highlight removal
+	end);
+
+	return editBox;
+end
+
 function MakeFrameMovable(panel, motion)
 
 	panel:EnableMouse(true)
@@ -37,6 +60,8 @@ function MakeFrameMovable(panel, motion)
 	panel:SetScript("OnDragStop", panel.StopMovingOrSizing)
 end
 
+
+local InitDelayEditBoxes = nil;	-- Forward declaration
 
 function InitSettingsFrames()
 
@@ -79,6 +104,71 @@ function InitSettingsFrames()
 	end);
 
 
+	-- MIN MAX DELAY
+	g_interfaceSettingsFrame.lab = CreateLabel(g_interfaceSettingsFrame.panel, "Min delay");
+	g_interfaceSettingsFrame.lab:SetPoint("TOPLEFT", 60, -98);
+	g_interfaceSettingsFrame.lab = CreateLabel(g_interfaceSettingsFrame.panel, "Max delay");
+	g_interfaceSettingsFrame.lab:SetPoint("TOPLEFT", 140, -98);
+	InitDelayEditBoxes();
+
+
 	-- BIND PANEL TO INTERFACE SETTINGS
 	InterfaceOptions_AddCategory(g_interfaceSettingsFrame.panel);
+end
+
+
+-- MIN MAX DELAY FUNCTION
+InitDelayEditBoxes = 	function()
+
+	-- MIN DELAY
+	local onMinDelayEnterPressedCallback = function()
+
+		local newValue = g_interfaceSettingsFrame.boxMin:GetNumber();
+		if newValue == g_ktaOptions.minDelay then
+			return;
+
+		elseif not SetDelay(newValue, g_ktaOptions.maxDelay) then
+			g_interfaceSettingsFrame.boxMin:SetText(g_ktaOptions.minDelay);
+		end
+	end
+
+	g_interfaceSettingsFrame.boxMin = CreateEditBox(g_interfaceSettingsFrame.panel, "boxMinDelay", 60, 20, true, onMinDelayEnterPressedCallback);
+	g_interfaceSettingsFrame.boxMin:SetPoint("TOPLEFT", 65, -115);
+
+	g_interfaceSettingsFrame.boxMin:SetScript("OnSizeChanged", function()	-- OnShow is called before setting the size, so setting a text then is useless; OnSizeChanged guarentees that the box has been initialized
+		g_interfaceSettingsFrame.boxMin:SetText(g_ktaOptions.minDelay);
+	end);
+
+	g_interfaceSettingsFrame.boxMin:SetScript("OnEditFocusLost", function()
+		g_interfaceSettingsFrame.boxMin:SetText(g_ktaOptions.minDelay);
+	end);
+
+		-- MAX DELAY
+	local onMaxDelayEnterPressedCallback = function()
+
+		local newValue = g_interfaceSettingsFrame.boxMax:GetNumber();
+		if newValue == g_ktaOptions.maxDelay then
+			return;
+
+		elseif not SetDelay(g_ktaOptions.minDelay, newValue) then
+			g_interfaceSettingsFrame.boxMax:SetText(g_ktaOptions.maxDelay);
+		end
+	end
+
+	g_interfaceSettingsFrame.boxMax = CreateEditBox(g_interfaceSettingsFrame.panel, "boxMaxDelay", 60, 20, true, onMaxDelayEnterPressedCallback);
+	g_interfaceSettingsFrame.boxMax:SetPoint("TOPLEFT", 145, -115);
+
+	g_interfaceSettingsFrame.boxMax:SetScript("OnSizeChanged", function()	-- OnShow is called before setting the size, so setting a text then is useless; OnSizeChanged guarentees that the box has been initialized
+		g_interfaceSettingsFrame.boxMax:SetText(g_ktaOptions.maxDelay);
+	end);
+
+	g_interfaceSettingsFrame.boxMax:SetScript("OnEditFocusLost", function()
+		g_interfaceSettingsFrame.boxMax:SetText(g_ktaOptions.maxDelay);
+	end);
+
+
+	AddListenerEvent(g_interfaceEventsListener, "OnDelayChanged", function()
+		g_interfaceSettingsFrame.boxMin:SetText(g_ktaOptions.minDelay);
+		g_interfaceSettingsFrame.boxMax:SetText(g_ktaOptions.maxDelay);
+	end);
 end
