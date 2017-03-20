@@ -4,27 +4,27 @@ local g_interfaceSettingsFrame = {};
 
 
 
-local function createLabel(panel, name)
+local function CreateLabel(panel, name)
 	local label = panel:CreateFontString(nil, "ARTWORK", "GameFontHighlight");
 	label:SetText(name);
 	return label;
 end
-local function createCheck(panel, key, wth, hgt)
+local function CreateCheck(panel, key, width, height)
 	local chkOpt = CreateFrame("CheckButton", "KTA_" .. key, panel, "OptionsCheckButtonTemplate");
-	chkOpt:SetWidth(wth);
-	chkOpt:SetHeight(hgt);
+	chkOpt:SetWidth(width);
+	chkOpt:SetHeight(height);
 	return chkOpt;
 end
-local function createSlider(panel, name, x, y, min, max, step)
+local function CreateSlider(panel, name, width, height, min, max, step)
 	local sliderOpt = CreateFrame("Slider", "KTA_" .. name, panel, "OptionsSliderTemplate");
-	sliderOpt:SetWidth(x);
-	sliderOpt:SetHeight(y);
+	sliderOpt:SetWidth(width);
+	sliderOpt:SetHeight(height);
 	sliderOpt:SetMinMaxValues(min, max);
 	sliderOpt:SetValueStep(step);
 	_G[sliderOpt:GetName() .. "Low"]:SetText(min);
 	_G[sliderOpt:GetName() .. "High"]:SetText(max);
 	_G[sliderOpt:GetName() .. "Text"]:SetText(name);
-	return sliderOpt
+	return sliderOpt;
 end
 
 function MakeFrameMovable(panel, motion)
@@ -56,7 +56,7 @@ function InitSettingsFrames()
 
 
 	-- DEACTIVATED
-	g_interfaceSettingsFrame.lab = createLabel(g_interfaceSettingsFrame.panel, "Deactivated");
+	g_interfaceSettingsFrame.lab = CreateLabel(g_interfaceSettingsFrame.panel, "Deactivated");
 	g_interfaceSettingsFrame.lab:SetPoint("TOPLEFT", 80, -48);
 	g_interfaceSettingsFrame.chkDeact = CreateCheck(g_interfaceSettingsFrame.panel, "chkDeactivate", 20, 20);
 	g_interfaceSettingsFrame.chkDeact:SetPoint("TOPLEFT", 60, -45);
@@ -68,7 +68,7 @@ function InitSettingsFrames()
 
 
 	-- MUTE DURING COMBAT
-	g_interfaceSettingsFrame.lab = createLabel(g_interfaceSettingsFrame.panel, "Mute during Combat");
+	g_interfaceSettingsFrame.lab = CreateLabel(g_interfaceSettingsFrame.panel, "Mute during Combat");
 	g_interfaceSettingsFrame.lab:SetPoint("TOPLEFT", 80, -68);
 	g_interfaceSettingsFrame.chkCombat = CreateCheck(g_interfaceSettingsFrame.panel, "chkMuteInCombat", 20, 20);
 	g_interfaceSettingsFrame.chkCombat:SetPoint("TOPLEFT", 60, -65);
@@ -76,7 +76,7 @@ function InitSettingsFrames()
 
 	g_interfaceSettingsFrame.chkCombat:SetScript("OnClick", function()
 		g_ktaOptions.muteDuringCombat = not g_ktaOptions.muteDuringCombat;
-	end)
+	end);
 
 
 	-- BIND PANEL TO INTERFACE SETTINGS
