@@ -260,10 +260,14 @@ function RemoveGods(godsNames)
 	DisplayCurrentGods();
 end
 
-function SetSoundChannel(parSoundChannel)
+function SetSoundChannel(parSoundChannel, fromInterface)
 
 	g_ktaOptions.soundChannel = TrySetSoundChannel(parSoundChannel, g_ktaOptions.soundChannel);
 	KTA_Print("The soundfiles will now be played on the channel " .. g_ktaOptions.soundChannel);
+
+	if not fromInterface then
+		CallEventListener(g_interfaceEventsListener, "OnSoundChannelChanged");
+	end
 end
 
 function SetDefaultSoundChannel(parSoundChannel)

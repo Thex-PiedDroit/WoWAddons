@@ -28,7 +28,6 @@ local function CreateSlider(panel, name, width, height, min, max, step)
 	_G[sliderOpt:GetName() .. "Text"]:SetText(name);
 	return sliderOpt;
 end
-
 local function CreateEditBox(panel, name, width, height, onlyNumeric, onEnterPressedCallback)
 	local editBox = CreateFrame("EditBox", "KTA_" .. name, panel, "InputBoxTemplate");
 	editBox:SetAutoFocus(false);
@@ -49,6 +48,21 @@ local function CreateEditBox(panel, name, width, height, onlyNumeric, onEnterPre
 
 	return editBox;
 end
+local function CreateDropDownList(panel, name, width, options)
+	local dropDownList = CreateFrame("Frame", "KTA_" .. name, panel, "UIDropDownMenuTemplate");
+	UIDropDownMenu_SetWidth(dropDownList, width);
+
+	return dropDownList;
+end
+local function InitDropDownList(list, buttons, selectedButtonName)
+	UIDropDownMenu_Initialize(list, function()
+		for i = 1, #buttons, 1 do
+			UIDropDownMenu_AddButton(buttons[i]);
+		end
+	end);
+
+	UIDropDownMenu_SetSelectedName(list, selectedButtonName);
+end
 
 function MakeFrameMovable(panel, motion)
 
@@ -62,6 +76,8 @@ end
 
 
 local InitDelayEditBoxes = nil;	-- Forward declaration
+local InitSoundChannelDropDownList = nil;
+
 
 function InitSettingsFrames()
 
@@ -110,6 +126,14 @@ function InitSettingsFrames()
 	g_interfaceSettingsFrame.lab = CreateLabel(g_interfaceSettingsFrame.panel, "Max delay");
 	g_interfaceSettingsFrame.lab:SetPoint("TOPLEFT", 140, -98);
 	InitDelayEditBoxes();
+
+
+	-- SOUND CHANNEL
+	g_interfaceSettingsFrame.lab = CreateLabel(g_interfaceSettingsFrame.panel, "Sound channel", buttons);
+	g_interfaceSettingsFrame.lab:SetPoint("TOPLEFT", 60, -145);
+	g_interfaceSettingsFrame.listSoundChan = CreateDropDownList(g_interfaceSettingsFrame.panel, "listSoundChannel", 100);
+	g_interfaceSettingsFrame.listSoundChan:SetPoint("TOPLEFT", 40, -160);
+	InitSoundChannelDropDownList(g_interfaceSettingsFrame.listSoundChan);
 
 
 	-- BIND PANEL TO INTERFACE SETTINGS
@@ -170,5 +194,44 @@ InitDelayEditBoxes = 	function()
 	AddListenerEvent(g_interfaceEventsListener, "OnDelayChanged", function()
 		g_interfaceSettingsFrame.boxMin:SetText(g_ktaOptions.minDelay);
 		g_interfaceSettingsFrame.boxMax:SetText(g_ktaOptions.maxDelay);
+	end);
+end
+
+-- INIT SOUNDCHANNEL DROPDOWN LIST FUNCTION
+InitSoundChannelDropDownList = function(list)
+
+	UIDropDownMenu_Initialize(list, function(self)
+
+		local buttons = UIDropDownMenu_CreateInfo();
+		buttons.func = function(self)
+			UIDropDownMenu_SetText(list, self.value);
+			SetSoundChannel(self.value, true);
+			CloseDropDownMenus();
+		end;
+		buttons.text = "Master";
+		buttons.value = "Master";
+		buttons.checked = g_ktaOptions.soundChannel == buttons.text;
+		UIDropDownMenu_AddButton(buttons);
+		buttons.text = "Sound";
+		buttons.value = "Sound";
+		buttons.checked = g_ktaOptions.soundChannel == buttons.text;
+		UIDropDownMenu_AddButton(buttons);
+		buttons.text = "Music";
+		buttons.value = "Music";
+		buttons.checked = g_ktaOptions.soundChannel == buttons.text;
+		UIDropDownMenu_AddButton(buttons);
+		buttons.text = "Ambience";
+		buttons.value = "Ambience";
+		buttons.checked = g_ktaOptions.soundChannel == buttons.text;
+		UIDropDownMenu_AddButton(buttons);
+		buttons.text = "Dialog";
+		buttons.value = "Dialog";
+		buttons.checked = g_ktaOptions.soundChannel == buttons.text;
+		UIDropDownMenu_AddButton(buttons);
+	end);
+
+	UIDropDownMenu_SetText(g_interfaceSettingsFrame.listSoundChan, g_ktaOptions.soundChannel);
+	AddListenerEvent(g_interfaceEventsListener, "OnSoundChannelChanged", function()
+		UIDropDownMenu_SetText(g_interfaceSettingsFrame.listSoundChan, g_ktaOptions.soundChannel);
 	end);
 end
