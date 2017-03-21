@@ -1,7 +1,7 @@
 ## Interface: 70000
 ## Title: |cff00ccffKillThemAll_LichKing|r
 ## Version: 0.1
-## Notes: Randomly plays Old Gods whispers audio files
+## Notes: Adds The Lich King to KTA
 ## Author: Thex
 ## DefaultState: enabled
 ##Dependencies: KillThemAll
