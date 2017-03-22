@@ -59,6 +59,20 @@ AddGodToSettingsList = function(god)
 	end
 	g_godsListSettings.chkGod[godIndex] = CreateCheck(g_godsListSettings, "chkGod_" .. god.dataName, 20, 20);
 	g_godsListSettings.chkGod[godIndex]:SetPoint("TOPLEFT", godsChkOriginX + offsetX, godsChkOriginY - offsetY);
+	g_godsListSettings.chkGod[godIndex]:SetChecked(TableContains(g_currentGods, god));
+
+	g_godsListSettings.chkGod[godIndex]:SetScript("OnClick", function()
+		print(god.displayName);
+		if TableContains(g_currentGods, god) then
+			RemoveGods({ god.dataName });
+		else
+			AddGods({ god.dataName });
+		end
+	end);
+
+	AddListenerEvent(g_interfaceEventsListener, "OnGodsChanged", function()
+		g_godsListSettings.chkGod[godIndex]:SetChecked(TableContains(g_currentGods, god));
+	end);
 
 	g_godsListSettings:SetHeight(40 + offsetY);
 end

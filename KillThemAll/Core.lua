@@ -135,6 +135,8 @@ function SetGods(godsNames, silent)
 			KTA_Print("You feel the presence of all gods around you");
 		end
 
+		CallEventListener(g_interfaceEventsListener, "OnGodsChanged");
+
 		return;
 	elseif TableContains(godsNames, "NONE") then
 		g_currentGods = {};
@@ -142,6 +144,8 @@ function SetGods(godsNames, silent)
 		if not silent then
 			DisplayCurrentGods();
 		end
+
+		CallEventListener(g_interfaceEventsListener, "OnGodsChanged");
 
 		return;
 	end
@@ -184,6 +188,8 @@ function SetGods(godsNames, silent)
 	if not silent then
 		DisplayCurrentGods();
 	end
+
+	CallEventListener(g_interfaceEventsListener, "OnGodsChanged");
 
 	StartWaiting();
 end
@@ -271,6 +277,8 @@ function RemoveGods(godsNames, silent)
 	if not silent then
 		DisplayCurrentGods();
 	end
+
+	CallEventListener(g_interfaceEventsListener, "OnGodsChanged");
 
 	StartWaiting();
 end
