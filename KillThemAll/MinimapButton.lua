@@ -2,6 +2,18 @@
 g_minimapButton = LibStub("LibDBIcon-1.0", true);
 
 
+function SetMinimapButtonHidden(hidden)
+
+	g_ktaOptions.minimapButton.hide = hidden;
+
+	if hidden then
+		g_minimapButton:Hide("KillThemAll");
+	else
+		g_minimapButton:Show("KillThemAll");
+	end
+end
+
+
 function InitMinimapButton(settingsPanel)
 
 	local ldb = LibStub:GetLibrary("LibDataBroker-1.1");
@@ -39,4 +51,5 @@ function InitMinimapButton(settingsPanel)
 	end
 
 	g_minimapButton:Register("KillThemAll", minimapLDB, g_ktaOptions.minimapButton);
+	SetMinimapButtonHidden(g_ktaOptions.minimapButton.hide);
 end
