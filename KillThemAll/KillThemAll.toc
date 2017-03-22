@@ -6,6 +6,9 @@
 ## DefaultState: enabled
 ## SavedVariables: S_AddonVersion, S_ktaOptions
 
+Libraries/LibStub.lua
+Libraries/CallbackHandler-1.0.lua
+Libraries/LibDataBroker-1.1.lua
 Options.lua
 SettingsFrame.lua
 Helpers.lua

@@ -11,6 +11,7 @@ function LoadOptions()
 
 	local defaultOptionsIsNotNil = S_ktaOptions ~= nil and S_ktaOptions.default ~= nil;
 	local defaultSoundChannel = (defaultOptionsIsNotNil and S_ktaOptions.default.soundChannel) or "Dialog";
+	local minimapOptionIsNotNil = S_ktaOptions ~= nil and S_ktaOptions.default ~= nil;
 
 	g_ktaOptions =
 	{
@@ -25,6 +26,11 @@ function LoadOptions()
 		deactivated = (S_ktaOptions ~= nil and S_ktaOptions.deactivated) or (S_ktaOptions == nil and false),
 		muteDuringCombat = (S_ktaOptions ~= nil and S_ktaOptions.muteDuringCombat) or (S_ktaOptions == nil and false),
 		soundChannel = (S_ktaOptions ~= nil and S_ktaOptions.soundChannel) or defaultSoundChannel,
+
+		minimapButton =
+		{
+			hide = (minimapOptionIsNotNil and S_ktaOptions.minimapButton.hide) or (minimapOptionIsNotNil and false),
+		}
 	}
 
 	SetGods(GetWords((S_ktaOptions ~= nil and S_ktaOptions.gods) or g_ktaOptions.default.gods), true);

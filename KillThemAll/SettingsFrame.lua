@@ -75,6 +75,7 @@ end
 
 local InitDelayEditBoxes = nil;	-- Forward declaration
 local InitSoundChannelDropDownList = nil;
+local InitMinimapButton = nil;
 
 
 function InitSettingsFrames()
@@ -124,6 +125,8 @@ function InitSettingsFrames()
 
 	-- BIND PANEL TO INTERFACE SETTINGS
 	InterfaceOptions_AddCategory(g_interfaceSettingsFrame.panel);
+
+	InitMinimapButton();
 end
 
 
@@ -220,4 +223,19 @@ InitSoundChannelDropDownList = function(list)
 	AddListenerEvent(g_interfaceEventsListener, "OnSoundChannelChanged", function()
 		UIDropDownMenu_SetText(g_interfaceSettingsFrame.listSoundChan, g_ktaOptions.soundChannel);
 	end);
+end
+
+InitMinimapButton = function()
+
+	local ldb = LibStub:GetLibrary("LibDataBroker-1.1");
+	local minimapLDB = ldb:NewDataObject("KillThemAll",
+	{
+		type = "launcher",
+		icon = "Interface/Icons/Spell_shadow_auraofdarkness",
+		OnClick = function(clickedframe, button)
+		end,
+	});
+
+	local libIcon = LibStub("LibDBIcon-1.0", true);
+	libIcon:Register("KillThemAll", minimapLDB, g_ktaOptions.minimapButton);
 end
