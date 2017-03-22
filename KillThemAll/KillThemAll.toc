@@ -6,13 +6,17 @@
 ## DefaultState: enabled
 ## SavedVariables: S_AddonVersion, S_ktaOptions
 
+Libraries/LibStub.lua
+Libraries/CallbackHandler-1.0.lua
+Libraries/LibDataBroker-1.1.lua
 Options.lua
+MinimapButton.lua
 SettingsFrame.lua
 Helpers.lua
-SoundLibraryBase.lua
-Yshaarj.lua
-Cthun.lua
-YoggSaron.lua
-IlGynoth.lua
+Gods/SoundLibraryBase.lua
+Gods/Yshaarj.lua
+Gods/Cthun.lua
+Gods/YoggSaron.lua
+Gods/IlGynoth.lua
 Core.lua
 SlashCommands.lua

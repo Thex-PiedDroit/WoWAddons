@@ -10,7 +10,7 @@ end
 
 ---------------------------------
 
-local TEXT_COLOR = "FFe899ff";
+TEXT_COLOR = "FFe899ff";
 local KTA_PREFIX = "|c" .. TEXT_COLOR .. "KTA: |r"
 function KTA_Print(str)
 	print(KTA_PREFIX .. str);
@@ -102,6 +102,12 @@ function PrintAvailableGods()
 		print("     " .. AllSoundLibraries[i].dataName);
 	end
 	print("     All");
+end
+
+function ToggleDeactivated()
+
+	g_ktaOptions.deactivated = not g_ktaOptions.deactivated;
+	CallEventListener(g_interfaceEventsListener, "OnToggleDeactivated");
 end
 
 function GetGodByName(godName)

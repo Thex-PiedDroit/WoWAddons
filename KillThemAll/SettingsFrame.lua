@@ -90,7 +90,11 @@ function InitSettingsFrames()
 	g_interfaceSettingsFrame.chkDeact:SetChecked(g_ktaOptions.deactivated);
 
 	g_interfaceSettingsFrame.chkDeact:SetScript("OnClick", function()
-		g_ktaOptions.deactivated = not g_ktaOptions.deactivated;
+		ToggleDeactivated();
+	end);
+
+	AddListenerEvent(g_interfaceEventsListener, "OnToggleDeactivated", function()
+		g_interfaceSettingsFrame.chkDeact:SetChecked(g_ktaOptions.deactivated);
 	end);
 
 
@@ -106,24 +110,38 @@ function InitSettingsFrames()
 	end);
 
 
+	-- HIDE MINIMAP BUTTON
+	g_interfaceSettingsFrame.lab = CreateLabel(g_interfaceSettingsFrame.panel, "Hide minimap button");
+	g_interfaceSettingsFrame.lab:SetPoint("TOPLEFT", 80, -88);
+	g_interfaceSettingsFrame.chkMiniMapButton = CreateCheck(g_interfaceSettingsFrame.panel, "chkHideMinimapButton", 20, 20);
+	g_interfaceSettingsFrame.chkMiniMapButton:SetPoint("TOPLEFT", 60, -85);
+	g_interfaceSettingsFrame.chkMiniMapButton:SetChecked(g_ktaOptions.minimapButton.hide);
+
+	g_interfaceSettingsFrame.chkMiniMapButton:SetScript("OnClick", function()
+		SetMinimapButtonHidden(not g_ktaOptions.minimapButton.hide);
+	end);
+
+
 	-- MIN MAX DELAY
 	g_interfaceSettingsFrame.lab = CreateLabel(g_interfaceSettingsFrame.panel, "Min delay");
-	g_interfaceSettingsFrame.lab:SetPoint("TOPLEFT", 60, -98);
+	g_interfaceSettingsFrame.lab:SetPoint("TOPLEFT", 60, -118);
 	g_interfaceSettingsFrame.lab = CreateLabel(g_interfaceSettingsFrame.panel, "Max delay");
-	g_interfaceSettingsFrame.lab:SetPoint("TOPLEFT", 140, -98);
+	g_interfaceSettingsFrame.lab:SetPoint("TOPLEFT", 140, -118);
 	InitDelayEditBoxes();
 
 
 	-- SOUND CHANNEL
 	g_interfaceSettingsFrame.lab = CreateLabel(g_interfaceSettingsFrame.panel, "Sound channel", buttons);
-	g_interfaceSettingsFrame.lab:SetPoint("TOPLEFT", 60, -145);
+	g_interfaceSettingsFrame.lab:SetPoint("TOPLEFT", 60, -165);
 	g_interfaceSettingsFrame.listSoundChan = CreateDropDownList(g_interfaceSettingsFrame.panel, "listSoundChannel", 100);
-	g_interfaceSettingsFrame.listSoundChan:SetPoint("TOPLEFT", 40, -160);
+	g_interfaceSettingsFrame.listSoundChan:SetPoint("TOPLEFT", 40, -180);
 	InitSoundChannelDropDownList(g_interfaceSettingsFrame.listSoundChan);
 
 
 	-- BIND PANEL TO INTERFACE SETTINGS
 	InterfaceOptions_AddCategory(g_interfaceSettingsFrame.panel);
+
+	InitMinimapButton(g_interfaceSettingsFrame.panel);
 end
 
 
@@ -143,7 +161,7 @@ InitDelayEditBoxes = 	function()
 	end
 
 	g_interfaceSettingsFrame.boxMin = CreateEditBox(g_interfaceSettingsFrame.panel, "boxMinDelay", 60, 20, true, onMinDelayEnterPressedCallback);
-	g_interfaceSettingsFrame.boxMin:SetPoint("TOPLEFT", 65, -115);
+	g_interfaceSettingsFrame.boxMin:SetPoint("TOPLEFT", 65, -135);
 
 	g_interfaceSettingsFrame.boxMin:SetScript("OnSizeChanged", function()	-- OnShow is called before setting the size, so setting a text then is useless; OnSizeChanged guarentees that the box has been initialized
 		g_interfaceSettingsFrame.boxMin:SetText(g_ktaOptions.minDelay);
@@ -166,7 +184,7 @@ InitDelayEditBoxes = 	function()
 	end
 
 	g_interfaceSettingsFrame.boxMax = CreateEditBox(g_interfaceSettingsFrame.panel, "boxMaxDelay", 60, 20, true, onMaxDelayEnterPressedCallback);
-	g_interfaceSettingsFrame.boxMax:SetPoint("TOPLEFT", 145, -115);
+	g_interfaceSettingsFrame.boxMax:SetPoint("TOPLEFT", 145, -135);
 
 	g_interfaceSettingsFrame.boxMax:SetScript("OnSizeChanged", function()	-- OnShow is called before setting the size, so setting a text then is useless; OnSizeChanged guarentees that the box has been initialized
 		g_interfaceSettingsFrame.boxMax:SetText(g_ktaOptions.maxDelay);
