@@ -68,6 +68,10 @@ function InitSettingsFrames()
 	InitSoundChannelDropDownList(g_interfaceSettingsFrame.listSoundChan);
 
 
+	-- GODS LIST
+	InitGodsListSettings(g_interfaceSettingsFrame);
+
+
 	-- BIND PANEL TO INTERFACE SETTINGS
 	InterfaceOptions_AddCategory(g_interfaceSettingsFrame.panel);
 

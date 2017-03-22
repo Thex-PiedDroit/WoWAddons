@@ -12,6 +12,7 @@ Libraries/LibDataBroker-1.1.lua
 Options.lua
 Settings/SettingsHelpers.lua
 Settings/MinimapButton.lua
+Settings/GodsListSettings.lua
 Settings/SettingsFrame.lua
 Helpers.lua
 Gods/SoundLibraryBase.lua
