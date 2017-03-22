@@ -62,11 +62,11 @@ AddGodToSettingsList = function(god)
 	g_godsListSettings.chkGod[godIndex]:SetChecked(TableContains(g_currentGods, god));
 
 	g_godsListSettings.chkGod[godIndex]:SetScript("OnClick", function()
-		print(god.displayName);
+
 		if TableContains(g_currentGods, god) then
-			RemoveGods({ god.dataName });
+			RemoveGods({ god.dataName }, true);
 		else
-			AddGods({ god.dataName });
+			AddGods({ god.dataName }, true);
 		end
 	end);
 

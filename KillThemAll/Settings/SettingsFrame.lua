@@ -143,7 +143,7 @@ InitSoundChannelDropDownList = function(list)
 		local buttons = UIDropDownMenu_CreateInfo();
 		buttons.func = function(self)
 			UIDropDownMenu_SetText(list, self.value);
-			SetSoundChannel(self.value, true);
+			SetSoundChannel(self.value, true, true);
 			CloseDropDownMenus();
 		end;
 		buttons.text = "Master";
