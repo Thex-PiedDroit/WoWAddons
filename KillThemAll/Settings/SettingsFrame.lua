@@ -3,82 +3,12 @@ local g_interfaceSettingsFrame = {};
 g_interfaceEventsListener = {};
 
 
-
-local function CreateLabel(panel, name)
-	local label = panel:CreateFontString(nil, "ARTWORK", "GameFontHighlight");
-	label:SetText(name);
-	return label;
-end
-local function CreateCheck(panel, key, width, height)
-	local chkOpt = CreateFrame("CheckButton", "KTA_" .. key, panel, "OptionsCheckButtonTemplate");
-	chkOpt:SetWidth(width);
-	chkOpt:SetHeight(height);
-	return chkOpt;
-end
-local function CreateSlider(panel, name, width, height, min, max, step)
-	local sliderOpt = CreateFrame("Slider", "KTA_" .. name, panel, "OptionsSliderTemplate");
-	sliderOpt:SetWidth(width);
-	sliderOpt:SetHeight(height);
-	sliderOpt:SetMinMaxValues(min, max);
-	sliderOpt:SetValueStep(step);
-	_G[sliderOpt:GetName() .. "Low"]:SetText(min);
-	_G[sliderOpt:GetName() .. "High"]:SetText(max);
-	_G[sliderOpt:GetName() .. "Text"]:SetText(name);
-	return sliderOpt;
-end
-local function CreateEditBox(panel, name, width, height, onlyNumeric, onEnterPressedCallback)
-	local editBox = CreateFrame("EditBox", "KTA_" .. name, panel, "InputBoxTemplate");
-	editBox:SetAutoFocus(false);
-	editBox:SetWidth(width);
-	editBox:SetHeight(height);
-	editBox:SetNumeric(onlyNumeric);
-
-	editBox:SetScript("OnEnterPressed", function()
-		onEnterPressedCallback();
-
-		editBox:ClearFocus();
-		editBox:HighlightText(100,100);	-- Force highlight removal
-	end);
-	editBox:SetScript("OnEscapePressed", function()
-		editBox:ClearFocus();
-		editBox:HighlightText(100,100);	-- Force highlight removal
-	end);
-
-	return editBox;
-end
-local function CreateDropDownList(panel, name, width, options)
-	local dropDownList = CreateFrame("Frame", "KTA_" .. name, panel, "UIDropDownMenuTemplate");
-	UIDropDownMenu_SetWidth(dropDownList, width);
-
-	return dropDownList;
-end
-local function InitDropDownList(list, buttons, selectedButtonName)
-	UIDropDownMenu_Initialize(list, function()
-		for i = 1, #buttons, 1 do
-			UIDropDownMenu_AddButton(buttons[i]);
-		end
-	end);
-
-	UIDropDownMenu_SetSelectedName(list, selectedButtonName);
-end
-
-function MakeFrameMovable(panel, motion)
-
-	panel:EnableMouse(true)
-	panel:SetMovable(true)
-	panel:SetClampedToScreen(true)
-	panel:RegisterForDrag("LeftButton")
-	panel:SetScript("OnDragStart", panel.StartMoving)
-	panel:SetScript("OnDragStop", panel.StopMovingOrSizing)
-end
-
-
 local InitDelayEditBoxes = nil;	-- Forward declaration
 local InitSoundChannelDropDownList = nil;
 
 
 function InitSettingsFrames()
-	g_interfaceSettingsFrame.panel = CreateFrame( "Frame", "KTA_InterfaceSettingsFrame", UIParent);
+	g_interfaceSettingsFrame.panel = CreateFrame("Frame", "KTA_InterfaceSettingsFrame", UIParent);
 	g_interfaceSettingsFrame.panel.name = "KillThemAll Settings";
 
 

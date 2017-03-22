@@ -10,8 +10,9 @@ Libraries/LibStub.lua
 Libraries/CallbackHandler-1.0.lua
 Libraries/LibDataBroker-1.1.lua
 Options.lua
-MinimapButton.lua
-SettingsFrame.lua
+Settings/SettingsHelpers.lua
+Settings/MinimapButton.lua
+Settings/SettingsFrame.lua
 Helpers.lua
 Gods/SoundLibraryBase.lua
 Gods/Yshaarj.lua
