@@ -9,16 +9,17 @@ function LoadOptions()
 		return;
 	end
 
-	local defaultSoundChannel = (S_ktaOptions ~= nil and S_ktaOptions.default ~= nil and S_ktaOptions.default.soundChannel) or "Dialog";
+	local defaultOptionsIsNotNil = S_ktaOptions ~= nil and S_ktaOptions.default ~= nil;
+	local defaultSoundChannel = (defaultOptionsIsNotNil and S_ktaOptions.default.soundChannel) or "Dialog";
 
 	g_ktaOptions =
 	{
 		default =
 		{
-			gods = (S_ktaOptions ~= nil and S_ktaOptions.default ~= nil and S_ktaOptions.default.gods) or "YSHAARJ",
+			gods = (defaultOptionsIsNotNil and S_ktaOptions.default.gods) or "YSHAARJ",
 			soundChannel = defaultSoundChannel,
-			minDelay = (S_ktaOptions ~= nil and S_ktaOptions.default ~= nil and S_ktaOptions.default.minDelay) or 300,
-			maxDelay = (S_ktaOptions ~= nil and S_ktaOptions.default ~= nil and S_ktaOptions.default.maxDelay) or 1200,
+			minDelay = (defaultOptionsIsNotNil and S_ktaOptions.default.minDelay) or 300,
+			maxDelay = (defaultOptionsIsNotNil and S_ktaOptions.default.maxDelay) or 1200,
 		},
 
 		deactivated = (S_ktaOptions ~= nil and S_ktaOptions.deactivated) or (S_ktaOptions == nil and false),

@@ -1,7 +1,5 @@
 
-local g_standAloneSettingsFrame = CreateFrame("Frame", "KTA_StandAloneSettingsFrame", UIParent, "BasicFrameTemplateWithInset");
 local g_interfaceSettingsFrame = {};
-
 g_interfaceEventsListener = {};
 
 
@@ -80,18 +78,6 @@ local InitSoundChannelDropDownList = nil;
 
 
 function InitSettingsFrames()
-
-------------------- STAND ALONE FRAME -------------------
-
-	g_standAloneSettingsFrame:SetSize(600, 500);
-	g_standAloneSettingsFrame:SetPoint("CENTER", UIParent, "CENTER");
-
-	MakeFrameMovable(g_standAloneSettingsFrame);
-	g_standAloneSettingsFrame:Hide();
-
-
-
-------------------- INTERFACE SETTINGS PANEL -------------------
 	g_interfaceSettingsFrame.panel = CreateFrame( "Frame", "KTA_InterfaceSettingsFrame", UIParent);
 	g_interfaceSettingsFrame.panel.name = "KillThemAll Settings";
 
