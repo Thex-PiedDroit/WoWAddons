@@ -237,8 +237,12 @@ InitMinimapButton = function()
 		type = "launcher",
 		icon = "Interface/Icons/Spell_shadow_auraofdarkness",
 		OnClick = function(clickedframe, button)
+
 			if button == "LeftButton" then
 				ToggleDeactivated();
+			elseif button == "RightButton" then
+				InterfaceOptionsFrame_OpenToCategory(g_interfaceSettingsFrame.panel);
+				InterfaceOptionsFrame_OpenToCategory(g_interfaceSettingsFrame.panel);	-- Twice because once only opens the menu, not the right category, for some reason
 			end
 		end,
 	});
@@ -246,6 +250,7 @@ InitMinimapButton = function()
 	function minimapLDB:OnTooltipShow()
 		self:AddLine("|c" .. TEXT_COLOR .. "KillThemAll|r");
 		self:AddLine("|cFFFFFFFFLeft click: activate/deactivate|r");
+		self:AddLine("|cFFFFFFFFRight click: open settings|r");
 	end
 	function minimapLDB:OnEnter()
 		GameTooltip:SetOwner(self, "ANCHOR_NONE");
