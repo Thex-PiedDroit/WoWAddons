@@ -20,7 +20,10 @@ function CreateEditBox(panel, name, width, height, onlyNumeric, onEnterPressedCa
 	editBox:SetNumeric(onlyNumeric);
 
 	editBox:SetScript("OnEnterPressed", function()
-		onEnterPressedCallback();
+
+		if onEnterPressedCallback ~= nil then
+			onEnterPressedCallback();
+		end
 
 		editBox:ClearFocus();
 		editBox:HighlightText(100, 100);	-- Force highlight removal
@@ -38,4 +41,13 @@ function CreateDropDownList(panel, name, width, options)
 	UIDropDownMenu_SetWidth(dropDownList, width);
 
 	return dropDownList;
+end
+
+function CreateButton(panel, name, width, text)
+
+	local button = CreateFrame("Button", "KTA_" .. name, panel, "UIPanelButtonTemplate");
+	button:SetWidth(width);
+	button:SetText(text);
+
+	return button;
 end

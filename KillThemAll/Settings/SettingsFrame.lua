@@ -83,40 +83,18 @@ end
 InitDelayEditBoxes = 	function()
 
 	-- MIN DELAY
-	local onMinDelayEnterPressedCallback = function()
-
-		local newValue = g_interfaceSettingsFrame.boxMin:GetNumber();
-		if newValue == g_ktaOptions.minDelay then
-			return;
-
-		elseif not SetDelay(newValue, g_ktaOptions.maxDelay) then
-			g_interfaceSettingsFrame.boxMin:SetText(g_ktaOptions.minDelay);
-		end
-	end
-
-	g_interfaceSettingsFrame.boxMin = CreateEditBox(g_interfaceSettingsFrame.panel, "boxMinDelay", 60, 20, true, onMinDelayEnterPressedCallback);
+	g_interfaceSettingsFrame.boxMin = CreateEditBox(g_interfaceSettingsFrame.panel, "boxMinDelay", 60, 20, true);
 	g_interfaceSettingsFrame.boxMin:SetPoint("TOPLEFT", 65, -135);
 
 	g_interfaceSettingsFrame.boxMin:SetScript("OnSizeChanged", function()	-- OnShow is called before setting the size, so setting a text then is useless; OnSizeChanged guarentees that the box has been initialized
 		g_interfaceSettingsFrame.boxMin:SetText(g_ktaOptions.minDelay);
 	end);
 
-	g_interfaceSettingsFrame.boxMin:SetScript("OnEditFocusLost", function()
+	g_interfaceSettingsFrame.boxMin:SetScript("OnShow", function()
 		g_interfaceSettingsFrame.boxMin:SetText(g_ktaOptions.minDelay);
 	end);
 
-		-- MAX DELAY
-	local onMaxDelayEnterPressedCallback = function()
-
-		local newValue = g_interfaceSettingsFrame.boxMax:GetNumber();
-		if newValue == g_ktaOptions.maxDelay then
-			return;
-
-		elseif not SetDelay(g_ktaOptions.minDelay, newValue) then
-			g_interfaceSettingsFrame.boxMax:SetText(g_ktaOptions.maxDelay);
-		end
-	end
-
+	-- MAX DELAY
 	g_interfaceSettingsFrame.boxMax = CreateEditBox(g_interfaceSettingsFrame.panel, "boxMaxDelay", 60, 20, true, onMaxDelayEnterPressedCallback);
 	g_interfaceSettingsFrame.boxMax:SetPoint("TOPLEFT", 145, -135);
 
@@ -124,14 +102,48 @@ InitDelayEditBoxes = 	function()
 		g_interfaceSettingsFrame.boxMax:SetText(g_ktaOptions.maxDelay);
 	end);
 
-	g_interfaceSettingsFrame.boxMax:SetScript("OnEditFocusLost", function()
+		g_interfaceSettingsFrame.boxMax:SetScript("OnShow", function()
 		g_interfaceSettingsFrame.boxMax:SetText(g_ktaOptions.maxDelay);
+	end);
+
+
+	-- TAB BEHAVIOUR
+	g_interfaceSettingsFrame.boxMin:SetScript("OnTabPressed", function()
+		g_interfaceSettingsFrame.boxMin:ClearFocus();
+		g_interfaceSettingsFrame.boxMin:HighlightText(100, 100);	-- Force highlight removal
+
+		g_interfaceSettingsFrame.boxMax:SetFocus();
+		g_interfaceSettingsFrame.boxMax:HighlightText();
+	end);
+	g_interfaceSettingsFrame.boxMax:SetScript("OnTabPressed", function()
+		g_interfaceSettingsFrame.boxMax:ClearFocus();
+		g_interfaceSettingsFrame.boxMax:HighlightText(100, 100);	-- Force highlight removal
+
+		g_interfaceSettingsFrame.boxMin:SetFocus();
+		g_interfaceSettingsFrame.boxMin:HighlightText();
 	end);
 
 
 	AddListenerEvent(g_interfaceEventsListener, "OnDelayChanged", function()
 		g_interfaceSettingsFrame.boxMin:SetText(g_ktaOptions.minDelay);
 		g_interfaceSettingsFrame.boxMax:SetText(g_ktaOptions.maxDelay);
+	end);
+
+
+	-- OK BUTTON
+	g_interfaceSettingsFrame.buttonDelay = CreateButton(g_interfaceSettingsFrame.panel, "delayOKButton", 80, "Set delay");
+	g_interfaceSettingsFrame.buttonDelay:SetPoint("TOPLEFT", 215, -134);
+
+	g_interfaceSettingsFrame.buttonDelay:SetScript("OnClick", function()
+
+		local newMin = g_interfaceSettingsFrame.boxMin:GetNumber();
+		local newMax = g_interfaceSettingsFrame.boxMax:GetNumber();
+
+		if newMin == g_ktaOptions.minDelay and newMax == g_ktaOptions.maxDelay then
+			return;
+		end
+
+		SetDelay(newMin, newMax);
 	end);
 end
 
