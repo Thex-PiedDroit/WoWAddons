@@ -135,6 +135,8 @@ function SetGods(godsNames, silent)
 			KTA_Print("You feel the presence of all gods around you");
 		end
 
+		CallEventListener(g_interfaceEventsListener, "OnGodsChanged");
+
 		return;
 	elseif TableContains(godsNames, "NONE") then
 		g_currentGods = {};
@@ -142,6 +144,8 @@ function SetGods(godsNames, silent)
 		if not silent then
 			DisplayCurrentGods();
 		end
+
+		CallEventListener(g_interfaceEventsListener, "OnGodsChanged");
 
 		return;
 	end
@@ -154,11 +158,9 @@ function SetGods(godsNames, silent)
 		table.remove(godsNames, defaultIndex);
 		local defaultGods = GetWords(string.upper(g_ktaOptions.default.gods));
 		local containsAll = TableContains(defaultGods, "ALL");
-		SetGods(defaultGods, not containsAll);
+		SetGods(defaultGods, silent);
 
-		if TableContains(defaultGods, "ALL") then
-			return;
-		end
+		return;
 	end
 
 	for i = 1, #godsNames, 1 do
@@ -186,6 +188,15 @@ function SetGods(godsNames, silent)
 	if not silent then
 		DisplayCurrentGods();
 	end
+
+	CallEventListener(g_interfaceEventsListener, "OnGodsChanged");
+
+	StartWaiting();
+end
+
+function AddGods(godsNames, silent)
+
+	SetGods(TableCat(GodsToStringTable(g_currentGods, false), godsNames));
 end
 
 function SetDefaultGods(godsNames, silent)
@@ -249,7 +260,7 @@ function SetDefaultGods(godsNames, silent)
 	end
 end
 
-function RemoveGods(godsNames)
+function RemoveGods(godsNames, silent)
 
 	if TableContains(godsNames, "ALL") then
 		g_currentGods = {};
@@ -263,7 +274,13 @@ function RemoveGods(godsNames)
 		end
 	end
 
-	DisplayCurrentGods();
+	if not silent then
+		DisplayCurrentGods();
+	end
+
+	CallEventListener(g_interfaceEventsListener, "OnGodsChanged");
+
+	StartWaiting();
 end
 
 function SetSoundChannel(parSoundChannel, fromInterface)

@@ -208,19 +208,13 @@ function SlashCmdList.KTA(msg)
 
 
 	if cmd == "SETGODS" or cmd == "SETGOD" then
-
 		SetGods(args);
-		StartWaiting();
 
 	elseif cmd == "ADDGODS" or cmd == "ADDGOD" or cmd == "ADD" then
-
-		SetGods(TableCat(GodsToStringTable(g_currentGods, false), args));
-		StartWaiting();
+		AddGods(args);
 
 	elseif cmd == "REMOVEGODS" or cmd == "REMOVEGOD" or cmd == "REMOVE" then
-
 		RemoveGods(args);
-		StartWaiting();
 
 	elseif cmd == "SETDELAY" then
 		SetDelay(args[1], args[2]);
