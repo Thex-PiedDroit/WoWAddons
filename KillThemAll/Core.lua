@@ -10,7 +10,7 @@ end
 
 ---------------------------------
 
-local TEXT_COLOR = "FFe899ff";
+TEXT_COLOR = "FFe899ff";
 local KTA_PREFIX = "|c" .. TEXT_COLOR .. "KTA: |r"
 function KTA_Print(str)
 	print(KTA_PREFIX .. str);

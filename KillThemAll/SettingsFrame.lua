@@ -236,6 +236,22 @@ InitMinimapButton = function()
 		end,
 	});
 
+	function minimapLDB:OnTooltipShow()
+		self:AddLine("|c" .. TEXT_COLOR .. "KillThemAll|r");
+	end
+	function minimapLDB:OnEnter()
+		GameTooltip:SetOwner(self, "ANCHOR_NONE");
+		GameTooltip:SetPoint("TOPLEFT", self, "BOTTOMLEFT");
+		GameTooltip:ClearLines();
+		dataobj.OnTooltipShow(GameTooltip);
+		GameTooltip:Show();
+		dataobj.hide = true;
+		dataobj:Hide();
+	end
+	function minimapLDB:OnLeave()
+		GameTooltip:Hide();
+	end
+
 	local libIcon = LibStub("LibDBIcon-1.0", true);
 	libIcon:Register("KillThemAll", minimapLDB, g_ktaOptions.minimapButton);
 end
