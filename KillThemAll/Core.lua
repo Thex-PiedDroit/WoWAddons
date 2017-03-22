@@ -196,7 +196,7 @@ end
 
 function AddGods(godsNames, silent)
 
-	SetGods(TableCat(GodsToStringTable(g_currentGods, false), godsNames));
+	SetGods(TableCat(GodsToStringTable(g_currentGods, false), godsNames), silent);
 end
 
 function SetDefaultGods(godsNames, silent)
@@ -283,10 +283,13 @@ function RemoveGods(godsNames, silent)
 	StartWaiting();
 end
 
-function SetSoundChannel(parSoundChannel, fromInterface)
+function SetSoundChannel(parSoundChannel, silent, fromInterface)
 
 	g_ktaOptions.soundChannel = TrySetSoundChannel(parSoundChannel, g_ktaOptions.soundChannel);
-	KTA_Print("The soundfiles will now be played on the channel " .. g_ktaOptions.soundChannel);
+
+	if not silent then
+		KTA_Print("The soundfiles will now be played on the channel " .. g_ktaOptions.soundChannel);
+	end
 
 	if not fromInterface then
 		CallEventListener(g_interfaceEventsListener, "OnSoundChannelChanged");

@@ -101,7 +101,7 @@ function PrintHelp(cmd, args, parameters)
 
 		PrintTooltip("Will reset all gods and values to default ones. You can change the default values and gods by using the \"/kta SetDefault\" command.");
 
-	elseif cmd == "display" or cmd == "Display" then
+	elseif cmd == "DISPLAY" then
 
 		if args ~= nil then
 
@@ -136,13 +136,18 @@ function PrintHelp(cmd, args, parameters)
 				if TableContains(args, "SOUNDCHANNEL") or TableContains(args, "CHANNEL") then
 					print("/kta Display soundChannel");
 					PrintTooltip("Will display the current sound channel the soundfiles will be played on.");
-				end				
+				end
 				return;
 			end
 		end
 
 		print("/kta Display [Delay|Gods|SoundChannel|Default]");
 		PrintTooltip("Will display current parameters. If no parameter provided, all parameters will be listed.");
+
+	elseif cmd == "SETTINGS" or cmd == "OPTIONS" then
+
+		print("/kta Settings");
+		PrintTooltip("Opens up the settings panel");
 
 	elseif cmd == "DEBUG" or cmd == "DBG" then
 
@@ -176,6 +181,7 @@ function PrintAllCommands()
 	PrintHelp("SETDEFAULT", nil, "noToolTip");
 	PrintHelp("RESET", nil, "noToolTip");
 	PrintHelp("DISPLAY", nil, "noToolTip");
+	PrintHelp("SETTINGS", nil, "noToolTip");
 	PrintHelp("DEBUG", nil, "noToolTip");
 end
 
@@ -267,6 +273,10 @@ function SlashCmdList.KTA(msg)
 			DisplaySoundChannel();
 			return;
 		end
+
+	elseif cmd == "SETTINGS" or cmd == "OPTIONS" then
+
+		OpenSettingsPanel();
 
 	elseif cmd == "DEBUG" or cmd == "DBG" then
 

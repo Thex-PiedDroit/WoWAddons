@@ -28,8 +28,7 @@ function InitMinimapButton(settingsPanel)
 				KTA_Print("KillThemAll is now " .. ((g_ktaOptions.deactivated and "deactivated") or "activated"));
 
 			elseif button == "RightButton" then
-				InterfaceOptionsFrame_OpenToCategory(settingsPanel);
-				InterfaceOptionsFrame_OpenToCategory(settingsPanel);	-- Twice because once only opens the menu, not the right category, for some reason
+				OpenSettingsPanel();
 			end
 		end,
 	});
