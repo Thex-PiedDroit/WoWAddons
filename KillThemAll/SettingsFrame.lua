@@ -91,7 +91,11 @@ function InitSettingsFrames()
 	g_interfaceSettingsFrame.chkDeact:SetChecked(g_ktaOptions.deactivated);
 
 	g_interfaceSettingsFrame.chkDeact:SetScript("OnClick", function()
-		g_ktaOptions.deactivated = not g_ktaOptions.deactivated;
+		ToggleDeactivated();
+	end);
+
+	AddListenerEvent(g_interfaceEventsListener, "OnToggleDeactivated", function()
+		g_interfaceSettingsFrame.chkDeact:SetChecked(g_ktaOptions.deactivated);
 	end);
 
 
@@ -233,11 +237,15 @@ InitMinimapButton = function()
 		type = "launcher",
 		icon = "Interface/Icons/Spell_shadow_auraofdarkness",
 		OnClick = function(clickedframe, button)
+			if button == "LeftButton" then
+				ToggleDeactivated();
+			end
 		end,
 	});
 
 	function minimapLDB:OnTooltipShow()
 		self:AddLine("|c" .. TEXT_COLOR .. "KillThemAll|r");
+		self:AddLine("|cFFFFFFFFLeft click: activate/deactivate|r");
 	end
 	function minimapLDB:OnEnter()
 		GameTooltip:SetOwner(self, "ANCHOR_NONE");

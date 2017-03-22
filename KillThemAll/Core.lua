@@ -104,6 +104,12 @@ function PrintAvailableGods()
 	print("     All");
 end
 
+function ToggleDeactivated()
+
+	g_ktaOptions.deactivated = not g_ktaOptions.deactivated;
+	CallEventListener(g_interfaceEventsListener, "OnToggleDeactivated");
+end
+
 function GetGodByName(godName)
 
 	godName = string.upper(godName);
