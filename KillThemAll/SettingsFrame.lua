@@ -75,7 +75,6 @@ end
 
 local InitDelayEditBoxes = nil;	-- Forward declaration
 local InitSoundChannelDropDownList = nil;
-local InitMinimapButton = nil;
 
 
 function InitSettingsFrames()
@@ -130,7 +129,7 @@ function InitSettingsFrames()
 	-- BIND PANEL TO INTERFACE SETTINGS
 	InterfaceOptions_AddCategory(g_interfaceSettingsFrame.panel);
 
-	InitMinimapButton();
+	InitMinimapButton(g_interfaceSettingsFrame.panel);
 end
 
 
@@ -227,44 +226,4 @@ InitSoundChannelDropDownList = function(list)
 	AddListenerEvent(g_interfaceEventsListener, "OnSoundChannelChanged", function()
 		UIDropDownMenu_SetText(g_interfaceSettingsFrame.listSoundChan, g_ktaOptions.soundChannel);
 	end);
-end
-
-InitMinimapButton = function()
-
-	local ldb = LibStub:GetLibrary("LibDataBroker-1.1");
-	local minimapLDB = ldb:NewDataObject("KillThemAll",
-	{
-		type = "launcher",
-		icon = "Interface/Icons/Spell_shadow_auraofdarkness",
-		OnClick = function(clickedframe, button)
-
-			if button == "LeftButton" then
-				ToggleDeactivated();
-			elseif button == "RightButton" then
-				InterfaceOptionsFrame_OpenToCategory(g_interfaceSettingsFrame.panel);
-				InterfaceOptionsFrame_OpenToCategory(g_interfaceSettingsFrame.panel);	-- Twice because once only opens the menu, not the right category, for some reason
-			end
-		end,
-	});
-
-	function minimapLDB:OnTooltipShow()
-		self:AddLine("|c" .. TEXT_COLOR .. "KillThemAll|r");
-		self:AddLine("|cFFFFFFFFLeft click: activate/deactivate|r");
-		self:AddLine("|cFFFFFFFFRight click: open settings|r");
-	end
-	function minimapLDB:OnEnter()
-		GameTooltip:SetOwner(self, "ANCHOR_NONE");
-		GameTooltip:SetPoint("TOPLEFT", self, "BOTTOMLEFT");
-		GameTooltip:ClearLines();
-		dataobj.OnTooltipShow(GameTooltip);
-		GameTooltip:Show();
-		dataobj.hide = true;
-		dataobj:Hide();
-	end
-	function minimapLDB:OnLeave()
-		GameTooltip:Hide();
-	end
-
-	local libIcon = LibStub("LibDBIcon-1.0", true);
-	libIcon:Register("KillThemAll", minimapLDB, g_ktaOptions.minimapButton);
 end
