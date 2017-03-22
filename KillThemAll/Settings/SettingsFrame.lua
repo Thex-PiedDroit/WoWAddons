@@ -7,6 +7,13 @@ local InitDelayEditBoxes = nil;	-- Forward declaration
 local InitSoundChannelDropDownList = nil;
 
 
+function OpenSettingsPanel()
+
+	InterfaceOptionsFrame_OpenToCategory("KillThemAll Settings");
+	InterfaceOptionsFrame_OpenToCategory("KillThemAll Settings");	-- Twice because once only opens the menu, not the right category, for some reason
+end
+
+
 function InitSettingsFrames()
 	g_interfaceSettingsFrame.panel = CreateFrame("Frame", "KTA_InterfaceSettingsFrame", UIParent);
 	g_interfaceSettingsFrame.panel.name = "KillThemAll Settings";
