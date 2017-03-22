@@ -1,6 +1,6 @@
 ## Interface: 70000
 ## Title: |cff00ccffKillThemAll_LichKing|r
-## Version: 1.0
+## Version: 1.1
 ## Notes: Adds The Lich King to KTA
 ## Author: Thex
 ## DefaultState: enabled
