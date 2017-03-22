@@ -10,7 +10,7 @@ end
 
 ---------------------------------
 
-local TEXT_COLOR = "FFe899ff";
+TEXT_COLOR = "FFe899ff";
 local KTA_PREFIX = "|c" .. TEXT_COLOR .. "KTA: |r"
 function KTA_Print(str)
 	print(KTA_PREFIX .. str);
@@ -104,6 +104,12 @@ function PrintAvailableGods()
 	print("     All");
 end
 
+function ToggleDeactivated()
+
+	g_ktaOptions.deactivated = not g_ktaOptions.deactivated;
+	CallEventListener(g_interfaceEventsListener, "OnToggleDeactivated");
+end
+
 function GetGodByName(godName)
 
 	godName = string.upper(godName);
@@ -129,6 +135,8 @@ function SetGods(godsNames, silent)
 			KTA_Print("You feel the presence of all gods around you");
 		end
 
+		CallEventListener(g_interfaceEventsListener, "OnGodsChanged");
+
 		return;
 	elseif TableContains(godsNames, "NONE") then
 		g_currentGods = {};
@@ -136,6 +144,8 @@ function SetGods(godsNames, silent)
 		if not silent then
 			DisplayCurrentGods();
 		end
+
+		CallEventListener(g_interfaceEventsListener, "OnGodsChanged");
 
 		return;
 	end
@@ -148,11 +158,9 @@ function SetGods(godsNames, silent)
 		table.remove(godsNames, defaultIndex);
 		local defaultGods = GetWords(string.upper(g_ktaOptions.default.gods));
 		local containsAll = TableContains(defaultGods, "ALL");
-		SetGods(defaultGods, not containsAll);
+		SetGods(defaultGods, silent);
 
-		if TableContains(defaultGods, "ALL") then
-			return;
-		end
+		return;
 	end
 
 	for i = 1, #godsNames, 1 do
@@ -180,6 +188,15 @@ function SetGods(godsNames, silent)
 	if not silent then
 		DisplayCurrentGods();
 	end
+
+	CallEventListener(g_interfaceEventsListener, "OnGodsChanged");
+
+	StartWaiting();
+end
+
+function AddGods(godsNames, silent)
+
+	SetGods(TableCat(GodsToStringTable(g_currentGods, false), godsNames));
 end
 
 function SetDefaultGods(godsNames, silent)
@@ -243,7 +260,7 @@ function SetDefaultGods(godsNames, silent)
 	end
 end
 
-function RemoveGods(godsNames)
+function RemoveGods(godsNames, silent)
 
 	if TableContains(godsNames, "ALL") then
 		g_currentGods = {};
@@ -257,13 +274,23 @@ function RemoveGods(godsNames)
 		end
 	end
 
-	DisplayCurrentGods();
+	if not silent then
+		DisplayCurrentGods();
+	end
+
+	CallEventListener(g_interfaceEventsListener, "OnGodsChanged");
+
+	StartWaiting();
 end
 
-function SetSoundChannel(parSoundChannel)
+function SetSoundChannel(parSoundChannel, fromInterface)
 
 	g_ktaOptions.soundChannel = TrySetSoundChannel(parSoundChannel, g_ktaOptions.soundChannel);
 	KTA_Print("The soundfiles will now be played on the channel " .. g_ktaOptions.soundChannel);
+
+	if not fromInterface then
+		CallEventListener(g_interfaceEventsListener, "OnSoundChannelChanged");
+	end
 end
 
 function SetDefaultSoundChannel(parSoundChannel)
@@ -287,13 +314,13 @@ function SetDelay(minDelayStr, maxDelayStr, silent)
 	if minValue == nil or maxValue == nil then
 		KTA_Print("Invalid use of SetDelay command:");
 		PrintHelp("SETDELAY", nil, "noToolTip");
-		return;
+		return false;
 	elseif minValue < 0 then
 		PrintInvalidParameters("Delay values cannot be negative");
-		return;
+		return false;
 	elseif minValue >= maxValue then
 		PrintInvalidParameters("Max delay must be bigger than min delay");
-		return;
+		return false;
 	end
 
 	g_ktaOptions.minDelay = minValue;
@@ -304,6 +331,9 @@ function SetDelay(minDelayStr, maxDelayStr, silent)
 	end
 
 	StartWaiting();
+	CallEventListener(g_interfaceEventsListener, "OnDelayChanged");
+
+	return true;
 end
 
 function SetDefaultDelay(minDelayStr, maxDelayStr)
@@ -358,7 +388,7 @@ end
 
 function PlayRandomSound(soundType)
 
-	if g_loading then
+	if g_loading or g_ktaOptions.deactivated then
 		return;
 	end
 
@@ -414,6 +444,7 @@ function events:ADDON_LOADED(arg)
 	end
 
 	LoadOptions();
+	InitSettingsFrames();
 	g_loading = false;
 end
 
@@ -438,7 +469,7 @@ end
 
 local function MyUpdate(self, elapsed)
 
-	if g_dead or #g_currentGods == 0 then
+	if g_dead or #g_currentGods == 0 or g_ktaOptions.deactivated or (g_ktaOptions.muteDuringCombat and InCombatLockdown()) then
 		return;
 	end
 
