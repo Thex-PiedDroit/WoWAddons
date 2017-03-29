@@ -1,4 +1,4 @@
-## Interface: 70000
+## Interface: 70200
 ## Title: |cff00ccffKillThemAll_LichKing|r
 ## Version: 1.1
 ## Notes: Adds The Lich King to KTA
