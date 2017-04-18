@@ -138,7 +138,7 @@ function SetGods(godsNames, silent)
 		CallEventListener(g_interfaceEventsListener, "OnGodsChanged");
 
 		return;
-	elseif TableContains(godsNames, "NONE") then
+	elseif godsNames == nil or #godsNames == 0 or TableContains(godsNames, "NONE") then
 		g_currentGods = {};
 
 		if not silent then
@@ -177,9 +177,8 @@ function SetGods(godsNames, silent)
 	if #newGods == 0 and not defaultCall then
 		if not silent then
 			KTA_Print("No valid god name found.");
+			PrintAvailableGods();
 		end
-
-		PrintAvailableGods();
 		return;
 	end
 
