@@ -103,3 +103,50 @@ function CreateTabbedWindow(panel, name, width, height, tabsCount, tabsList, tab
 	mainFrame.tabFrames = {};
 	return mainFrame;
 end
+
+local function CreateScrollbar(scrollFrame)
+
+	scrollbar = CreateFrame("Slider", nil, scrollFrame, "UIPanelScrollBarTemplate");
+	scrollbar:SetPoint("TOPLEFT", scrollFrame, "TOPRIGHT", -22, -20);
+	scrollbar:SetPoint("BOTTOMLEFT", scrollFrame, "BOTTOMRIGHT", -22, 26);
+	scrollbar:SetMinMaxValues(1, 200);
+	scrollbar:SetValueStep(1);
+	scrollbar.scrollStep = 1;
+	scrollbar:SetValue(0);
+	scrollbar:SetWidth(16);
+
+	scrollbar:SetScript("OnValueChanged", function (self, value)
+		scrollFrame:SetVerticalScroll(value);
+	end);
+
+	local scrollBarBG = scrollbar:CreateTexture(nil, "BACKGROUND");
+	scrollBarBG:SetAllPoints(scrollbar);
+	scrollBarBG:SetTexture(0, 0, 0, 0.4);
+
+	scrollbar:SetBackdrop(
+	{
+		bgFile = "Interface/Tooltips/UI-Tooltip-Background",
+		edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
+		tile = true,
+		tileSize = 16,
+		edgeSize = 10,
+		insets = { left = 4, right = 4, top = 4, bottom = 4 },
+	});
+	scrollbar:SetBackdropColor(0,0,0,0.5);
+
+	return scrollbar;
+end
+
+function CreateScrollFrame(panel, name, width, height)
+
+	local scrollableFrame = CreateFrame("ScrollFrame", name, panel);
+
+	scrollableFrame:SetSize(width, height);
+
+	scrollableFrame.scrollbar = CreateScrollbar(scrollableFrame);
+	scrollableFrame.content = CreateFrame("Frame", name .. "_Content", scrollableFrame);
+	scrollableFrame.content:SetSize(width, height);
+	scrollableFrame:SetScrollChild(scrollableFrame.content);
+
+	return scrollableFrame;
+end
