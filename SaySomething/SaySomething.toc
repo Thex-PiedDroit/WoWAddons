@@ -4,5 +4,8 @@
 ## Notes: Adds an interface to bind random sentences to spells
 ## Author: Thex
 ## DefaultState: enabled
+## SavedVariables: S_settings
 
+SpellSayingObject.lua
+Settings/Settings.lua
 Core.lua
