@@ -15,6 +15,7 @@ function events:PLAYER_ENTERING_WORLD(...)
 		return;
 	end
 
+	InitSaySomethingSettingsFrame();
 	initDone = true;
 end
 
