@@ -8,5 +8,6 @@
 
 SpellSayingObject.lua
 Settings/Settings.lua
+Settings/SettingsHelpers.lua
 Settings/SettingsFrame.lua
 Core.lua
