@@ -1,0 +1,8 @@
+## Interface: 70200
+## Title: SaySomething
+## Version: 0.1
+## Notes: Adds an interface to bind random sentences to spells
+## Author: Thex
+## DefaultState: enabled
+
+Core.lua
