@@ -19,6 +19,15 @@ function events:PLAYER_ENTERING_WORLD(...)
 	initDone = true;
 end
 
+function events:ADDON_LOADED(addonName)
+
+	if addonName ~= "SaySomething" then
+		return;
+	end
+
+	LoadSettings();
+end
+
 saySomethingEventListener:SetScript("OnEvent", function(self, event, ...)
 										events[event](self, ...);
 									end);
