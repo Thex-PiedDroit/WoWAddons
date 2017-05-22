@@ -1,0 +1,8 @@
+## Interface: 70200
+## Title: PollCraft
+## Version: 0.1
+## Notes: Adds tools to create polls in game
+## Author: Thex
+## DefaultState: enabled
+
+Core.lua
