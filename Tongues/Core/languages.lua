@@ -1936,7 +1936,41 @@ Tongues.Language["Orca"].Difficulty = {
 	["Hunter"]	= 0;
 	["Death Knight"]= 0;
 };
+---Signs
+Tongues.Language["Signs"] = {
+	[1] = { "*Hands gestures*" },
+};
 
+
+Tongues.Language["Signs"].Difficulty = {
+	["default"] 	= 500;
+
+	[BFAC["Alliance"]] 	= 0;
+	[BFAC["Horde"]] 	= 0;
+
+	[BRAC["Human"]]	= 0;
+	[BRAC["Dwarf"]] 	= 0;
+	[BRAC["Gnome"]] 	= 0;
+	[BRAC["Night Elf"]] 	= 0;
+	[BRAC["Draenei"]]	= 0;
+
+	[BRAC["Orc"]]	=0;
+	[BRAC["Troll"]]	= 0;
+	[BRAC["Undead"]]	= 0;
+	[BRAC["Tauren"]]	= 0;
+	[BRAC["Blood Elf"]]	= 0;
+
+	["Warrior"]	= 0;
+	["Rogue"]	= 0;
+	["Druid"]	= 0;
+	["Mage"]	= 0;
+	["Warlock"]	= 0;
+	["Paladin"]	= 0;
+	["Priest"]	= 0;
+	["Shaman"]	= 0;
+	["Hunter"]	= 0;
+	["Death Knight"]= 0;
+};
 
 
 

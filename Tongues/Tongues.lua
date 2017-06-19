@@ -1214,15 +1214,17 @@ HandleSend = function(self, msg, chatType, langID, language, channel)--HANDLE TE
 		-- End Dialects
 
 		-- For Affects
-		local type = "Affect";
-		local s = self.Settings.Character[type];
+		if self.Settings.Character.Language ~= "Signs" then		-- Affects should not have an effect on sign language
+			local type = "Affect";
+			local s = self.Settings.Character[type];
 
-		--randomseed(math.random(0,2147483647)+(GetTime() * 1000));
-		if (self[type] ~= nil ) and (self[type][s] ~= nil ) and (math.random(1,100) < self.Settings.Character.AffectFrequency) then
-			msg = self:ApplyEffect(msg, self[type][s]["substitute"]);
+		--FIND--randomseed(math.random(0,2147483647)+(GetTime() * 1000));
+			if (self[type] ~= nil ) and (self[type][s] ~= nil ) and (math.random(1,100) < self.Settings.Character.AffectFrequency) then
+				msg = self:ApplyEffect(msg, self[type][s]["substitute"]);
+			end;
 		end;
 		-- End Affects
-		
+
 
 		return msg
 	end;
@@ -1391,7 +1393,11 @@ HandleSend = function(self, msg, chatType, langID, language, channel)--HANDLE TE
 	end;
 	---------------------------------------------------------------------------------------
 TranslateWord = function(self,word,s)
-                
+
+		if s == "Signs" then
+			return self.Language[s][1][1];
+		end
+
 		word = string.gsub( word, "[%a\128-\244']+", 
 			function(word)
 			    local ignoreflag = ""; 
