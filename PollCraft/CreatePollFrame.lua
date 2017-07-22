@@ -46,6 +46,23 @@ function InitCreatePollFrame()
 	allowMultipleVotesCheck:SetPoint("TOPLEFT", framesMargin + 195, pollTypesListPosY - 2);
 
 
+
+	--[[      QUESTION EDITBOX      ]]--
+	local questionEditBoxPosY = pollTypesListPosY - 80;
+
+	local questionEditBoxLabel = CreateLabel(newPollFrame, "Question:", 16);
+	questionEditBoxLabel:SetPoint("TOPLEFT", framesMargin, questionEditBoxPosY + 26);
+
+	local questionEditBoxSize =
+	{
+		x = optionsFrameSize.x - (framesMargin * 2),
+		y = 44
+	}
+	local newQuestionEditBox = CreateEditBox("QuestionEditBox", newPollFrame, questionEditBoxSize.x, questionEditBoxSize.y, false, nil, nil, 16);
+	newQuestionEditBox:SetPoint("TOP", 0, questionEditBoxPosY);
+	newPollFrame.questionEditBox = newQuestionEditBox;
+
+
 	g_createPollFrame.panel = mainFrame;
 end
 
