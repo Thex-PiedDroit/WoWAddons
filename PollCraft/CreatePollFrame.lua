@@ -9,6 +9,8 @@ local mainFrameSize =
 local framesMargin = (mainFrameSize.x / 40);
 
 local CreatePollTypesDropdownList = nil;
+local answersParentFrame = nil;
+local CreateAnswerEditBox = nil;
 
 
 function InitCreatePollFrame()
@@ -77,6 +79,8 @@ function InitCreatePollFrame()
 	answersFrame:SetPoint("TOP", 0, answersFramePosY);
 
 	answersFrame.content.answersBoxes = {};
+	answersParentFrame = answersFrame.content;
+	CreateAnswerEditBox();
 
 
 	g_createPollFrame.createPollFrame = newPollFrame;
@@ -106,4 +110,87 @@ CreatePollTypesDropdownList = function(parentFrame, posY)
 	pollTypesList:SetPoint("TOPLEFT", 0, posY);
 	UIDropDownMenu_SetSelectedValue(pollTypesList, availableOptions[1].value, false);
 	parentFrame.pollTypesDropDownList = pollTypesList;
+end
+
+
+local answersCount = 0;
+local marginBetweenAnswers = 30;
+local AddOrRemoveAnswerEditBox = nil;
+local RemoveAnswer = nil;
+local answerObjects = {};
+
+CreateAnswerEditBox = function()
+
+	local answerObject = {};
+
+	local answerNumberStr = tostring(answersCount + 1);
+
+	local editBoxWidth = answersParentFrame:GetWidth() - (framesMargin * 4) - 40;
+	local editBoxHeight = 44;
+
+	local boxPosY = ((-marginBetweenAnswers - editBoxHeight) * answersCount) - 30;
+
+	local answerNumber = CreateLabel(answersParentFrame, answerNumberStr .. ".", 16);
+	answerNumber:SetPoint("TOPLEFT", framesMargin - 5, boxPosY - 5);
+
+	local newAnswerEditBox = CreateEditBox("QuestionEditBox", answersParentFrame, editBoxWidth, editBoxHeight, false, AddOrRemoveAnswerEditBox, answersCount + 1, 16);
+	newAnswerEditBox:SetPoint("TOPLEFT", framesMargin + 30, boxPosY);
+
+	local deleteButton = CreateIconButton("DeleteAnswer" .. answerNumberStr .. "Button", answersParentFrame, 20, "Interface/Buttons/Ui-grouploot-pass-up", "Interface/Buttons/Ui-grouploot-pass-down", nil, RemoveAnswer, answersCount + 1);
+	deleteButton:SetPoint("TOPLEFT", framesMargin + 30 + editBoxWidth + 12, boxPosY);
+
+	answersCount = answersCount + 1;
+
+	answerObject.number = answerNumber;
+	answerObject.editBoxScrollFrame = newAnswerEditBox;
+	answerObject.deleteButton = deleteButton;
+
+	table.insert(answersParentFrame.answersBoxes, newAnswerEditBox);
+	table.insert(answerObjects, answerObject);
+end
+
+AddOrRemoveAnswerEditBox = function(index)
+
+	local object = answerObjects[index];
+	local boxText = object.editBoxScrollFrame.EditBox:GetText();
+
+	if boxText == nil or boxText == "" then
+		RemoveAnswer(index);
+
+	elseif index == answersCount then
+		if answersCount < #answerObjects then
+			local nextObject = answerObjects[index + 1];
+			nextObject.number:Show();
+			nextObject.editBoxScrollFrame:Show();
+			nextObject.deleteButton:Show();
+			answersCount = answersCount + 1;
+		else
+			CreateAnswerEditBox();
+		end
+	end
+end
+
+RemoveAnswer = function(index)
+
+	if index == answersCount then
+		local editBox = answerObjects[index].editBoxScrollFrame.EditBox;
+		editBox:SetText("");
+		editBox:ClearFocus();
+		editBox:HighlightText(0, 0);	-- Forces highlight removal
+		return;
+	end
+
+	for i = index, answersCount - 1 do
+
+		local nextObject = answerObjects[i + 1];
+		answerObjects[i].editBoxScrollFrame.EditBox:SetText(nextObject.editBoxScrollFrame.EditBox:GetText());
+
+		if i + 1 == answersCount then
+			nextObject.number:Hide();
+			nextObject.editBoxScrollFrame:Hide();
+			nextObject.deleteButton:Hide();
+		end
+	end
+
+	answersCount = answersCount - 1;
 end
