@@ -63,6 +63,23 @@ function InitCreatePollFrame()
 	newPollFrame.questionEditBox = newQuestionEditBox;
 
 
+	--[[      ANSWERS FRAME      ]]--
+	local answersEditBoxLabel = CreateLabel(newPollFrame, "Answers:", 16);
+	local answersFramePosY = questionEditBoxPosY - questionEditBoxSize.y - 58;
+	answersEditBoxLabel:SetPoint("TOPLEFT", framesMargin, answersFramePosY + 20);
+
+	local answersFrameSize =
+	{
+		x = questionEditBoxSize.x + 12,
+		y = optionsFrameSize.y - questionEditBoxSize.y + questionEditBoxPosY - 120;
+	}
+	local answersFrame = CreateScrollFrame("AnswersFrame_InterfacePoll", newPollFrame, answersFrameSize.x, answersFrameSize.y);
+	answersFrame:SetPoint("TOP", 0, answersFramePosY);
+
+	answersFrame.content.answersBoxes = {};
+
+
+	g_createPollFrame.createPollFrame = newPollFrame;
 	g_createPollFrame.panel = mainFrame;
 end
 
