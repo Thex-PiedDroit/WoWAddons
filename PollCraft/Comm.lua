@@ -18,6 +18,10 @@ local function ReceiveMessage(prefix, message)
 		return;
 	end
 
+	if g_receivePollFrame == nil then
+		InitializeReceivePollFrame();
+	end
+
 	-- Do stuff here
 end
 
