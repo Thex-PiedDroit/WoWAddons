@@ -15,4 +15,5 @@ Libraries\AceSerializer-3.0\AceSerializer-3.0.xml
 Comm.lua
 Core.lua
 FramesCreationHelpers.lua
+ReceivePollFrame.lua
 CreatePollFrame.lua
