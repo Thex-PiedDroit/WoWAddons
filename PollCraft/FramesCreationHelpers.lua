@@ -25,9 +25,16 @@ local function CreateBackdrop(frame, alpha)
 end
 
 
-function CreateLabel(parent, text, fontSize)
+function CreateLabel(parent, text, fontSize, width, alignment)
 	local label = parent:CreateFontString(nil, "ARTWORK", "GameFontHighlight");
 	label:SetText(text);
+
+	if width ~= nil then
+		label:SetWidth(width);
+		label:SetJustifyH(alignment);
+		label:SetJustifyV("TOP");
+	end
+
 	if fontSize ~= nil then
 		label:SetFont("Fonts\\FRIZQT__.TTF", fontSize);
 	end
@@ -38,6 +45,17 @@ end
 function CreateCheckButton(parent, name, onCheckCallback, callbackArguments)
 	local checkButton = CreateFrame("CheckButton", prefix .. name, parent, "OptionsCheckButtonTemplate");
 	checkButton:SetSize(22, 22);
+
+	if onCheckCallback ~= nil then
+		button:SetScript("OnClick", function(self) onCheckCallback(self, callbackArguments) end);
+	end
+
+	return checkButton;
+end
+
+function CreateRadioCheckButton(parent, name, onCheckCallback, callbackArguments)
+	local checkButton = CreateFrame("CheckButton", prefix .. name, parent, "UIRadioButtonTemplate");
+	checkButton:SetSize(18, 18);
 
 	if onCheckCallback ~= nil then
 		button:SetScript("OnClick", function(self) onCheckCallback(self, callbackArguments) end);
