@@ -83,6 +83,10 @@ function InitCreatePollFrame()
 	CreateAnswerEditBox();
 
 
+	local createPollButton = CreateButton("CreatePollButton", newPollFrame, 120, 30, "Create Poll");
+	createPollButton:SetPoint("TOP", 0, answersFramePosY - answersFrameSize.y - (framesMargin * 0.5));
+
+
 	g_createPollFrame.createPollFrame = newPollFrame;
 	g_createPollFrame.panel = mainFrame;
 end
