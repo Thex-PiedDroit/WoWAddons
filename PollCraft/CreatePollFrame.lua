@@ -12,6 +12,8 @@ local CreatePollTypesDropdownList = nil;
 local answersParentFrame = nil;
 local CreateAnswerEditBox = nil;
 
+local SendNewPollAway = nil;
+
 
 function InitCreatePollFrame()
 
@@ -36,16 +38,19 @@ function InitCreatePollFrame()
 
 	local pollTypesListPosY = -50;
 	CreatePollTypesDropdownList(newPollFrame, pollTypesListPosY);
+	mainFrame.pollTypesDropDownList = newPollFrame.pollTypesDropDownList;
 
 	local allowNewAnswersLabel = CreateLabel(newPollFrame, "Allow users to add answers", 16);
 	allowNewAnswersLabel:SetPoint("TOPLEFT", framesMargin + 220, pollTypesListPosY + 22);
 	local allowNewAnswersCheck = CreateCheckButton(newPollFrame, "AllowNewAnswersCheckButton");
 	allowNewAnswersCheck:SetPoint("TOPLEFT", framesMargin + 195, pollTypesListPosY + 25);
+	mainFrame.allowNewAnswersCheck = allowNewAnswersCheck;
 
 	local allowMultipleVotesLabel = CreateLabel(newPollFrame, "Allow multiple votes", 16);
 	allowMultipleVotesLabel:SetPoint("TOPLEFT", framesMargin + 220, pollTypesListPosY - 5);
 	local allowMultipleVotesCheck = CreateCheckButton(newPollFrame, "AllowMultipleVotesCheckButton");
 	allowMultipleVotesCheck:SetPoint("TOPLEFT", framesMargin + 195, pollTypesListPosY - 2);
+	mainFrame.allowMultipleVotesCheck = allowMultipleVotesCheck;
 
 
 
@@ -62,7 +67,7 @@ function InitCreatePollFrame()
 	}
 	local newQuestionEditBox = CreateEditBox("QuestionEditBox", newPollFrame, questionEditBoxSize.x, questionEditBoxSize.y, false, nil, nil, 16);
 	newQuestionEditBox:SetPoint("TOP", 0, questionEditBoxPosY);
-	newPollFrame.questionEditBox = newQuestionEditBox;
+	mainFrame.questionEditBoxScrollFrame = newQuestionEditBox;
 
 
 	--[[      ANSWERS FRAME      ]]--
@@ -87,7 +92,7 @@ function InitCreatePollFrame()
 	newQuestionEditBox:SetFrameLevel(answersFrameLevel + 10);
 
 
-	local createPollButton = CreateButton("CreatePollButton", newPollFrame, 120, 30, "Create Poll");
+	local createPollButton = CreateButton("CreatePollButton", newPollFrame, 120, 30, "Create Poll", SendNewPollAway);
 	createPollButton:SetPoint("TOP", 0, answersFramePosY - answersFrameSize.y - (framesMargin * 0.5));
 	createPollButton:SetFrameLevel(answersFrameLevel + 10);
 
@@ -202,4 +207,44 @@ RemoveAnswer = function(index)
 	end
 
 	answersCount = answersCount - 1;
+end
+
+
+local function GeneratePollGUID()
+	return GetPlayerGUID() .. tostring(random(1000000, 9999999));
+end
+
+SendNewPollAway = function()
+
+	local data = g_createPollFrame.panel;
+	local newPoll =
+	{
+		pollID = GeneratePollGUID(),
+		pollType = UIDropDownMenu_GetSelectedValue(data.pollTypesDropDownList),
+		multiVotes = data.allowMultipleVotesCheck:GetChecked(),
+		allowNewAnswers = data.allowNewAnswersCheck:GetChecked(),
+		question = data.questionEditBoxScrollFrame.EditBox:GetText(),
+		answers = {}
+	}
+
+	for i = 1, answersCount - 1 do
+		table.insert(newPoll.answers, answerObjects[i].editBoxScrollFrame.EditBox:GetText());
+	end
+
+	if newPoll.question == nil or newPoll.question == ""
+		or newPoll.answers == nil or #newPoll.answers == 0
+		or newPoll.answers[1] == nil or newPoll.answers[1] == "" then
+		return;
+	end
+
+	local newMessage =
+	{
+		messageType = "NewPoll",
+		poll = newPoll
+	}
+
+	g_pollCraftComm:SendMessage(newMessage, newPoll.pollType);
+	LoadAndOpenReceivePollFrame(newPoll);
+	g_receivePollFrame.panel:ClearAllPoints();
+	g_receivePollFrame.panel:SetPoint("TOPLEFT", g_createPollFrame.panel, "TOPRIGHT", 0, 0);
 end
