@@ -150,7 +150,7 @@ CreateAnswerEditBox = function()
 	local answerNumber = CreateLabel(answersParentFrame, answerNumberStr .. ".", 16);
 	answerNumber:SetPoint("TOPLEFT", framesMargin - 5, boxPosY - 5);
 
-	local newAnswerEditBox = CreateEditBox("QuestionEditBox", answersParentFrame, answerEditBoxWidth, answerEditBoxHeight, false, AddOrRemoveAnswerEditBox, answersCount + 1, 16);
+	local newAnswerEditBox = CreateEditBox("AnswerEditBox", answersParentFrame, answerEditBoxWidth, answerEditBoxHeight, false, AddOrRemoveAnswerEditBox, answersCount + 1, 16);
 	newAnswerEditBox:SetPoint("TOPLEFT", framesMargin + 30, boxPosY);
 
 	local deleteButton = CreateIconButton("DeleteAnswer" .. answerNumberStr .. "Button", answersParentFrame, 20, "Interface/Buttons/Ui-grouploot-pass-up", "Interface/Buttons/Ui-grouploot-pass-down", nil, RemoveAnswer, answersCount + 1);
@@ -166,17 +166,17 @@ CreateAnswerEditBox = function()
 	table.insert(answerObjects, answerObject);
 end
 
-AddOrRemoveAnswerEditBox = function(index)
+AddOrRemoveAnswerEditBox = function(currentlyModifiedAnswerIndex)
 
-	local object = answerObjects[index];
+	local object = answerObjects[currentlyModifiedAnswerIndex];
 	local boxText = object.editBoxScrollFrame.EditBox:GetText();
 
 	if boxText == nil or boxText == "" then
-		RemoveAnswer(index);
+		RemoveAnswer(currentlyModifiedAnswerIndex);
 
-	elseif index == answersCount then
+	elseif currentlyModifiedAnswerIndex == answersCount then
 		if answersCount < #answerObjects then
-			local nextObject = answerObjects[index + 1];
+			local nextObject = answerObjects[currentlyModifiedAnswerIndex + 1];
 			nextObject.number:Show();
 			nextObject.editBoxScrollFrame:Show();
 			nextObject.deleteButton:Show();
