@@ -34,3 +34,7 @@ function GetNameForPrint(targetName, targetRealm)
 	return targetName;
 end
 
+function math.Clamp(number, min, max)
+
+	return math.min(max, math.max(number, min));
+end

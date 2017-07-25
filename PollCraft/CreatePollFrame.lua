@@ -10,6 +10,7 @@ local framesMargin = (mainFrameSize.x / 40);
 
 local CreatePollTypesDropdownList = nil;
 local answersParentFrame = nil;
+local answersScrollFrame = nil;
 local CreateAnswerEditBox = nil;
 
 local SendNewPollAway = nil;
@@ -85,6 +86,7 @@ function InitCreatePollFrame()
 
 	answersFrame.content.answersBoxes = {};
 	answersParentFrame = answersFrame.content;
+	answersScrollFrame = answersFrame;
 	CreateAnswerEditBox();
 	local answersFrameLevel = answersFrame.content:GetFrameLevel();
 	allowNewAnswersCheck:SetFrameLevel(answersFrameLevel + 10);
@@ -128,7 +130,9 @@ end
 
 
 local answersCount = 0;
-local marginBetweenAnswers = 30;
+local marginBetweenAnswers = 20;
+local answerEditBoxHeight = 44;
+local totalHeightOfEachAnswer = answerEditBoxHeight + marginBetweenAnswers;
 local AddOrRemoveAnswerEditBox = nil;
 local RemoveAnswer = nil;
 local answerObjects = {};
@@ -139,19 +143,18 @@ CreateAnswerEditBox = function()
 
 	local answerNumberStr = tostring(answersCount + 1);
 
-	local editBoxWidth = answersParentFrame:GetWidth() - (framesMargin * 4) - 40;
-	local editBoxHeight = 44;
+	local answerEditBoxWidth = answersParentFrame:GetWidth() - (framesMargin * 4) - 40;
 
-	local boxPosY = ((-marginBetweenAnswers - editBoxHeight) * answersCount) - 30;
+	local boxPosY = -((totalHeightOfEachAnswer * answersCount) + marginBetweenAnswers);
 
 	local answerNumber = CreateLabel(answersParentFrame, answerNumberStr .. ".", 16);
 	answerNumber:SetPoint("TOPLEFT", framesMargin - 5, boxPosY - 5);
 
-	local newAnswerEditBox = CreateEditBox("QuestionEditBox", answersParentFrame, editBoxWidth, editBoxHeight, false, AddOrRemoveAnswerEditBox, answersCount + 1, 16);
+	local newAnswerEditBox = CreateEditBox("QuestionEditBox", answersParentFrame, answerEditBoxWidth, answerEditBoxHeight, false, AddOrRemoveAnswerEditBox, answersCount + 1, 16);
 	newAnswerEditBox:SetPoint("TOPLEFT", framesMargin + 30, boxPosY);
 
 	local deleteButton = CreateIconButton("DeleteAnswer" .. answerNumberStr .. "Button", answersParentFrame, 20, "Interface/Buttons/Ui-grouploot-pass-up", "Interface/Buttons/Ui-grouploot-pass-down", nil, RemoveAnswer, answersCount + 1);
-	deleteButton:SetPoint("TOPLEFT", framesMargin + 30 + editBoxWidth + 12, boxPosY);
+	deleteButton:SetPoint("TOPLEFT", framesMargin + 30 + answerEditBoxWidth + 12, boxPosY);
 
 	answersCount = answersCount + 1;
 
@@ -182,6 +185,8 @@ AddOrRemoveAnswerEditBox = function(index)
 			CreateAnswerEditBox();
 		end
 	end
+
+	UpdateScrollBar(answersScrollFrame, answersCount * totalHeightOfEachAnswer);
 end
 
 RemoveAnswer = function(index)
@@ -207,6 +212,7 @@ RemoveAnswer = function(index)
 	end
 
 	answersCount = answersCount - 1;
+	UpdateScrollBar(answersScrollFrame, answersCount * totalHeightOfEachAnswer);
 end
 
 

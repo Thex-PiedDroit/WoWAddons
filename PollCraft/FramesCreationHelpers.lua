@@ -173,7 +173,7 @@ local function CreateScrollbar(scrollFrame)
 	scrollbar = CreateFrame("Slider", nil, scrollFrame, "UIPanelScrollBarTemplate");
 	scrollbar:SetPoint("TOPLEFT", scrollFrame, "TOPRIGHT", -22, -22);
 	scrollbar:SetPoint("BOTTOMLEFT", scrollFrame, "BOTTOMRIGHT", -22, 22);
-	scrollbar:SetMinMaxValues(1, 200);
+	scrollbar:SetMinMaxValues(0, 200);
 	scrollbar:SetValueStep(1);
 	scrollbar.scrollStep = 1;
 	scrollbar:SetValue(0);
@@ -192,6 +192,18 @@ local function CreateScrollbar(scrollFrame)
 	return scrollbar;
 end
 
+function UpdateScrollBar(scrollFrame, contentHeight)
+
+	scrollbar = scrollFrame.scrollbar;
+	local scrollFrameHeight = scrollFrame:GetHeight() - 20;
+	scrollbar:SetMinMaxValues(0, math.max(1, contentHeight - scrollFrameHeight));
+	if contentHeight <= scrollFrameHeight then
+		scrollbar:Hide();
+	else
+		scrollbar:Show();
+	end
+end
+
 function CreateScrollFrame(name, parent, width, height)
 
 	local scrollableFrame = CreateFrame("ScrollFrame", prefix .. name, parent);
@@ -200,9 +212,24 @@ function CreateScrollFrame(name, parent, width, height)
 	scrollableFrame:SetHitRectInsets(4, 4, 4, 4);
 
 	scrollableFrame.scrollbar = CreateScrollbar(scrollableFrame);
+	scrollableFrame.scrollbar:Hide();
 	scrollableFrame.content = CreateFrame("Frame", prefix .. name .. "_Content", scrollableFrame);
 	scrollableFrame.content:SetSize(width, height);
 	scrollableFrame:SetScrollChild(scrollableFrame.content);
+
+	local mouseWheelFrameCapture = CreateFrame("Frame", prefix .. name .. "_MouseWheelCapture", scrollableFrame);
+	mouseWheelFrameCapture:SetSize(width, height);
+	mouseWheelFrameCapture:SetAllPoints(true);
+	mouseWheelFrameCapture:SetFrameLevel(scrollableFrame:GetFrameLevel() + 2);
+	mouseWheelFrameCapture:EnableMouseWheel(true);
+
+	mouseWheelFrameCapture:SetScript("OnMouseWheel", function(self, delta)
+		local scrollFrame = self:GetParent();
+		local newValue = math.Clamp(scrollFrame:GetVerticalScroll() - (delta * 40), scrollFrame.scrollbar:GetMinMaxValues());
+		scrollFrame.scrollbar:SetValue(newValue);
+	end);
+
+	scrollableFrame.mouseWheelFrameCapture = mouseWheelFrameCapture;
 
 	return scrollableFrame;
 end
