@@ -8,6 +8,7 @@ function GetPlayerGUID()
 	return playerGUID;
 end
 local playerName = UnitName("player") .. "-" .. GetRealmName();
+g_currentlyBusy = false;
 
 
 local function ReceiveMessage(prefix, message)
@@ -18,11 +19,16 @@ local function ReceiveMessage(prefix, message)
 		return;
 	end
 
-	if g_receivePollFrame == nil then
-		InitializeReceivePollFrame();
-	end
+	local actualMessage = messageObject.message;
 
-	-- Do stuff here
+
+	if actualMessage.messageType == "NewPoll" then
+
+		LoadAndOpenReceivePollFrame(actualMessage.poll, messageObject.senderName);
+
+	--else if actualMessage.messageType == "Vote" then
+
+	end
 end
 
 g_pollCraftComm:RegisterComm("PollCraft", ReceiveMessage);
