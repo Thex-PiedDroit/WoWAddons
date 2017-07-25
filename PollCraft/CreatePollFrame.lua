@@ -81,10 +81,15 @@ function InitCreatePollFrame()
 	answersFrame.content.answersBoxes = {};
 	answersParentFrame = answersFrame.content;
 	CreateAnswerEditBox();
+	local answersFrameLevel = answersFrame.content:GetFrameLevel();
+	allowNewAnswersCheck:SetFrameLevel(answersFrameLevel + 10);
+	allowMultipleVotesCheck:SetFrameLevel(answersFrameLevel + 10);
+	newQuestionEditBox:SetFrameLevel(answersFrameLevel + 10);
 
 
 	local createPollButton = CreateButton("CreatePollButton", newPollFrame, 120, 30, "Create Poll");
 	createPollButton:SetPoint("TOP", 0, answersFramePosY - answersFrameSize.y - (framesMargin * 0.5));
+	createPollButton:SetFrameLevel(answersFrameLevel + 10);
 
 
 	g_createPollFrame.createPollFrame = newPollFrame;
