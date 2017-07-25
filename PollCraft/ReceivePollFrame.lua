@@ -9,6 +9,7 @@ local mainFrameSize =
 local framesMargin = (mainFrameSize.x / 40);
 
 local answersParentFrame = nil;
+local answersScrollFrame = nil;
 local answersCount = 0;
 
 
@@ -72,6 +73,7 @@ function InitializeReceivePollFrame()
 
 	answersFrame.content.answersBoxes = {};
 	answersParentFrame = answersFrame.content;
+	answersScrollFrame = answersFrame;
 
 
 	local sendVoteButton = CreateButton("SendVoteButton", newPollFrame, 120, 30, "Send vote");
@@ -86,7 +88,9 @@ end
 
 
 local answersObjects = {};
+local marginBetweenAnswers = 10;
 local answersFramesHeight = 70;
+local totalHeightOfEachAnswer = answersFramesHeight + (framesMargin * 0.25);
 
 function LoadAnswer(answerText, trueCheckFalseTickButton)
 
@@ -101,7 +105,7 @@ function LoadAnswer(answerText, trueCheckFalseTickButton)
 		local answerIndexStr = tostring(answersCount + 1);
 
 		local answerFrameWidth = answersParentFrame:GetWidth() - (framesMargin * 4) - 40;
-		local textFramePosY = -10 - ((answersFramesHeight + (framesMargin * 0.25)) * answersCount);
+		local textFramePosY = -((totalHeightOfEachAnswer * answersCount) + 10);
 		local textFrame = CreateBackdroppedFrame("Answer" .. answerIndexStr .. "TextFrame", answersParentFrame, answerFrameWidth, answersFramesHeight);
 		textFrame:SetPoint("TOPLEFT", framesMargin + 24, textFramePosY);
 		local newText = CreateLabel(textFrame, answerText, 16, answerFrameWidth - 20, "LEFT");
@@ -136,6 +140,7 @@ function LoadAnswer(answerText, trueCheckFalseTickButton)
 	end
 
 	answersCount = answersCount + 1;
+	UpdateScrollBar(answersScrollFrame, answersCount * totalHeightOfEachAnswer);
 end
 
 function MakeAllTicksExclusive()
