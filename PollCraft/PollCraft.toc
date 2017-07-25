@@ -12,6 +12,7 @@ Libraries\AceComm-3.0\AceComm-3.0.xml
 Libraries\AceSerializer-3.0\AceSerializer-3.0.xml
 
 
+Helpers.lua
 Comm.lua
 Core.lua
 FramesCreationHelpers.lua

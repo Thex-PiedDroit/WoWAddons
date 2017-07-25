@@ -211,7 +211,7 @@ end
 
 
 local function GeneratePollGUID()
-	return GetPlayerGUID() .. tostring(random(1000000, 9999999));
+	return MyGUID() .. tostring(random(1000000, 9999999));
 end
 
 SendNewPollAway = function()
@@ -244,7 +244,7 @@ SendNewPollAway = function()
 	}
 
 	g_pollCraftComm:SendMessage(newMessage, newPoll.pollType);
-	LoadAndOpenReceivePollFrame(newPoll);
+	LoadAndOpenReceivePollFrame(newPoll, Me());
 	g_receivePollFrame.panel:ClearAllPoints();
 	g_receivePollFrame.panel:SetPoint("TOPLEFT", g_createPollFrame.panel, "TOPRIGHT", 0, 0);
 end

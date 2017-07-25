@@ -155,11 +155,23 @@ function MakeAllTicksExclusive()
 end
 
 
-function LoadAndOpenReceivePollFrame(pollData, sender)
+function LoadAndOpenReceivePollFrame(pollData, sender, senderRealm)
 
 	if pollData.pollType == "RAID" then
 
 		if g_currentlyBusy then
+			if sender ~= nil and sender ~= Me() then
+
+				local busyMessage = { messageType = "Busy" };
+
+				if senderRealm == MyRealm() then
+					g_pollCraftComm:SendMessage(busyMessage, "WHISPER", sender);
+				else
+					busyMessage.specificTarget = sender;	-- Because for some reason, blizzard decided that cross-realm WHISPERS do not work in parties and raid groups
+					g_pollCraftComm:SendMessage(busyMessage, "RAID");
+				end
+			end
+
 			return;
 		end
 
