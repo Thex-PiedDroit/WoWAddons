@@ -11,6 +11,7 @@ local framesMargin = (mainFrameSize.x / 40);
 local answersParentFrame = nil;
 local answersScrollFrame = nil;
 local answersCount = 0;
+local additionalAnswersCount = 0;
 
 local HideAllAnswers = nil;
 
@@ -84,7 +85,7 @@ function InitializeReceivePollFrame()
 
 	mainFrame:Hide();
 	mainFrame:SetScript("OnShow", function() g_currentlyBusy = true; end);
-	mainFrame:SetScript("OnHide", function() HideAllAnswers(); g_currentlyBusy = false; answersCount = 0; end);
+	mainFrame:SetScript("OnHide", function() HideAllAnswers(); g_currentlyBusy = false; answersCount = 0; additionalAnswersCount = 0; end);
 	g_receivePollFrame.panel = mainFrame;
 end
 
@@ -179,28 +180,27 @@ function LoadAnswer(answerText)
 		MakeAllTicksExclusive()
 	end
 
-	if not isAdditionalAnswer or not allowMultipleVotes then
+	if not isAdditionalAnswer then
 		if allowMultipleVotes then
 			object.voteCheck:Show();
 			object.voteCheck:SetChecked(false);
-			object.voteTick:Hide();
 		else
-			object.voteCheck:Hide();
 			object.voteTick:Show();
 			object.voteTick:SetChecked(false);
 		end
 	end
 
-	answersCount = answersCount + 1;
+	if not isAdditionalAnswer then
+		answersCount = answersCount + 1;
+	end
 	UpdateScrollBar(answersScrollFrame, answersCount * totalHeightOfEachAnswer);
 end
 
 AddOrRemoveAdditionalAnswerEditBox = function(currentlyModifiedAnswerIndex)
 
-	if not allowAdditionalAnswers or not allowMultipleVotes then
+	if not allowAdditionalAnswers then
 		return;
 	end
-
 
 	local object = answerObjects[currentlyModifiedAnswerIndex];
 	local boxText = object.editBoxScrollFrame.EditBox:GetText();
@@ -208,22 +208,30 @@ AddOrRemoveAdditionalAnswerEditBox = function(currentlyModifiedAnswerIndex)
 	if boxText == nil or boxText == "" then
 		RemoveAdditionalAnswer(currentlyModifiedAnswerIndex);
 
-	elseif currentlyModifiedAnswerIndex == answersCount then
-		if answersCount < #answerObjects then
+	elseif not allowMultipleVotes then
+		if additionalAnswersCount > 0 then
+			return;
+		end
+		answersCount = answersCount + 1;
+		additionalAnswersCount = additionalAnswersCount + 1;
 
+		object.voteTick:Show();
+		object.voteTick:SetChecked(false);
+
+	elseif currentlyModifiedAnswerIndex == answersCount + 1 then
+
+		answersCount = answersCount + 1;
+		additionalAnswersCount = additionalAnswersCount + 1;
+
+		if answersCount < #answerObjects then
 			local nextObject = answerObjects[currentlyModifiedAnswerIndex + 1];
 			nextObject.number:Show();
 			nextObject.editBoxScrollFrame.EditBox:SetText("");
 			nextObject.editBoxScrollFrame:Show();
 
-			if allowAdditionalAnswers then
-				nextObject.deleteButton:Show();
-			else
-				nextObject.deleteButton:Hide();
-			end
+			nextObject.deleteButton:Show();
 			nextObject.textFrame:Hide();
 			nextObject.text:Hide();
-			answersCount = answersCount + 1;
 		else
 			LoadAnswer("");
 		end
@@ -237,33 +245,47 @@ end
 
 RemoveAdditionalAnswer = function(index)
 
-	if index == answersCount then
-		local editBox = answerObjects[index].editBoxScrollFrame.EditBox;
+	local editBox = answerObjects[index].editBoxScrollFrame.EditBox;
+	local currentText = editBox:GetText();
+
+	if currentText == nil or currentText == "" then
+		return;
+	end
+
+	local lastAnswerIndex = answersCount;
+	if allowMultipleVotes then	-- Difference comes from the fact that in one-vote policy, we increase the amount of answers without increasing the amount of answer boxes
+		lastAnswerIndex = lastAnswerIndex + 1;
+	end
+
+	if index == lastAnswerIndex then
+
 		editBox:SetText("");
 		editBox:ClearFocus();
 		editBox:HighlightText(0, 0);	-- Forces highlight removal
 		answerObjects[index].voteCheck:Hide();
-		return;
-	end
+		answerObjects[index].voteTick:Hide();
 
-	for i = index, answersCount - 1 do
+	else
+		for i = index, answersCount do
 
-		local currentObject = answerObjects[i];
-		local nextObject = answerObjects[i + 1];
-		currentObject.editBoxScrollFrame.EditBox:SetText(nextObject.editBoxScrollFrame.EditBox:GetText());
-		currentObject.voteCheck:SetChecked(nextObject.voteCheck:GetChecked());
+			local currentObject = answerObjects[i];
+			local nextObject = answerObjects[i + 1];
+			currentObject.editBoxScrollFrame.EditBox:SetText(nextObject.editBoxScrollFrame.EditBox:GetText());
+			currentObject.voteCheck:SetChecked(nextObject.voteCheck:GetChecked());
 
-		if i + 1 == answersCount then
-			nextObject.number:Hide();
-			nextObject.editBoxScrollFrame:Hide();
-			nextObject.deleteButton:Hide();
-			nextObject.voteCheck:Hide();
+			if i + 1 == lastAnswerIndex then
+				nextObject.number:Hide();
+				nextObject.editBoxScrollFrame:Hide();
+				nextObject.deleteButton:Hide();
+				nextObject.voteCheck:Hide();
 
-			currentObject.voteCheck:Hide();
+				currentObject.voteCheck:Hide();
+			end
 		end
 	end
 
 	answersCount = answersCount - 1;
+	additionalAnswersCount = additionalAnswersCount - 1;
 	UpdateScrollBar(answersScrollFrame, answersCount * totalHeightOfEachAnswer);
 end
 
