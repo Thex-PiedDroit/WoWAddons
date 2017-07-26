@@ -1,0 +1,4 @@
+Types of polls:
+	- Chat based (Poll launched, options 1. 2 . 3. ..., people type "Poll 2" or something)
+	- Direct (Interface, with buttons)
+	- "Permantent" (In addon frame, list of active polls)
