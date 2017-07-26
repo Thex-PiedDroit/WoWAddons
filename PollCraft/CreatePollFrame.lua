@@ -217,7 +217,7 @@ end
 
 
 local function GeneratePollGUID()
-	return MyGUID() .. tostring(random(1000000, 9999999));
+	return MyGUID() .. tostring(math.random(1000000, 9999999));
 end
 
 SendNewPollAway = function()
