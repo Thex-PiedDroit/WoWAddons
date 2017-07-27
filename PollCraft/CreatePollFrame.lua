@@ -230,6 +230,8 @@ SendNewPollAway = function()
 	local newPoll =
 	{
 		pollGUID = GeneratePollGUID(),
+		pollMasterFullName = PollCraft_Me(),
+		pollMasterRealm = PollCraft_MyRealm(),
 		pollType = UIDropDownMenu_GetSelectedValue(data.pollTypesDropDownList),
 		multiVotes = data.allowMultipleVotesCheck:GetChecked(),
 		allowNewAnswers = data.allowNewAnswersCheck:GetChecked(),
@@ -238,7 +240,12 @@ SendNewPollAway = function()
 	}
 
 	for i = 1, answersCount - 1 do
-		table.insert(newPoll.answers, answerObjects[i].editBoxScrollFrame.EditBox:GetText());
+		local answerObject =
+		{
+			text = answerObjects[i].editBoxScrollFrame.EditBox:GetText(),
+			GUID = tostring(i)
+		}
+		table.insert(newPoll.answers, answerObject);
 	end
 
 	if newPoll.question == nil or newPoll.question == ""
