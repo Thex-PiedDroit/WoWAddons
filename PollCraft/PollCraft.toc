@@ -13,6 +13,7 @@ Libraries\AceSerializer-3.0\AceSerializer-3.0.xml
 
 
 Helpers.lua
+PollsData.lua
 Comm.lua
 Core.lua
 FramesCreationHelpers.lua

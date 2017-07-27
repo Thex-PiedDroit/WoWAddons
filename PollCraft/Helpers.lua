@@ -49,3 +49,11 @@ function math.Clamp(number, min, max)
 
 	return math.min(max, math.max(number, min));
 end
+
+function table.Len(T)
+	local count = 0
+	for _ in pairs(T) do
+		count = count + 1;
+	end
+	return count
+end
