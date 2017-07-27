@@ -1,6 +1,7 @@
 
 g_receivePollFrame = nil;
 
+
 local mainFrameSize =
 {
 	x = 600,
@@ -23,6 +24,7 @@ function InitReceivePollFrame()
 	end
 
 	g_receivePollFrame = {};
+	g_receivePollFrame.framesMargin = framesMargin;
 
 	local containingFrame = CreateBackdroppedFrame("ReceivePollFrameContainer", UIParent, mainFrameSize.x, mainFrameSize.y, true);
 	containingFrame:SetPoint("CENTER", 0, 0);
@@ -82,7 +84,7 @@ function InitReceivePollFrame()
 	answersScrollFrame = answersFrame;
 
 
-	local sendVoteButton = CreateButton("SendVoteButton", newPollFrame, 120, 30, "Send vote");
+	local sendVoteButton = CreateButton("SendVoteButton", newPollFrame, 120, 30, "Send vote", SendVoteAway);
 	sendVoteButton:SetPoint("TOP", 0, answersFramePosY - answersFrameSize.y - (framesMargin * 0.4));
 	sendVoteButton:SetFrameLevel(answersParentFrame:GetFrameLevel() + 10);
 
@@ -318,6 +320,19 @@ RemoveAdditionalAnswer = function(index)
 	UpdateAnswersScrollbar();
 end
 
+local function ChangeAnswerObjectToStaticAnswer(answerObject)
+	answerObject.textFrame:Show();
+	answerObject.text:Show();
+	answerObject.editBoxScrollFrame:Hide();
+	answerObject.deleteButton:Hide();
+
+	if allowMultipleVotes then
+		answerObject.voteCheck:Show();
+	else
+		answerObject.voteTick:Show();
+	end
+end
+
 local function HideAnswer(answerObject)
 	answerObject.textFrame:Hide();
 	answerObject.text:Hide();
@@ -333,6 +348,30 @@ HideAllAnswers = function()
 	for i = 1, #answerObjects do
 		HideAnswer(answerObjects[i]);
 	end
+end
+
+local function InsertAdditionalAnswer(newAnswer)
+
+	answersCount = answersCount + 1;
+	if allowMultipleVotes or additionalAnswersCount == 0 then
+		LoadAnswer(nil);	-- Create empty answer at the end of the list
+	end
+	local newIndex = answersCount - additionalAnswersCount;
+
+	for i = answersCount, newIndex + 1, -1 do
+		local currentObject = answerObjects[i];
+		local previousObject = answerObjects[i - 1];
+		currentObject.editBoxScrollFrame.EditBox:SetText(previousObject:GetText());
+		currentObject.voteCheck:SetChecked(previousObject.voteCheck:GetChecked());
+		currentObject.voteTick:SetChecked(previousObject.voteTick:GetChecked());
+	end
+
+	local newObject = answerObjects[newIndex];
+	ChangeAnswerObjectToStaticAnswer(newObject);
+	newObject.text:SetText(newAnswer.text);
+	newObject.voteCheck:SetChecked(false);
+	newObject.voteTick:SetChecked(false);
+	newObject.GUID = newAnswer.GUID;
 end
 
 
@@ -367,6 +406,8 @@ UpdateAnswersScrollbar = function()
 	UpdateScrollBar(answersScrollFrame, answersCountForUpdateScrollbar * totalHeightOfEachAnswer);
 end
 
+local pollGUID = 0;
+
 function LoadAndOpenReceivePollFrame(pollData)
 
 	if pollData.pollType == "RAID" then
@@ -396,9 +437,57 @@ function LoadAndOpenReceivePollFrame(pollData)
 		if allowAdditionalAnswers then
 			LoadAnswer(nil);
 		end
+
+		pollGUID = pollData.pollGUID;
 		g_receivePollFrame.receivePollFrame:Show();
 		g_receivePollFrame.containingFrame:Show();
+
 		AddPollDataToMemory(pollData);
 	end
+end
 
+function LoadAdditionalAnswersForVoting(newAnswers)
+
+	for i = 1, #newAnswers do
+		InsertAdditionalAnswer(newAnswers[i]);
+	end
+end
+
+
+local function CreateAnswerGUID(index)
+	return PollCraft_Me() .. index;
+end
+
+function GetVoteData()
+
+	local voteObject =
+	{
+		pollGUID = pollGUID,
+		newAnswers = {},
+		vote = {}
+	}
+
+	for i = 1, additionalAnswersCount do
+		local answerObject = answerObjects[answersCount - additionalAnswersCount + i];
+
+		local newAnswerGUID = CreateAnswerGUID(i);
+		answerObject.GUID = newAnswerGUID;
+
+		local additionalAnswerData =
+		{
+			text = answerObject.editBoxScrollFrame.EditBox:GetText(),
+			GUID = newAnswerGUID
+		}
+
+		table.insert(voteObject.newAnswers, additionalAnswerData);
+	end
+
+	for i = 1, answersCount do
+		local currentAnswer = answerObjects[i];
+		if currentAnswer:IsSelected() then
+			table.insert(voteObject.vote, currentAnswer.GUID);
+		end
+	end
+
+	return voteObject;
 end

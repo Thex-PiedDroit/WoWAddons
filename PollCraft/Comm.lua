@@ -34,8 +34,13 @@ local function ReceiveMessage(prefix, message)
 	elseif messageType == "Busy" then
 		PollCraft_Print(PollCraft_GetNameForPrint(messageObject.senderName, messageObject.senderRealm) .. " could not receive your poll because they were busy.");
 
-	--elseif actualMessage.messageType == "Vote" then
+	elseif messageType == "Vote" then
+		HandleVoteMessageReception(actualMessage, messageObject.senderFullName, messageObject.senderRealm);
 
+	elseif messageType == "Results" then
+		local resultsData = actualMessage.resultsData;
+		RegisterResults(resultsData);
+		LoadAndOpenPollResultsFrame(GetPollData(resultsData.pollGUID));
 	end
 end
 
