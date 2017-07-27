@@ -18,6 +18,10 @@ local SendNewPollAway = nil;
 
 function InitCreatePollFrame()
 
+	if g_createPollFrame.createPollFrame ~= nil then
+		return;
+	end
+
 	local mainFrame = CreateBackdroppedFrame("CreatePollFrame", UIParent, mainFrameSize.x, mainFrameSize.y, true);
 	mainFrame:SetPoint("CENTER", 0, 0);
 
@@ -217,7 +221,7 @@ end
 
 
 local function GeneratePollGUID()
-	return MyGUID() .. tostring(math.random(1000000, 9999999));
+	return PollCraft_MyGUID() .. tostring(math.random(1000000, 9999999));
 end
 
 SendNewPollAway = function()
@@ -225,7 +229,7 @@ SendNewPollAway = function()
 	local data = g_createPollFrame.panel;
 	local newPoll =
 	{
-		pollID = GeneratePollGUID(),
+		pollGUID = GeneratePollGUID(),
 		pollType = UIDropDownMenu_GetSelectedValue(data.pollTypesDropDownList),
 		multiVotes = data.allowMultipleVotesCheck:GetChecked(),
 		allowNewAnswers = data.allowNewAnswersCheck:GetChecked(),
@@ -238,8 +242,8 @@ SendNewPollAway = function()
 	end
 
 	if newPoll.question == nil or newPoll.question == ""
-		or newPoll.answers == nil or #newPoll.answers == 0
-		or newPoll.answers[1] == nil or newPoll.answers[1] == "" then
+		or newPoll.answers == nil or #newPoll.answers < 2
+		or newPoll.answers[2] == nil or newPoll.answers[2].text == nil or newPoll.answers[2].text == "" then
 		return;
 	end
 

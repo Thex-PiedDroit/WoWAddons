@@ -18,20 +18,21 @@ local function ReceiveMessage(prefix, message)
 
 	local actualMessage = messageObject.message;
 
-	if actualMessage.specificTarget ~= nil and actualMessage.specificTarget ~= Me() then
+	if actualMessage.specificTarget ~= nil and actualMessage.specificTarget ~= PollCraft_Me() then
 		return;		-- Because for some reason, blizzard decided that cross-realm WHISPERS do not work in parties and raid groups
 	end
 
+	local messageType = actualMessage.messageType;
 
-	if actualMessage.messageType == "NewPoll" then
-		if messageObject.senderGUID ~= nil and messageObject.senderGUID == MyGUID() then
+	if messageType == "NewPoll" then
+		if messageObject.senderFullName ~= nil and messageObject.senderFullName == PollCraft_Me() then
 			return;
 		end
 
 		LoadAndOpenReceivePollFrame(actualMessage.poll, messageObject.senderFullName, messageObject.senderRealm);
 
-	elseif actualMessage.messageType == "Busy" then
-		PollCraft_Print(GetNameForPrint(messageObject.senderName, messageObject.senderRealm) .. " could not receive your poll because they were busy.");
+	elseif messageType == "Busy" then
+		PollCraft_Print(PollCraft_GetNameForPrint(messageObject.senderName, messageObject.senderRealm) .. " could not receive your poll because they were busy.");
 
 	--elseif actualMessage.messageType == "Vote" then
 
@@ -45,16 +46,16 @@ function g_pollCraftComm:SendMessage(msg, channel, target)
 
 	local messageObject =
 	{
-		senderGUID = MyGUID();
-		senderName = MyName();
-		senderRealm = MyRealm();
-		senderFullName = Me();
+		senderBTag = PollCraft_MyBTag();
+		senderName = PollCraft_MyName();
+		senderRealm = PollCraft_MyRealm();
+		senderFullName = PollCraft_Me();
 		message = msg;
 	};
 
 	local serializedMessage = serializer:Serialize(messageObject);
 
-	if target == Me() then
+	if target == PollCraft_Me() then
 		ReceiveMessage("PollCraft", serializedMessage);
 	else
 		self:SendCommMessage("PollCraft", serializedMessage, channel, target);
@@ -65,7 +66,7 @@ function SendPollMessage(message, messageType, channel, target, targetRealm)
 
 	message.messageType = messageType;
 
-	if channel == "WHISPER" and targetRealm ~= MyRealm() then
+	if channel == "WHISPER" and targetRealm ~= PollCraft_MyRealm() then
 		message.specificTarget = target;	-- Because for some reason, blizzard decided that cross-realm WHISPERS do not work in parties and raid groups
 		channel = "RAID";
 	end
