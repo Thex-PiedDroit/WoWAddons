@@ -57,3 +57,12 @@ function table.Len(T)
 	end
 	return count
 end
+
+function table.clone(T)
+
+	local copy = {};
+	for i = 1, #T do
+		table.insert(copy, T[i]);
+	end
+	return copy;
+end
