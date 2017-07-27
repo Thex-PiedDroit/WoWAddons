@@ -16,7 +16,11 @@ local additionalAnswersCount = 0;
 local HideAllAnswers = nil;
 
 
-function InitializeReceivePollFrame()
+function InitReceivePollFrame()
+
+	if g_receivePollFrame ~= nil then
+		return;
+	end
 
 	g_receivePollFrame = {};
 
@@ -42,12 +46,11 @@ function InitializeReceivePollFrame()
 	mainFrameTitle:SetPoint("CENTER", 0, 0);
 
 
+		--[[      QUESTION FRAME      ]]--
 	local questionPosY = -45;
 	local questionSectionLabel = CreateLabel(newPollFrame, "Question:", 16);
 	questionSectionLabel:SetPoint("TOPLEFT", framesMargin, questionPosY + 22);
 
-
-	--[[      QUESTION FRAME      ]]--
 	local questionFrameSize =
 	{
 		x = innerFrameSize.x - framesMargin,
@@ -55,8 +58,9 @@ function InitializeReceivePollFrame()
 	}
 	local questionFrame = CreateBackdroppedFrame("QuestionFrame", newPollFrame, questionFrameSize.x, questionFrameSize.y);
 	questionFrame:SetPoint("TOP", 0, questionPosY);
-	local questionLabel = CreateLabel(questionFrame, "Question here", 16, questionFrameSize.x - 18, "LEFT");
+	local questionLabel = CreateLabel(questionFrame, "Question here", 16, "LEFT");
 	questionLabel:SetPoint("TOPLEFT", 13, -12);
+	questionLabel:SetPoint("BOTTOMRIGHT", -13, 12);
 	newPollFrame.questionLabel = questionLabel;
 
 
@@ -80,6 +84,7 @@ function InitializeReceivePollFrame()
 
 	local sendVoteButton = CreateButton("SendVoteButton", newPollFrame, 120, 30, "Send vote");
 	sendVoteButton:SetPoint("TOP", 0, answersFramePosY - answersFrameSize.y - (framesMargin * 0.4));
+	sendVoteButton:SetFrameLevel(answersParentFrame:GetFrameLevel() + 10);
 
 
 	containingFrame:Hide();
@@ -95,7 +100,6 @@ local AddOrRemoveAdditionalAnswerEditBox = nil;
 local RemoveAdditionalAnswer = nil;
 
 local answerObjects = {};
-local marginBetweenAnswers = 10;
 local answersFramesHeight = 70;
 local totalHeightOfEachAnswer = answersFramesHeight + (framesMargin * 0.25);
 
@@ -103,6 +107,7 @@ local additionalAnswerEditBoxHeight = answersFramesHeight - 12;
 
 local allowAdditionalAnswers = false;
 local allowMultipleVotes = false;
+local UpdateAnswersScrollbar = nil;
 
 function LoadAnswer(answerText)
 
@@ -134,8 +139,9 @@ function LoadAnswer(answerText)
 		local textFramePosY = -((totalHeightOfEachAnswer * answersCount) + 10);
 		local textFrame = CreateBackdroppedFrame("Answer" .. answerIndexStr .. "TextFrame", answersParentFrame, answerFrameWidth, answersFramesHeight);
 		textFrame:SetPoint("TOPLEFT", framesMargin + 24, textFramePosY);
-		local answerLabel = CreateLabel(textFrame, answerText, 16, answerFrameWidth - 20, "LEFT");
+		local answerLabel = CreateLabel(textFrame, answerText, 16, "LEFT");
 		answerLabel:SetPoint("TOPLEFT", framesMargin, -11);
+		answerLabel:SetPoint("BOTTOMRIGHT", -framesMargin, 11);
 
 		local additionalAnswerEditBoxWidth = answerFrameWidth - 12;
 		local additionalAnswerEditBox = CreateEditBox("AdditionalAnswer" .. answerIndexStr .. "EditBox", answersParentFrame, additionalAnswerEditBoxWidth, additionalAnswerEditBoxHeight, false, AddOrRemoveAdditionalAnswerEditBox, answersCount + 1, 16);
@@ -194,7 +200,7 @@ function LoadAnswer(answerText)
 	if not isAdditionalAnswer then
 		answersCount = answersCount + 1;
 	end
-	UpdateScrollBar(answersScrollFrame, answersCount * totalHeightOfEachAnswer);
+	UpdateAnswersScrollbar();
 end
 
 AddOrRemoveAdditionalAnswerEditBox = function(currentlyModifiedAnswerIndex)
@@ -241,7 +247,7 @@ AddOrRemoveAdditionalAnswerEditBox = function(currentlyModifiedAnswerIndex)
 		object.voteCheck:SetChecked(false);
 	end
 
-	UpdateScrollBar(answersScrollFrame, answersCount * totalHeightOfEachAnswer);
+	UpdateAnswersScrollbar();
 end
 
 RemoveAdditionalAnswer = function(index)
@@ -287,7 +293,7 @@ RemoveAdditionalAnswer = function(index)
 
 	answersCount = answersCount - 1;
 	additionalAnswersCount = additionalAnswersCount - 1;
-	UpdateScrollBar(answersScrollFrame, answersCount * totalHeightOfEachAnswer);
+	UpdateAnswersScrollbar();
 end
 
 local function HideAnswer(answerObject)
@@ -323,21 +329,35 @@ function MakeAllTicksExclusive()
 	end
 end
 
+UpdateAnswersScrollbar = function()
+
+	local answersCountForUpdateScrollbar = answersCount;
+
+	if allowAdditionalAnswers then
+		local addition = 1;
+		if not allowMultipleVotes and additionalAnswersCount > 0 then
+			addition = 0;
+		end
+		answersCountForUpdateScrollbar = answersCount + addition;
+	end
+
+	UpdateScrollBar(answersScrollFrame, answersCountForUpdateScrollbar * totalHeightOfEachAnswer);
+end
 
 function LoadAndOpenReceivePollFrame(pollData, sender, senderRealm)
 
 	if pollData.pollType == "RAID" then
 
 		if g_currentlyBusy then
-			if sender ~= nil and sender ~= Me() then
-				SendPollMessage({}, "Busy", "WHISPER", sender, senderRealm);
+			if sender ~= nil and sender ~= PollCraft_Me() then
+				SendPollMessage({}, "Busy", "WHISPER", pollData.pollMasterFullName, pollData.pollMasterRealm);
 			end
 
 			return;
 		end
 
 		if g_receivePollFrame == nil then
-			InitializeReceivePollFrame();
+			InitReceivePollFrame();
 		elseif g_receivePollFrame.resultsFrame ~= nil then
 			g_receivePollFrame.resultsFrame:Hide();
 		end
