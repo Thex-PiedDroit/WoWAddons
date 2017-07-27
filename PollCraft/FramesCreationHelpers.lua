@@ -25,12 +25,11 @@ local function CreateBackdrop(frame, alpha)
 end
 
 
-function CreateLabel(parent, text, fontSize, width, alignment)
+function CreateLabel(parent, text, fontSize, alignment)
 	local label = parent:CreateFontString(nil, "ARTWORK", "GameFontHighlight");
 	label:SetText(text);
 
-	if width ~= nil then
-		label:SetWidth(width);
+	if alignment ~= nil then
 		label:SetJustifyH(alignment);
 		label:SetJustifyV("TOP");
 	end
@@ -224,7 +223,12 @@ function CreateScrollFrame(name, parent, width, height)
 	mouseWheelFrameCapture:EnableMouseWheel(true);
 
 	mouseWheelFrameCapture:SetScript("OnMouseWheel", function(self, delta)
+
 		local scrollFrame = self:GetParent();
+		if not scrollFrame.scrollbar:IsVisible() then
+			return;
+		end
+
 		local newValue = math.Clamp(scrollFrame:GetVerticalScroll() - (delta * 40), scrollFrame.scrollbar:GetMinMaxValues());
 		scrollFrame.scrollbar:SetValue(newValue);
 	end);
