@@ -21,3 +21,5 @@ ReceivePollFrame.lua
 PollResultsFrame.lua
 CreatePollFrame.lua
 Core.lua
+
+Tests.lua
