@@ -245,6 +245,6 @@ SendNewPollAway = function()
 
 	SendPollMessage({ poll = newPoll }, "NewPoll", newPoll.pollType);
 	LoadAndOpenReceivePollFrame(newPoll, PollCraft_Me(), PollCraft_MyRealm());
-	g_receivePollFrame.panel:ClearAllPoints();
-	g_receivePollFrame.panel:SetPoint("TOPLEFT", g_createPollFrame.panel, "TOPRIGHT", 0, 0);
+	g_receivePollFrame.containingFrame:ClearAllPoints();
+	g_receivePollFrame.containingFrame:SetPoint("TOPLEFT", g_createPollFrame.panel, "TOPRIGHT", 0, 0);
 end
