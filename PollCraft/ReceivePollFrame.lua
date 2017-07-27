@@ -109,7 +109,15 @@ local allowAdditionalAnswers = false;
 local allowMultipleVotes = false;
 local UpdateAnswersScrollbar = nil;
 
-function LoadAnswer(answerText)
+local function LoadAnswer(answerObject)
+
+	local answerText = "";
+	local answerGUID = nil;
+
+	if answerObject ~= nil then
+		answerText = answerObject.text;
+		answerGUID = answerObject.GUID;
+	end
 
 	local object = nil;
 
@@ -132,6 +140,7 @@ function LoadAnswer(answerText)
 			object.deleteButton:Hide();
 		end
 		object.number:Show();
+		object.GUID = answerGUID;
 	else
 		local answerIndexStr = tostring(answersCount + 1);
 
@@ -180,8 +189,21 @@ function LoadAnswer(answerText)
 			deleteButton = deleteButton;
 			number = newNumber,
 			voteCheck = newCheck,
-			voteTick = newTick
-		}
+			voteTick = newTick,
+			GUID = answerGUID,
+
+			IsSelected = function(self)
+				return (self.voteCheck:IsVisible() and self.voteCheck:GetChecked()) or (self.voteTick:IsVisible() and self.voteTick:GetChecked());
+			end,
+
+			GetText = function(self)
+				if self.text:IsVisible() then
+					return self.text:GetText();
+				elseif self.editBoxScrollFrame:IsVisible() then
+					return self.editBoxScrollFrame.EditBox:GetText();
+				end
+			end,
+		};
 
 		table.insert(answerObjects, object);
 		MakeAllTicksExclusive()
@@ -240,7 +262,7 @@ AddOrRemoveAdditionalAnswerEditBox = function(currentlyModifiedAnswerIndex)
 			nextObject.textFrame:Hide();
 			nextObject.text:Hide();
 		else
-			LoadAnswer("");
+			LoadAnswer(nil);
 		end
 
 		object.voteCheck:Show();
@@ -304,6 +326,7 @@ local function HideAnswer(answerObject)
 	answerObject.number:Hide();
 	answerObject.voteCheck:Hide();
 	answerObject.voteTick:Hide();
+	answerObject.GUID = nil;
 end
 
 HideAllAnswers = function()
@@ -344,7 +367,7 @@ UpdateAnswersScrollbar = function()
 	UpdateScrollBar(answersScrollFrame, answersCountForUpdateScrollbar * totalHeightOfEachAnswer);
 end
 
-function LoadAndOpenReceivePollFrame(pollData, sender, senderRealm)
+function LoadAndOpenReceivePollFrame(pollData)
 
 	if pollData.pollType == "RAID" then
 
@@ -371,10 +394,11 @@ function LoadAndOpenReceivePollFrame(pollData, sender, senderRealm)
 			LoadAnswer(pollData.answers[i]);
 		end
 		if allowAdditionalAnswers then
-			LoadAnswer("");
+			LoadAnswer(nil);
 		end
 		g_receivePollFrame.receivePollFrame:Show();
 		g_receivePollFrame.containingFrame:Show();
+		AddPollDataToMemory(pollData);
 	end
 
 end
