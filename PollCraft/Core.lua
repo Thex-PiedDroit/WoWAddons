@@ -16,6 +16,9 @@ function events:ADDON_LOADED(addonName)
 	end
 
 	InitCreatePollFrame();
+	--InitTests();
+	--TestOneSimpleVote();
+	--TestSomeVotes();
 end
 
 pollCraftEventListener:SetScript("OnEvent", function(self, event, ...)
