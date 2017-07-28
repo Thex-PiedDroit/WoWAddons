@@ -14,7 +14,9 @@ voteData =
 ]]
 
 
-function SendVoteAway(args)
+function SendVoteAway(self, args)
+
+	self:Disable();
 
 	local voteData = GetVoteData();
 	local pollData = GetPollData(voteData.pollGUID);

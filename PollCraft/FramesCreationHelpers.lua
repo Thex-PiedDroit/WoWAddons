@@ -132,7 +132,7 @@ function CreateButton(name, parent, width, height, text, onClickCallback, callba
 	button:SetText(text);
 
 	if onClickCallback ~= nil then
-		button:SetScript("OnClick", function() onClickCallback(callbackArguments) end);
+		button:SetScript("OnClick", function(self) onClickCallback(self, callbackArguments) end);
 	end
 
 	return button;
