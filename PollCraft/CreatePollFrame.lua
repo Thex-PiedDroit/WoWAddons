@@ -18,6 +18,10 @@ local SendNewPollAway = nil;
 
 function InitCreatePollFrame()
 
+	if g_createPollFrame.createPollFrame ~= nil then
+		return;
+	end
+
 	local mainFrame = CreateBackdroppedFrame("CreatePollFrame", UIParent, mainFrameSize.x, mainFrameSize.y, true);
 	mainFrame:SetPoint("CENTER", 0, 0);
 
@@ -217,7 +221,7 @@ end
 
 
 local function GeneratePollGUID()
-	return MyGUID() .. tostring(math.random(1000000, 9999999));
+	return PollCraft_MyGUID() .. tostring(math.random(1000000, 9999999));
 end
 
 SendNewPollAway = function()
@@ -225,7 +229,9 @@ SendNewPollAway = function()
 	local data = g_createPollFrame.panel;
 	local newPoll =
 	{
-		pollID = GeneratePollGUID(),
+		pollGUID = GeneratePollGUID(),
+		pollMasterFullName = PollCraft_Me(),
+		pollMasterRealm = PollCraft_MyRealm(),
 		pollType = UIDropDownMenu_GetSelectedValue(data.pollTypesDropDownList),
 		multiVotes = data.allowMultipleVotesCheck:GetChecked(),
 		allowNewAnswers = data.allowNewAnswersCheck:GetChecked(),
@@ -234,23 +240,22 @@ SendNewPollAway = function()
 	}
 
 	for i = 1, answersCount - 1 do
-		table.insert(newPoll.answers, answerObjects[i].editBoxScrollFrame.EditBox:GetText());
+		local answerObject =
+		{
+			text = answerObjects[i].editBoxScrollFrame.EditBox:GetText(),
+			GUID = tostring(i)
+		}
+		table.insert(newPoll.answers, answerObject);
 	end
 
 	if newPoll.question == nil or newPoll.question == ""
-		or newPoll.answers == nil or #newPoll.answers == 0
-		or newPoll.answers[1] == nil or newPoll.answers[1] == "" then
+		or newPoll.answers == nil or #newPoll.answers < 2
+		or newPoll.answers[2] == nil or newPoll.answers[2].text == nil or newPoll.answers[2].text == "" then
 		return;
 	end
 
-	local newMessage =
-	{
-		messageType = "NewPoll",
-		poll = newPoll
-	}
-
-	g_pollCraftComm:SendMessage(newMessage, newPoll.pollType);
-	LoadAndOpenReceivePollFrame(newPoll, Me());
-	g_receivePollFrame.panel:ClearAllPoints();
-	g_receivePollFrame.panel:SetPoint("TOPLEFT", g_createPollFrame.panel, "TOPRIGHT", 0, 0);
+	SendPollMessage({ poll = newPoll }, "NewPoll", newPoll.pollType);
+	LoadAndOpenReceivePollFrame(newPoll, PollCraft_Me(), PollCraft_MyRealm());
+	g_receivePollFrame.containingFrame:ClearAllPoints();
+	g_receivePollFrame.containingFrame:SetPoint("TOPLEFT", g_createPollFrame.panel, "TOPRIGHT", 0, 0);
 end

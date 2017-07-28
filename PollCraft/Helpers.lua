@@ -1,19 +1,30 @@
 
 
+local _, playerBTag = BNGetInfo();
+function PollCraft_MyBTag()
+	if playerBTag == nil then
+		local _, newBTag = BNGetInfo();
+		playerBTag = newBTag;
+	end
+	return playerBTag;
+end
 local playerGUID = UnitGUID("player");
-function MyGUID()
+function PollCraft_MyGUID()
+	if playerGUID == nil then
+		playerGUID = UnitGUID("player");
+	end
 	return playerGUID;
 end
 local playerName = UnitName("player");
-function MyName()
+function PollCraft_MyName()
 	return playerName;
 end
 local playerRealm = GetRealmName();
-function MyRealm()
+function PollCraft_MyRealm()
 	return playerRealm;
 end
 local playerFullName = playerName .. "-" .. playerRealm;
-function Me()
+function PollCraft_Me()
 	return playerFullName;
 end
 
@@ -25,9 +36,9 @@ function PollCraft_Print(message)
 end
 
 
-function GetNameForPrint(targetName, targetRealm)
+function PollCraft_GetNameForPrint(targetName, targetRealm)
 
-	if targetRealm ~= MyRealm() then
+	if targetRealm ~= PollCraft_MyRealm() then
 		targetName = targetName .. "-" .. targetRealm;
 	end
 
@@ -37,4 +48,21 @@ end
 function math.Clamp(number, min, max)
 
 	return math.min(max, math.max(number, min));
+end
+
+function table.Len(T)
+	local count = 0
+	for _ in pairs(T) do
+		count = count + 1;
+	end
+	return count
+end
+
+function table.clone(T)
+
+	local copy = {};
+	for i = 1, #T do
+		table.insert(copy, T[i]);
+	end
+	return copy;
 end
