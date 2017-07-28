@@ -20,6 +20,11 @@ local HideAllAnswers = nil;
 function InitReceivePollFrame()
 
 	if g_receivePollFrame ~= nil then
+		g_receivePollFrame.receivePollFrame.sendVoteButton:Enable();
+
+		if g_receivePollFrame.resultsFrame ~= nil then
+			g_receivePollFrame.resultsFrame:Hide();
+		end
 		return;
 	end
 
@@ -87,6 +92,7 @@ function InitReceivePollFrame()
 	local sendVoteButton = CreateButton("SendVoteButton", newPollFrame, 120, 30, "Send vote", SendVoteAway);
 	sendVoteButton:SetPoint("TOP", 0, answersFramePosY - answersFrameSize.y - (framesMargin * 0.4));
 	sendVoteButton:SetFrameLevel(answersParentFrame:GetFrameLevel() + 10);
+	newPollFrame.sendVoteButton = sendVoteButton;
 
 
 	containingFrame:Hide();
@@ -420,11 +426,7 @@ function LoadAndOpenReceivePollFrame(pollData)
 			return;
 		end
 
-		if g_receivePollFrame == nil then
-			InitReceivePollFrame();
-		elseif g_receivePollFrame.resultsFrame ~= nil then
-			g_receivePollFrame.resultsFrame:Hide();
-		end
+		InitReceivePollFrame();
 
 		g_receivePollFrame.receivePollFrame.questionLabel:SetText(pollData.question);
 
