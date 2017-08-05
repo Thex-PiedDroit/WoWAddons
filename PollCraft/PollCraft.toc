@@ -17,7 +17,8 @@ PollsData.lua
 Comm.lua
 FramesCreationHelpers.lua
 HandleVote.lua
-ReceivePollFrame.lua
+CurrentPollsFrame.lua
+VoteFrame.lua
 PollResultsFrame.lua
 CreatePollFrame.lua
 Core.lua

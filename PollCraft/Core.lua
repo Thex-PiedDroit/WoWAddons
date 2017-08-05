@@ -16,7 +16,7 @@ function events:ADDON_LOADED(addonName)
 	end
 
 	InitCreatePollFrame();
-	--InitTests();
+	InitCurrentPollsFrame();
 	--TestOneSimpleVote();
 	--TestSomeVotes();
 end

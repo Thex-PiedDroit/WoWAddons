@@ -1,13 +1,5 @@
 
-g_receivePollFrame = nil;
-
-
-local mainFrameSize =
-{
-	x = 600,
-	y = 700
-}
-local framesMargin = (mainFrameSize.x / 40);
+local innerFramesMargin = 0;
 
 local answersParentFrame = nil;
 local answersScrollFrame = nil;
@@ -17,37 +9,33 @@ local additionalAnswersCount = 0;
 local HideAllAnswers = nil;
 
 
-function InitReceivePollFrame()
+function InitVoteFrame()
 
-	if g_receivePollFrame ~= nil then
-		g_receivePollFrame.receivePollFrame.sendVoteButton:Enable();
+	if g_currentPollsMotherFrame.voteFrame ~= nil then
+		g_currentPollsMotherFrame.voteFrame.sendVoteButton:Enable();
 
-		if g_receivePollFrame.resultsFrame ~= nil then
-			g_receivePollFrame.resultsFrame:Hide();
+		if g_currentPollsMotherFrame.resultsFrame ~= nil then
+			g_currentPollsMotherFrame.resultsFrame:Hide();
 		end
 		return;
 	end
 
-	g_receivePollFrame = {};
-	g_receivePollFrame.framesMargin = framesMargin;
+	innerFramesMargin = GetInnerFramesMargin();
+	local motherFrameSize = GetMotherFrameSize();
 
-	local containingFrame = CreateBackdroppedFrame("ReceivePollFrameContainer", UIParent, mainFrameSize.x, mainFrameSize.y, true);
-	containingFrame:SetPoint("CENTER", 0, 0);
-
-	local closeButton = CreateFrame("Button", "PollCraft_CloseReceivePollFrameButton", containingFrame, "UIPanelCloseButton");
-	closeButton:SetPoint("TOPRIGHT", 0, 0);
+	local containingFrame = g_currentPollsMotherFrame.panel;
 
 
 	local innerFrameSize =
 	{
-		x = mainFrameSize.x - framesMargin,
-		y = mainFrameSize.y - (framesMargin * 5)
+		x = motherFrameSize.x - innerFramesMargin,
+		y = motherFrameSize.y - (innerFramesMargin * 5)
 	};
 
-	local newPollFrame = CreateBackdroppedFrame("ReceivePollFrame", containingFrame, innerFrameSize.x, innerFrameSize.y);
-	newPollFrame:SetPoint("BOTTOM", 0, mainFrameSize.x / 80);
+	local newPollFrame = CreateBackdroppedFrame("VoteFrame", containingFrame, innerFrameSize.x, innerFrameSize.y);
+	newPollFrame:SetPoint("BOTTOM", 0, motherFrameSize.x / 80);
 
-	local titleFrame = CreateBackdroppedFrame("ReceivePollFrameTitleBackdrop", newPollFrame, 250, 35);
+	local titleFrame = CreateBackdroppedFrame("VoteFrameTitleBackdrop", newPollFrame, 250, 35);
 	titleFrame:SetPoint("TOP", containingFrame, "TOP", 0, -20);
 	local mainFrameTitle = CreateLabel(titleFrame, "PollCraft - Poll received", 20);
 	mainFrameTitle:SetPoint("CENTER", 0, 0);
@@ -56,11 +44,11 @@ function InitReceivePollFrame()
 		--[[      QUESTION FRAME      ]]--
 	local questionPosY = -45;
 	local questionSectionLabel = CreateLabel(newPollFrame, "Question:", 16);
-	questionSectionLabel:SetPoint("TOPLEFT", framesMargin, questionPosY + 22);
+	questionSectionLabel:SetPoint("TOPLEFT", innerFramesMargin, questionPosY + 22);
 
 	local questionFrameSize =
 	{
-		x = innerFrameSize.x - framesMargin,
+		x = innerFrameSize.x - innerFramesMargin,
 		y = 56
 	}
 	local questionFrame = CreateBackdroppedFrame("QuestionFrame", newPollFrame, questionFrameSize.x, questionFrameSize.y);
@@ -74,7 +62,7 @@ function InitReceivePollFrame()
 		--[[      ANSWERS FRAME      ]]--
 	local answersFrameLabel = CreateLabel(newPollFrame, "Answers:", 16);
 	local answersFramePosY = questionPosY - questionFrameSize.y - 32;
-	answersFrameLabel:SetPoint("TOPLEFT", framesMargin, answersFramePosY + 20);
+	answersFrameLabel:SetPoint("TOPLEFT", innerFramesMargin, answersFramePosY + 20);
 
 	local answersFrameSize =
 	{
@@ -90,7 +78,7 @@ function InitReceivePollFrame()
 
 
 	local sendVoteButton = CreateButton("SendVoteButton", newPollFrame, 120, 30, "Send vote", SendVoteAway);
-	sendVoteButton:SetPoint("TOP", 0, answersFramePosY - answersFrameSize.y - (framesMargin * 0.4));
+	sendVoteButton:SetPoint("TOP", 0, answersFramePosY - answersFrameSize.y - (innerFramesMargin * 0.4));
 	sendVoteButton:SetFrameLevel(answersParentFrame:GetFrameLevel() + 10);
 	newPollFrame.sendVoteButton = sendVoteButton;
 
@@ -99,8 +87,7 @@ function InitReceivePollFrame()
 	newPollFrame:Hide();
 	newPollFrame:SetScript("OnShow", function() g_currentlyBusy = true; end);
 	newPollFrame:SetScript("OnHide", function() HideAllAnswers(); g_currentlyBusy = false; answersCount = 0; additionalAnswersCount = 0; end);
-	g_receivePollFrame.receivePollFrame = newPollFrame;
-	g_receivePollFrame.containingFrame = containingFrame;
+	g_currentPollsMotherFrame.voteFrame = newPollFrame;
 end
 
 
@@ -109,7 +96,7 @@ local RemoveAdditionalAnswer = nil;
 
 local answerObjects = {};
 local answersFramesHeight = 70;
-local totalHeightOfEachAnswer = answersFramesHeight + (framesMargin * 0.25);
+local totalHeightOfEachAnswer = answersFramesHeight + (innerFramesMargin * 0.25);
 
 local additionalAnswerEditBoxHeight = answersFramesHeight - 12;
 
@@ -152,20 +139,20 @@ local function LoadAnswer(answerObject)
 	else
 		local answerIndexStr = tostring(answersCount + 1);
 
-		local answerFrameWidth = answersParentFrame:GetWidth() - (framesMargin * 4) - 40;
+		local answerFrameWidth = answersParentFrame:GetWidth() - (innerFramesMargin * 4) - 40;
 		local textFramePosY = -((totalHeightOfEachAnswer * answersCount) + 10);
 		local textFrame = CreateBackdroppedFrame("Answer" .. answerIndexStr .. "TextFrame", answersParentFrame, answerFrameWidth, answersFramesHeight);
-		textFrame:SetPoint("TOPLEFT", framesMargin + 24, textFramePosY);
+		textFrame:SetPoint("TOPLEFT", innerFramesMargin + 24, textFramePosY);
 		local answerLabel = CreateLabel(textFrame, answerText, 16, "LEFT");
-		answerLabel:SetPoint("TOPLEFT", framesMargin, -11);
-		answerLabel:SetPoint("BOTTOMRIGHT", -framesMargin, 11);
+		answerLabel:SetPoint("TOPLEFT", innerFramesMargin, -11);
+		answerLabel:SetPoint("BOTTOMRIGHT", -innerFramesMargin, 11);
 
 		local additionalAnswerEditBoxWidth = answerFrameWidth - 12;
 		local additionalAnswerEditBox = CreateEditBox("AdditionalAnswer" .. answerIndexStr .. "EditBox", answersParentFrame, additionalAnswerEditBoxWidth, additionalAnswerEditBoxHeight, false, AddOrRemoveAdditionalAnswerEditBox, answersCount + 1, 16);
-		additionalAnswerEditBox:SetPoint("TOPLEFT", framesMargin + 30, textFramePosY - 7);
+		additionalAnswerEditBox:SetPoint("TOPLEFT", innerFramesMargin + 30, textFramePosY - 7);
 
 		local deleteButton = CreateIconButton("DeleteAdditionalAnswer" .. answerIndexStr .. "Button", answersParentFrame, 20, "Interface/Buttons/Ui-grouploot-pass-up", "Interface/Buttons/Ui-grouploot-pass-down", nil, RemoveAdditionalAnswer, answersCount + 1);
-		deleteButton:SetPoint("TOPLEFT", framesMargin + 28.5 + additionalAnswerEditBoxWidth + 12, textFramePosY -2);
+		deleteButton:SetPoint("TOPLEFT", innerFramesMargin + 28.5 + additionalAnswerEditBoxWidth + 12, textFramePosY -2);
 
 		if isAdditionalAnswer then
 			textFrame:Hide();
@@ -179,14 +166,14 @@ local function LoadAnswer(answerObject)
 		end
 
 		local newNumber = CreateLabel(answersParentFrame, answerIndexStr .. '.', 16);
-		newNumber:SetPoint("TOPRIGHT", textFrame, "TOPLEFT", 14 - framesMargin, - 8);
+		newNumber:SetPoint("TOPRIGHT", textFrame, "TOPLEFT", 14 - innerFramesMargin, - 8);
 
 		local newCheck = CreateCheckButton(answersParentFrame, "Answer" .. answerIndexStr .. "CheckButton");
-		newCheck:SetPoint("RIGHT", textFrame, "RIGHT", framesMargin + 10, 0);
+		newCheck:SetPoint("RIGHT", textFrame, "RIGHT", innerFramesMargin + 10, 0);
 		newCheck:Hide();
 
 		local newTick = CreateRadioCheckButton(answersParentFrame, "Answer" .. answerIndexStr .. "CheckButton");
-		newTick:SetPoint("RIGHT", textFrame, "RIGHT", framesMargin + 8, 0);
+		newTick:SetPoint("RIGHT", textFrame, "RIGHT", innerFramesMargin + 8, 0);
 		newTick:Hide();
 
 		object =
@@ -414,7 +401,7 @@ end
 
 local pollGUID = 0;
 
-function LoadAndOpenReceivePollFrame(pollData)
+function LoadAndOpenVoteFrame(pollData)
 
 	if pollData.pollType == "RAID" then
 
@@ -426,9 +413,9 @@ function LoadAndOpenReceivePollFrame(pollData)
 			return;
 		end
 
-		InitReceivePollFrame();
+		InitVoteFrame();
 
-		g_receivePollFrame.receivePollFrame.questionLabel:SetText(pollData.question);
+		g_currentPollsMotherFrame.voteFrame.questionLabel:SetText(pollData.question);
 
 		allowMultipleVotes = pollData.multiVotes;
 		allowAdditionalAnswers = pollData.allowNewAnswers;
@@ -441,8 +428,8 @@ function LoadAndOpenReceivePollFrame(pollData)
 		end
 
 		pollGUID = pollData.pollGUID;
-		g_receivePollFrame.receivePollFrame:Show();
-		g_receivePollFrame.containingFrame:Show();
+		g_currentPollsMotherFrame.voteFrame:Show();
+		g_currentPollsMotherFrame.panel:Show();
 
 		AddPollDataToMemory(pollData);
 	end
