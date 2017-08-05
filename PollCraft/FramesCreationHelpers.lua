@@ -10,6 +10,12 @@ function MakeFrameMovable(frame)
 	frame:SetScript("OnMouseUp", function(self) self:StopMovingOrSizing() end);
 end
 
+function MakeFrameClosable(frame, name)
+
+	local closeButton = CreateFrame("Button", prefix .. name, frame, "UIPanelCloseButton");
+	closeButton:SetPoint("TOPRIGHT", 0, 0);
+end
+
 local function CreateBackdrop(frame, alpha)
 
 	frame:SetBackdrop(

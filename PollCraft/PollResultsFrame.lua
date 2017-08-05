@@ -1,7 +1,5 @@
 
-g_pollResultsFrame = {};
-
-local framesMargin = 0;
+local innerFramesMargin = 0;
 
 local answersParentFrame = nil;
 local answersScrollFrame = nil;
@@ -12,25 +10,26 @@ local HideAllAnswers = nil;
 
 function InitResultsFrame()
 
-	if g_receivePollFrame.resultsFrame ~= nil then
+	if g_currentPollsMotherFrame.resultsFrame ~= nil then
 		return;
 	end
 
-	framesMargin = g_receivePollFrame.framesMargin;
+	innerFramesMargin = GetInnerFramesMargin();
+	local motherFrameSize = GetMotherFrameSize();
 
-	local mainFrameSizeX, mainFrameSizeY = g_receivePollFrame.containingFrame:GetSize();
+	local containingFrame = g_currentPollsMotherFrame.panel;
 
 	local innerFrameSize =
 	{
-		x = mainFrameSizeX - framesMargin,
-		y = mainFrameSizeY - (framesMargin * 5)
+		x = motherFrameSize.x - innerFramesMargin,
+		y = motherFrameSize.y - (innerFramesMargin * 5)
 	};
 
-	local mainFrame = CreateBackdroppedFrame("PollResultsFrame", g_receivePollFrame.containingFrame, innerFrameSize.x, innerFrameSize.y, false);
-	mainFrame:SetPoint("BOTTOM", 0, mainFrameSizeX / 80);
+	local mainFrame = CreateBackdroppedFrame("PollResultsFrame", containingFrame, innerFrameSize.x, innerFrameSize.y, false);
+	mainFrame:SetPoint("BOTTOM", 0, motherFrameSize.x / 80);
 
 	local titleFrame = CreateBackdroppedFrame("PollResultsFrameTitleBackdrop", mainFrame, 250, 35);
-	titleFrame:SetPoint("TOP", g_receivePollFrame.containingFrame, "TOP", 0, -20);
+	titleFrame:SetPoint("TOP", containingFrame, "TOP", 0, -20);
 	local mainFrameTitle = CreateLabel(titleFrame, "PollCraft - Poll results", 20);
 	mainFrameTitle:SetPoint("CENTER", 0, 0);
 
@@ -38,11 +37,11 @@ function InitResultsFrame()
 		--[[      QUESTION FRAME      ]]--
 	local questionPosY = -45;
 	local questionSectionLabel = CreateLabel(mainFrame, "Question:", 16);
-	questionSectionLabel:SetPoint("TOPLEFT", framesMargin, questionPosY + 22);
+	questionSectionLabel:SetPoint("TOPLEFT", innerFramesMargin, questionPosY + 22);
 
 	local questionFrameSize =
 	{
-		x = innerFrameSize.x - framesMargin,
+		x = innerFrameSize.x - innerFramesMargin,
 		y = 56
 	}
 	local questionFrame = CreateBackdroppedFrame("QuestionFrame", mainFrame, questionFrameSize.x, questionFrameSize.y);
@@ -56,7 +55,7 @@ function InitResultsFrame()
 		--[[      ANSWERS FRAME      ]]--
 	local answersFrameLabel = CreateLabel(mainFrame, "Answers:", 16);
 	local answersFramePosY = questionPosY - questionFrameSize.y - 32;
-	answersFrameLabel:SetPoint("TOPLEFT", framesMargin, answersFramePosY + 20);
+	answersFrameLabel:SetPoint("TOPLEFT", innerFramesMargin, answersFramePosY + 20);
 
 	local answersFrameSize =
 	{
@@ -72,12 +71,11 @@ function InitResultsFrame()
 
 
 	local changeVoteButton = CreateButton("SendVoteButton", mainFrame, 120, 30, "Change vote");
-	changeVoteButton:SetPoint("TOP", 0, answersFramePosY - answersFrameSize.y - (framesMargin * 0.4));
+	changeVoteButton:SetPoint("TOP", 0, answersFramePosY - answersFrameSize.y - (innerFramesMargin * 0.4));
 	changeVoteButton:SetFrameLevel(answersParentFrame:GetFrameLevel() + 10);
 
 
-	g_pollResultsFrame = mainFrame;
-	g_receivePollFrame.resultsFrame = mainFrame;
+	g_currentPollsMotherFrame.resultsFrame = mainFrame;
 	mainFrame:Hide();
 
 	mainFrame:SetScript("OnHide", function() HideAllAnswers(); answersCount = 0; end);
@@ -87,7 +85,7 @@ end
 local answerObjects = {};
 local answerObjectsIndexList = {};
 local answersFramesHeight = 70;
-local totalHeightOfEachAnswer = answersFramesHeight + (framesMargin * 0.25);
+local totalHeightOfEachAnswer = answersFramesHeight + (innerFramesMargin * 0.25);
 
 local function LoadAnswer(answerObject)
 
@@ -110,25 +108,25 @@ local function LoadAnswer(answerObject)
 	else
 		local answerIndexStr = tostring(answersCount + 1);
 
-		local answerContainingFrameWidth = answersParentFrame:GetWidth() - (framesMargin * 2.5);
+		local answerContainingFrameWidth = answersParentFrame:GetWidth() - (innerFramesMargin * 2.5);
 		local textFramePosY = -((totalHeightOfEachAnswer * answersCount) + 10);
 
 		local answerContainingFrame = CreateFrame("Frame", "Answer" .. answerIndexStr .. "ContainingFrame", answersParentFrame);
 		answerContainingFrame:SetSize(answerContainingFrameWidth, answersFramesHeight);
-		answerContainingFrame:SetPoint("TOPLEFT", framesMargin * 0.5, textFramePosY);
+		answerContainingFrame:SetPoint("TOPLEFT", innerFramesMargin * 0.5, textFramePosY);
 
-		local answerFrameWidth = answerContainingFrameWidth - (framesMargin * 1.5) - 50;
+		local answerFrameWidth = answerContainingFrameWidth - (innerFramesMargin * 1.5) - 50;
 		local textFrame = CreateBackdroppedFrame("Answer" .. answerIndexStr .. "TextFrame", answerContainingFrame, answerFrameWidth, answersFramesHeight);
-		textFrame:SetPoint("TOPLEFT", framesMargin + 20, 0);
+		textFrame:SetPoint("TOPLEFT", innerFramesMargin + 20, 0);
 		local answerLabel = CreateLabel(textFrame, answerText, 16, "LEFT");
-		answerLabel:SetPoint("TOPLEFT", framesMargin, -11);
-		answerLabel:SetPoint("BOTTOMRIGHT", -framesMargin, 11);
+		answerLabel:SetPoint("TOPLEFT", innerFramesMargin, -11);
+		answerLabel:SetPoint("BOTTOMRIGHT", -innerFramesMargin, 11);
 
 		local newNumber = CreateLabel(answerContainingFrame, answerIndexStr .. '.', 16);
-		newNumber:SetPoint("TOPRIGHT", textFrame, "TOPLEFT", 14 - framesMargin, - 8);
+		newNumber:SetPoint("TOPRIGHT", textFrame, "TOPLEFT", 14 - innerFramesMargin, - 8);
 
 		local votesCountLabel = CreateLabel(answerContainingFrame, "0", 16);
-		votesCountLabel:SetPoint("LEFT", textFrame, "RIGHT", framesMargin - 5, 0);
+		votesCountLabel:SetPoint("LEFT", textFrame, "RIGHT", innerFramesMargin - 5, 0);
 
 		object =
 		{
@@ -262,14 +260,14 @@ end
 
 function LoadAndOpenPollResultsFrame(pollData)
 
-	if g_receivePollFrame.resultsFrame == nil then
+	if g_currentPollsMotherFrame.resultsFrame == nil then
 		InitResultsFrame();
 	else
 		ReSortAnswers();
 	end
 
-	g_receivePollFrame.receivePollFrame:Hide();
-	g_receivePollFrame.resultsFrame.questionLabel:SetText(pollData.question);
+	g_currentPollsMotherFrame.voteFrame:Hide();
+	g_currentPollsMotherFrame.resultsFrame.questionLabel:SetText(pollData.question);
 
 	for i = 1, #pollData.answers do
 		LoadAnswer(pollData.answers[i]);
@@ -278,8 +276,8 @@ function LoadAndOpenPollResultsFrame(pollData)
 	LoadResults(pollData.results);
 
 	pollGUID = pollData.pollGUID;
-	g_receivePollFrame.resultsFrame:Show();
-	g_receivePollFrame.containingFrame:Show();
+	g_currentPollsMotherFrame.resultsFrame:Show();
+	g_currentPollsMotherFrame.panel:Show();
 end
 
 function AddVoteToResultsDisplay(voteData)
