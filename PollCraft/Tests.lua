@@ -1,12 +1,5 @@
 
 
-function InitTests()
-
-	InitCreatePollFrame();
-	InitReceivePollFrame();
-	InitResultsFrame();
-end
-
 local testPollData =
 {
 	pollGUID = "TEST_POLL",
