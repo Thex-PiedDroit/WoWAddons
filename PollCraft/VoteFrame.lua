@@ -6,7 +6,7 @@ local answersScrollFrame = nil;
 local answersCount = 0;
 local additionalAnswersCount = 0;
 
-local HideAllAnswers = nil;
+local RemoveAllAnswers = nil;
 
 
 function InitVoteFrame()
@@ -17,13 +17,15 @@ function InitVoteFrame()
 		if g_currentPollsMotherFrame.resultsFrame ~= nil then
 			g_currentPollsMotherFrame.resultsFrame:Hide();
 		end
+
+		RemoveAllAnswers();
 		return;
 	end
 
 	innerFramesMargin = GetInnerFramesMargin();
 	local motherFrameSize = GetMotherFrameSize();
 
-	local containingFrame = g_currentPollsMotherFrame.panel;
+	local containingFrame = g_currentPollsMotherFrame.currentPollFrame;
 
 
 	local innerFrameSize =
@@ -32,10 +34,10 @@ function InitVoteFrame()
 		y = motherFrameSize.y - (innerFramesMargin * 5)
 	};
 
-	local newPollFrame = CreateBackdroppedFrame("VoteFrame", containingFrame, innerFrameSize.x, innerFrameSize.y);
-	newPollFrame:SetPoint("BOTTOM", 0, motherFrameSize.x / 80);
+	local voteFrame = CreateBackdroppedFrame("VoteFrame", containingFrame, innerFrameSize.x, innerFrameSize.y);
+	voteFrame:SetPoint("BOTTOM", 0, motherFrameSize.x / 80);
 
-	local titleFrame = CreateBackdroppedFrame("VoteFrameTitleBackdrop", newPollFrame, 250, 35);
+	local titleFrame = CreateBackdroppedFrame("VoteFrameTitleBackdrop", voteFrame, 250, 35);
 	titleFrame:SetPoint("TOP", containingFrame, "TOP", 0, -20);
 	local mainFrameTitle = CreateLabel(titleFrame, "PollCraft - Poll received", 20);
 	mainFrameTitle:SetPoint("CENTER", 0, 0);
@@ -43,7 +45,7 @@ function InitVoteFrame()
 
 		--[[      QUESTION FRAME      ]]--
 	local questionPosY = -45;
-	local questionSectionLabel = CreateLabel(newPollFrame, "Question:", 16);
+	local questionSectionLabel = CreateLabel(voteFrame, "Question:", 16);
 	questionSectionLabel:SetPoint("TOPLEFT", innerFramesMargin, questionPosY + 22);
 
 	local questionFrameSize =
@@ -51,16 +53,16 @@ function InitVoteFrame()
 		x = innerFrameSize.x - innerFramesMargin,
 		y = 56
 	}
-	local questionFrame = CreateBackdroppedFrame("QuestionFrame", newPollFrame, questionFrameSize.x, questionFrameSize.y);
+	local questionFrame = CreateBackdroppedFrame("QuestionFrame", voteFrame, questionFrameSize.x, questionFrameSize.y);
 	questionFrame:SetPoint("TOP", 0, questionPosY);
 	local questionLabel = CreateLabel(questionFrame, "Question here", 16, "LEFT");
 	questionLabel:SetPoint("TOPLEFT", 13, -12);
 	questionLabel:SetPoint("BOTTOMRIGHT", -13, 12);
-	newPollFrame.questionLabel = questionLabel;
+	voteFrame.questionLabel = questionLabel;
 
 
 		--[[      ANSWERS FRAME      ]]--
-	local answersFrameLabel = CreateLabel(newPollFrame, "Answers:", 16);
+	local answersFrameLabel = CreateLabel(voteFrame, "Answers:", 16);
 	local answersFramePosY = questionPosY - questionFrameSize.y - 32;
 	answersFrameLabel:SetPoint("TOPLEFT", innerFramesMargin, answersFramePosY + 20);
 
@@ -69,7 +71,7 @@ function InitVoteFrame()
 		x = questionFrameSize.x,
 		y = innerFrameSize.y - questionFrameSize.y + questionPosY - 80;
 	}
-	local answersFrame = CreateScrollFrame("AnswersFrame_InterfacePoll", newPollFrame, answersFrameSize.x, answersFrameSize.y);
+	local answersFrame = CreateScrollFrame("AnswersFrame_InterfacePoll", voteFrame, answersFrameSize.x, answersFrameSize.y);
 	answersFrame:SetPoint("TOP", 0, answersFramePosY);
 
 	answersFrame.content.answersBoxes = {};
@@ -77,17 +79,15 @@ function InitVoteFrame()
 	answersScrollFrame = answersFrame;
 
 
-	local sendVoteButton = CreateButton("SendVoteButton", newPollFrame, 120, 30, "Send vote", SendVoteAway);
+	local sendVoteButton = CreateButton("SendVoteButton", voteFrame, 120, 30, "Send vote", SendVoteAway);
 	sendVoteButton:SetPoint("TOP", 0, answersFramePosY - answersFrameSize.y - (innerFramesMargin * 0.4));
 	sendVoteButton:SetFrameLevel(answersParentFrame:GetFrameLevel() + 10);
-	newPollFrame.sendVoteButton = sendVoteButton;
+	voteFrame.sendVoteButton = sendVoteButton;
 
 
 	containingFrame:Hide();
-	newPollFrame:Hide();
-	newPollFrame:SetScript("OnShow", function() g_currentlyBusy = true; end);
-	newPollFrame:SetScript("OnHide", function() HideAllAnswers(); g_currentlyBusy = false; answersCount = 0; additionalAnswersCount = 0; end);
-	g_currentPollsMotherFrame.voteFrame = newPollFrame;
+	voteFrame:Hide();
+	g_currentPollsMotherFrame.voteFrame = voteFrame;
 end
 
 
@@ -337,10 +337,13 @@ local function HideAnswer(answerObject)
 	answerObject.GUID = nil;
 end
 
-HideAllAnswers = function()
+RemoveAllAnswers = function()
 	for i = 1, #answerObjects do
 		HideAnswer(answerObjects[i]);
 	end
+
+	answersCount = 0;
+	additionalAnswersCount = 0;
 end
 
 local function InsertAdditionalAnswer(newAnswer)
@@ -430,6 +433,7 @@ function LoadAndOpenVoteFrame(pollData)
 		pollGUID = pollData.pollGUID;
 		g_currentPollsMotherFrame.voteFrame:Show();
 		g_currentPollsMotherFrame.panel:Show();
+		g_currentPollsMotherFrame.currentPollFrame:Show();
 
 		AddPollDataToMemory(pollData);
 	end
