@@ -10,10 +10,14 @@ function MakeFrameMovable(frame)
 	frame:SetScript("OnMouseUp", function(self) self:StopMovingOrSizing() end);
 end
 
-function MakeFrameClosable(frame, name)
+function MakeFrameClosable(frame, name, onCloseCallback)
 
 	local closeButton = CreateFrame("Button", prefix .. name, frame, "UIPanelCloseButton");
 	closeButton:SetPoint("TOPRIGHT", 0, 0);
+
+	if onCloseCallback ~= nil then
+		closeButton:SetScript("OnClick", onCloseCallback);
+	end
 end
 
 local function CreateBackdrop(frame, alpha)
@@ -269,17 +273,18 @@ local function CreateTab(parent, width, text, id)
 	return tab;
 end
 
-function CreateTabbedFrame(name, parent, width, height, tabsList, tabsNamesList)
+function CreateTabbedFrame(name, parent, width, height, movable, tabsNamesList)
 
-	local mainFrame = CreateBackdroppedFrame(name, parent, width, height);
+	local mainFrame = CreateBackdroppedFrame(name, parent, width, height, movable);
+	mainFrame.tabsButtons = {};
 
 	local previousTextSize = 0;
 
 	for i = 1, #tabsNamesList do
-		local newTab = CreateTab(mainFrame, 10, tabsNamesList[i], i);	-- '10' is placeholder width for tabs, before they get resized
+		local newTab = CreateTab(mainFrame, 10, tabsNamesList[i], i);	-- '10' is placeholder width for tabs, before they get automatically resized
 		newTab:SetPoint("TOPLEFT", previousTextSize, 23);
 		previousTextSize = previousTextSize + newTab:GetTextWidth() + 31;
-		tabsList[i] = newTab;
+		table.insert(mainFrame.tabsButtons, newTab);
 	end
 
 	PanelTemplates_SetNumTabs(mainFrame, #tabsNamesList);

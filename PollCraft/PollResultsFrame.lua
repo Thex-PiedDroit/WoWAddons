@@ -5,19 +5,20 @@ local answersParentFrame = nil;
 local answersScrollFrame = nil;
 local answersCount = 0;
 
-local HideAllAnswers = nil;
+local RemoveAllAnswers = nil;
 
 
 function InitResultsFrame()
 
 	if g_currentPollsMotherFrame.resultsFrame ~= nil then
+		RemoveAllAnswers();
 		return;
 	end
 
 	innerFramesMargin = GetInnerFramesMargin();
 	local motherFrameSize = GetMotherFrameSize();
 
-	local containingFrame = g_currentPollsMotherFrame.panel;
+	local containingFrame = g_currentPollsMotherFrame.currentPollFrame;
 
 	local innerFrameSize =
 	{
@@ -77,8 +78,6 @@ function InitResultsFrame()
 
 	g_currentPollsMotherFrame.resultsFrame = mainFrame;
 	mainFrame:Hide();
-
-	mainFrame:SetScript("OnHide", function() HideAllAnswers(); answersCount = 0; end);
 end
 
 
@@ -170,14 +169,6 @@ local function InsertAnswerObject(oldIndex, newIndex)
 	answerObjectsIndexList[oldIndex] = cachedIndex;
 end
 
-HideAllAnswers = function()
-	for i = 1, #answerObjects do
-		local answerObject = answerObjects[answerObjectsIndexList[i]];
-		answerObject.answerContainingFrame:Hide();
-		answerObject.GUID = nil;
-	end
-end
-
 
 local function SortAnswer(index, votesCount)
 
@@ -204,6 +195,20 @@ local function ReSortAnswers()
 		currentAnswerObject.number:SetText(i);
 	end
 end
+
+RemoveAllAnswers = function()
+
+	ReSortAnswers();
+
+	for i = 1, #answerObjects do
+		local answerObject = answerObjects[answerObjectsIndexList[i]];
+		answerObject.answerContainingFrame:Hide();
+		answerObject.GUID = nil;
+	end
+
+	answersCount = 0;
+end
+
 
 local function VoteForAnswer(index, pointsToAdd)
 
@@ -260,11 +265,7 @@ end
 
 function LoadAndOpenPollResultsFrame(pollData)
 
-	if g_currentPollsMotherFrame.resultsFrame == nil then
-		InitResultsFrame();
-	else
-		ReSortAnswers();
-	end
+	InitResultsFrame();
 
 	g_currentPollsMotherFrame.voteFrame:Hide();
 	g_currentPollsMotherFrame.resultsFrame.questionLabel:SetText(pollData.question);
@@ -276,8 +277,9 @@ function LoadAndOpenPollResultsFrame(pollData)
 	LoadResults(pollData.results);
 
 	pollGUID = pollData.pollGUID;
-	g_currentPollsMotherFrame.resultsFrame:Show();
 	g_currentPollsMotherFrame.panel:Show();
+	g_currentPollsMotherFrame.resultsFrame:Show();
+	g_currentPollsMotherFrame.currentPollFrame:Show();
 end
 
 function AddVoteToResultsDisplay(voteData)
