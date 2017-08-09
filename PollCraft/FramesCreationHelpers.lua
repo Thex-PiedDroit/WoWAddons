@@ -177,6 +177,22 @@ function CreateBackdroppedFrame(name, parent, width, height, movable)
 	return newFrame;
 end
 
+local titleFramesMargin = 0;
+
+function CreateBackdroppedTitle(name, parent, text)
+
+	if titleFramesMargin == 0 then
+		titleFramesMargin = GetInnerFramesMargin() * 2;
+	end
+
+	local titleFrame = CreateBackdroppedFrame(name, parent, 300, 35);	-- '300' is placeholder before resizing with text size
+	local mainFrameTitle = CreateLabel(titleFrame, text, 20);
+	titleFrame:SetWidth(mainFrameTitle:GetWidth() + titleFramesMargin);
+	mainFrameTitle:SetPoint("CENTER", 0, 0);
+
+	return titleFrame;
+end
+
 local function CreateScrollbar(scrollFrame)
 
 	scrollbar = CreateFrame("Slider", nil, scrollFrame, "UIPanelScrollBarTemplate");

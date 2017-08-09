@@ -37,10 +37,8 @@ function InitVoteFrame()
 	local voteFrame = CreateBackdroppedFrame("VoteFrame", containingFrame, innerFrameSize.x, innerFrameSize.y);
 	voteFrame:SetPoint("BOTTOM", 0, motherFrameSize.x / 80);
 
-	local titleFrame = CreateBackdroppedFrame("VoteFrameTitleBackdrop", voteFrame, 250, 35);
+	local titleFrame = CreateBackdroppedTitle("VoteFrameTitle", voteFrame, "PollCraft - Vote");
 	titleFrame:SetPoint("TOP", containingFrame, "TOP", 0, -20);
-	local mainFrameTitle = CreateLabel(titleFrame, "PollCraft - Poll received", 20);
-	mainFrameTitle:SetPoint("CENTER", 0, 0);
 
 
 		--[[      QUESTION FRAME      ]]--

@@ -29,10 +29,8 @@ function InitResultsFrame()
 	local mainFrame = CreateBackdroppedFrame("PollResultsFrame", containingFrame, innerFrameSize.x, innerFrameSize.y, false);
 	mainFrame:SetPoint("BOTTOM", 0, motherFrameSize.x / 80);
 
-	local titleFrame = CreateBackdroppedFrame("PollResultsFrameTitleBackdrop", mainFrame, 250, 35);
+	local titleFrame = CreateBackdroppedTitle("PollResultsFrameTitle", mainFrame, "PollCraft - Poll results");
 	titleFrame:SetPoint("TOP", containingFrame, "TOP", 0, -20);
-	local mainFrameTitle = CreateLabel(titleFrame, "PollCraft - Poll results", 20);
-	mainFrameTitle:SetPoint("CENTER", 0, 0);
 
 
 		--[[      QUESTION FRAME      ]]--
