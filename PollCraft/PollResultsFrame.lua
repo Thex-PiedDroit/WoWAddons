@@ -22,8 +22,8 @@ function InitResultsFrame()
 
 	local innerFrameSize =
 	{
-		x = motherFrameSize.x - innerFramesMargin,
-		y = motherFrameSize.y - (innerFramesMargin * 5)
+		x = motherFrameSize.x - (innerFramesMargin * 2),
+		y = motherFrameSize.y - (innerFramesMargin * 10)
 	};
 
 	local mainFrame = CreateBackdroppedFrame("PollResultsFrame", containingFrame, innerFrameSize.x, innerFrameSize.y, false);
@@ -34,13 +34,13 @@ function InitResultsFrame()
 
 
 		--[[      QUESTION FRAME      ]]--
-	local questionPosY = -45;
+	local questionPosY = -44;
 	local questionSectionLabel = CreateLabel(mainFrame, "Question:", 16);
 	questionSectionLabel:SetPoint("TOPLEFT", innerFramesMargin, questionPosY + 22);
 
 	local questionFrameSize =
 	{
-		x = innerFrameSize.x - innerFramesMargin,
+		x = innerFrameSize.x - (innerFramesMargin * 2),
 		y = 56
 	}
 	local questionFrame = CreateBackdroppedFrame("QuestionFrame", mainFrame, questionFrameSize.x, questionFrameSize.y);
@@ -70,7 +70,7 @@ function InitResultsFrame()
 
 
 	local changeVoteButton = CreateButton("SendVoteButton", mainFrame, 120, 30, "Change vote");
-	changeVoteButton:SetPoint("TOP", 0, answersFramePosY - answersFrameSize.y - (innerFramesMargin * 0.4));
+	changeVoteButton:SetPoint("BOTTOM", mainFrame, "BOTTOM", 0, innerFramesMargin * 1.6);
 	changeVoteButton:SetFrameLevel(answersParentFrame:GetFrameLevel() + 10);
 
 
@@ -82,7 +82,7 @@ end
 local answerObjects = {};
 local answerObjectsIndexList = {};
 local answersFramesHeight = 70;
-local totalHeightOfEachAnswer = answersFramesHeight + (innerFramesMargin * 0.25);
+local totalHeightOfEachAnswer = answersFramesHeight + (innerFramesMargin * 0.5);
 
 local function LoadAnswer(answerObject)
 
@@ -105,25 +105,25 @@ local function LoadAnswer(answerObject)
 	else
 		local answerIndexStr = tostring(answersCount + 1);
 
-		local answerContainingFrameWidth = answersParentFrame:GetWidth() - (innerFramesMargin * 2.5);
+		local answerContainingFrameWidth = answersParentFrame:GetWidth() - (innerFramesMargin * 4);
 		local textFramePosY = -((totalHeightOfEachAnswer * answersCount) + 10);
 
 		local answerContainingFrame = CreateFrame("Frame", "Answer" .. answerIndexStr .. "ContainingFrame", answersParentFrame);
 		answerContainingFrame:SetSize(answerContainingFrameWidth, answersFramesHeight);
-		answerContainingFrame:SetPoint("TOPLEFT", innerFramesMargin * 0.5, textFramePosY);
+		answerContainingFrame:SetPoint("TOPLEFT", innerFramesMargin, textFramePosY);
 
-		local answerFrameWidth = answerContainingFrameWidth - (innerFramesMargin * 1.5) - 50;
+		local answerFrameWidth = answerContainingFrameWidth - 70;
 		local textFrame = CreateBackdroppedFrame("Answer" .. answerIndexStr .. "TextFrame", answerContainingFrame, answerFrameWidth, answersFramesHeight);
-		textFrame:SetPoint("TOPLEFT", innerFramesMargin + 20, 0);
+		textFrame:SetPoint("TOPLEFT", innerFramesMargin + 22, 0);
 		local answerLabel = CreateLabel(textFrame, answerText, 16, "LEFT");
 		answerLabel:SetPoint("TOPLEFT", innerFramesMargin, -11);
 		answerLabel:SetPoint("BOTTOMRIGHT", -innerFramesMargin, 11);
 
 		local newNumber = CreateLabel(answerContainingFrame, answerIndexStr .. '.', 16);
-		newNumber:SetPoint("TOPRIGHT", textFrame, "TOPLEFT", 14 - innerFramesMargin, - 8);
+		newNumber:SetPoint("TOPRIGHT", textFrame, "TOPLEFT", -2, -8);
 
 		local votesCountLabel = CreateLabel(answerContainingFrame, "0", 16);
-		votesCountLabel:SetPoint("LEFT", textFrame, "RIGHT", innerFramesMargin - 5, 0);
+		votesCountLabel:SetPoint("LEFT", textFrame, "RIGHT", innerFramesMargin, 0);
 
 		object =
 		{

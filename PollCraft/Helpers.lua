@@ -35,6 +35,10 @@ function PollCraft_Print(message)
 	print(pollCraftPrefix .. message);
 end
 
+function GetSizeDifferenceBetweenFrameAndEditBox()
+	return 12;
+end
+
 
 function PollCraft_GetNameForPrint(targetName, targetRealm)
 

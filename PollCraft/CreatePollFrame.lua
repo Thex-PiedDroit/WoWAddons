@@ -6,7 +6,8 @@ local mainFrameSize =
 	x = 800,
 	y = 600
 };
-local framesMargin = (mainFrameSize.x / 40);
+local innerFramesMargin = (mainFrameSize.x / 80);
+local sizeDifferenceBetweenFrameAndEditBox = 0;
 
 local CreatePollTypesDropdownList = nil;
 local answersParentFrame = nil;
@@ -22,6 +23,8 @@ function InitCreatePollFrame()
 		return;
 	end
 
+	sizeDifferenceBetweenFrameAndEditBox = GetSizeDifferenceBetweenFrameAndEditBox();
+
 	local mainFrame = CreateBackdroppedFrame("CreatePollFrame", UIParent, mainFrameSize.x, mainFrameSize.y, true);
 	mainFrame:SetPoint("CENTER", 0, 0);
 
@@ -32,8 +35,8 @@ function InitCreatePollFrame()
 
 	local optionsFrameSize =
 	{
-		x = mainFrameSize.x - framesMargin,
-		y = mainFrameSize.y - (framesMargin * 4)
+		x = mainFrameSize.x - (innerFramesMargin * 2),
+		y = mainFrameSize.y - (innerFramesMargin * 8)
 	};
 
 	local newPollFrame = CreateBackdroppedFrame("CreatePollFrame", mainFrame, optionsFrameSize.x, optionsFrameSize.y);
@@ -44,15 +47,15 @@ function InitCreatePollFrame()
 	mainFrame.pollTypesDropDownList = newPollFrame.pollTypesDropDownList;
 
 	local allowNewAnswersLabel = CreateLabel(newPollFrame, "Allow users to add answers", 16);
-	allowNewAnswersLabel:SetPoint("TOPLEFT", framesMargin + 220, pollTypesListPosY + 22);
+	allowNewAnswersLabel:SetPoint("TOPLEFT", innerFramesMargin + 220, pollTypesListPosY + 22);
 	local allowNewAnswersCheck = CreateCheckButton(newPollFrame, "AllowNewAnswersCheckButton");
-	allowNewAnswersCheck:SetPoint("TOPLEFT", framesMargin + 195, pollTypesListPosY + 25);
+	allowNewAnswersCheck:SetPoint("TOPLEFT", innerFramesMargin + 195, pollTypesListPosY + 25);
 	mainFrame.allowNewAnswersCheck = allowNewAnswersCheck;
 
 	local allowMultipleVotesLabel = CreateLabel(newPollFrame, "Allow multiple votes", 16);
-	allowMultipleVotesLabel:SetPoint("TOPLEFT", framesMargin + 220, pollTypesListPosY - 5);
+	allowMultipleVotesLabel:SetPoint("TOPLEFT", innerFramesMargin + 220, pollTypesListPosY - 5);
 	local allowMultipleVotesCheck = CreateCheckButton(newPollFrame, "AllowMultipleVotesCheckButton");
-	allowMultipleVotesCheck:SetPoint("TOPLEFT", framesMargin + 195, pollTypesListPosY - 2);
+	allowMultipleVotesCheck:SetPoint("TOPLEFT", innerFramesMargin + 195, pollTypesListPosY - 2);
 	mainFrame.allowMultipleVotesCheck = allowMultipleVotesCheck;
 
 
@@ -61,11 +64,11 @@ function InitCreatePollFrame()
 	local questionEditBoxPosY = pollTypesListPosY - 80;
 
 	local questionEditBoxLabel = CreateLabel(newPollFrame, "Question:", 16);
-	questionEditBoxLabel:SetPoint("TOPLEFT", framesMargin, questionEditBoxPosY + 26);
+	questionEditBoxLabel:SetPoint("TOPLEFT", innerFramesMargin, questionEditBoxPosY + 26);
 
 	local questionEditBoxSize =
 	{
-		x = optionsFrameSize.x - (framesMargin * 2),
+		x = optionsFrameSize.x - (innerFramesMargin * 2) - sizeDifferenceBetweenFrameAndEditBox,
 		y = 44
 	}
 	local newQuestionEditBox = CreateEditBox("QuestionEditBox", newPollFrame, questionEditBoxSize.x, questionEditBoxSize.y, false, nil, nil, 16);
@@ -76,11 +79,11 @@ function InitCreatePollFrame()
 	--[[      ANSWERS FRAME      ]]--
 	local answersEditBoxLabel = CreateLabel(newPollFrame, "Answers:", 16);
 	local answersFramePosY = questionEditBoxPosY - questionEditBoxSize.y - 58;
-	answersEditBoxLabel:SetPoint("TOPLEFT", framesMargin, answersFramePosY + 20);
+	answersEditBoxLabel:SetPoint("TOPLEFT", innerFramesMargin, answersFramePosY + 20);
 
 	local answersFrameSize =
 	{
-		x = questionEditBoxSize.x + 12,
+		x = questionEditBoxSize.x + sizeDifferenceBetweenFrameAndEditBox,
 		y = optionsFrameSize.y - questionEditBoxSize.y + questionEditBoxPosY - 120;
 	}
 	local answersFrame = CreateScrollFrame("AnswersFrame_InterfacePoll", newPollFrame, answersFrameSize.x, answersFrameSize.y);
@@ -97,7 +100,7 @@ function InitCreatePollFrame()
 
 
 	local createPollButton = CreateButton("CreatePollButton", newPollFrame, 120, 30, "Create Poll", SendNewPollAway);
-	createPollButton:SetPoint("TOP", 0, answersFramePosY - answersFrameSize.y - (framesMargin * 0.5));
+	createPollButton:SetPoint("BOTTOM", newPollFrame, "BOTTOM", 0, innerFramesMargin * 2);
 	createPollButton:SetFrameLevel(answersFrameLevel + 10);
 
 
@@ -109,7 +112,7 @@ end
 CreatePollTypesDropdownList = function(parentFrame, posY)
 
 	local listLabel = CreateLabel(parentFrame, "Poll Type", 16);
-	listLabel:SetPoint("TOPLEFT", framesMargin + 3, posY + 22);
+	listLabel:SetPoint("TOPLEFT", innerFramesMargin + 3, posY + 22);
 
 	local availableOptions =
 	{
@@ -145,18 +148,18 @@ CreateAnswerEditBox = function()
 
 	local answerNumberStr = tostring(answersCount + 1);
 
-	local answerEditBoxWidth = answersParentFrame:GetWidth() - (framesMargin * 4) - 40;
+	local answerEditBoxWidth = answersParentFrame:GetWidth() - (innerFramesMargin * 2) - 90;
 
 	local boxPosY = -((totalHeightOfEachAnswer * answersCount) + marginBetweenAnswers);
 
-	local answerNumber = CreateLabel(answersParentFrame, answerNumberStr .. ".", 16);
-	answerNumber:SetPoint("TOPLEFT", framesMargin - 5, boxPosY - 5);
-
 	local newAnswerEditBox = CreateEditBox("AnswerEditBox", answersParentFrame, answerEditBoxWidth, answerEditBoxHeight, false, AddOrRemoveAnswerEditBox, answersCount + 1, 16);
-	newAnswerEditBox:SetPoint("TOPLEFT", framesMargin + 30, boxPosY);
+	newAnswerEditBox:SetPoint("TOPLEFT", innerFramesMargin + 40, boxPosY);
+
+	local answerNumber = CreateLabel(answersParentFrame, answerNumberStr .. ".", 16);
+	answerNumber:SetPoint("TOPRIGHT", newAnswerEditBox, "TOPLEFT", -innerFramesMargin, 0);
 
 	local deleteButton = CreateIconButton("DeleteAnswer" .. answerNumberStr .. "Button", answersParentFrame, 20, "Interface/Buttons/Ui-grouploot-pass-up", "Interface/Buttons/Ui-grouploot-pass-down", nil, RemoveAnswer, answersCount + 1);
-	deleteButton:SetPoint("TOPLEFT", framesMargin + 30 + answerEditBoxWidth + 12, boxPosY);
+	deleteButton:SetPoint("TOPLEFT", newAnswerEditBox, "TOPRIGHT", innerFramesMargin, 0);
 
 	answersCount = answersCount + 1;
 
