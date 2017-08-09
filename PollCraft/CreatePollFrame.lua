@@ -25,10 +25,8 @@ function InitCreatePollFrame()
 	local mainFrame = CreateBackdroppedFrame("CreatePollFrame", UIParent, mainFrameSize.x, mainFrameSize.y, true);
 	mainFrame:SetPoint("CENTER", 0, 0);
 
-	local titleFrame = CreateBackdroppedFrame("CreatePollFrameTitleBackdrop", mainFrame, 250, 35);
+	local titleFrame = CreateBackdroppedTitle("CreatePollFrameTitle", mainFrame, "PollCraft - Create Poll")
 	titleFrame:SetPoint("TOP", 0, -20);
-	local mainFrameTitle = CreateLabel(titleFrame, "PollCraft - Create Poll", 20);
-	mainFrameTitle:SetPoint("CENTER", 0, 0);
 
 
 
