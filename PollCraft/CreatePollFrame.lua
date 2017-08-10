@@ -1,13 +1,14 @@
 
 g_createPollFrame = {};
 
-local mainFrameSize =
+local containingFrameSize =
 {
 	x = 800,
 	y = 600
 };
-local innerFramesMargin = mainFrameSize.x / 80;
-local sizeDifferenceBetweenFrameAndEditBox = 0;
+local innerFramesMargin = GetInnerFramesMargin();
+local marginBetweenUpperBordersAndText = GetTextMarginFromUpperFramesBorders();
+local sizeDifferenceBetweenFrameAndEditBox = GetSizeDifferenceBetweenFrameAndEditBox();
 
 local CreatePollTypesDropdownList = nil;
 local answersParentFrame = nil;
@@ -23,71 +24,63 @@ function InitCreatePollFrame()
 		return;
 	end
 
-	sizeDifferenceBetweenFrameAndEditBox = GetSizeDifferenceBetweenFrameAndEditBox();
+	local containingFrame = CreateBackdroppedFrame("CreatePollFrame", UIParent, containingFrameSize, true);
+	containingFrame:SetPoint("CENTER", 0, 0);
 
-	local mainFrame = CreateBackdroppedFrame("CreatePollFrame", UIParent, mainFrameSize, true);
-	mainFrame:SetPoint("CENTER", 0, 0);
-
-	local titleFrame = CreateBackdroppedTitle("CreatePollFrameTitle", mainFrame, "PollCraft - Create Poll")
-	titleFrame:SetPoint("TOP", 0, -20);
+	local mainFrame = CreateBackdropTitledInnerFrame("CreatePollFrame", containingFrame, "PollCraft - Create Poll");
+	local innerFrameSize = GetFrameSizeAsTable(mainFrame);
 
 
+		--[[      CREATE POLL BUTTON      ]]--
+	local createPollButton = CreateButton("CreatePollButton", mainFrame, { x = 120, y = 30 }, "Create Poll", SendNewPollAway);
+	createPollButton:SetPoint("BOTTOM", mainFrame, "BOTTOM", 0, innerFramesMargin * 2);
 
-	local optionsFrameSize =
-	{
-		x = mainFrameSize.x - (innerFramesMargin * 2),
-		y = mainFrameSize.y - (innerFramesMargin * 8)
-	};
 
-	local newPollFrame = CreateBackdroppedFrame("CreatePollFrame", mainFrame, optionsFrameSize);
-	newPollFrame:SetPoint("BOTTOM", 0, mainFrameSize.x / 80);
+		--[[      POLL OPTIONS      ]]--
+	CreatePollTypesDropdownList(mainFrame);
+	containingFrame.pollTypesDropDownList = mainFrame.pollTypesDropDownList;
 
-	local pollTypesListPosY = -50;
-	CreatePollTypesDropdownList(newPollFrame, pollTypesListPosY);
-	mainFrame.pollTypesDropDownList = newPollFrame.pollTypesDropDownList;
+	local checksPosX = innerFramesMargin + 195;
+	local allowNewAnswersLabel = CreateLabel(mainFrame, "Allow users to add answers", 16);
+	allowNewAnswersLabel:SetPoint("TOPLEFT", checksPosX + 25, marginBetweenUpperBordersAndText);
+	local allowNewAnswersCheck = CreateCheckButton(mainFrame, "AllowNewAnswersCheckButton");
+	allowNewAnswersCheck:SetPoint("TOPLEFT", checksPosX, marginBetweenUpperBordersAndText + 3);
+	containingFrame.allowNewAnswersCheck = allowNewAnswersCheck;
 
-	local allowNewAnswersLabel = CreateLabel(newPollFrame, "Allow users to add answers", 16);
-	allowNewAnswersLabel:SetPoint("TOPLEFT", innerFramesMargin + 220, pollTypesListPosY + 22);
-	local allowNewAnswersCheck = CreateCheckButton(newPollFrame, "AllowNewAnswersCheckButton");
-	allowNewAnswersCheck:SetPoint("TOPLEFT", innerFramesMargin + 195, pollTypesListPosY + 25);
-	mainFrame.allowNewAnswersCheck = allowNewAnswersCheck;
-
-	local allowMultipleVotesLabel = CreateLabel(newPollFrame, "Allow multiple votes", 16);
-	allowMultipleVotesLabel:SetPoint("TOPLEFT", innerFramesMargin + 220, pollTypesListPosY - 5);
-	local allowMultipleVotesCheck = CreateCheckButton(newPollFrame, "AllowMultipleVotesCheckButton");
-	allowMultipleVotesCheck:SetPoint("TOPLEFT", innerFramesMargin + 195, pollTypesListPosY - 2);
-	mainFrame.allowMultipleVotesCheck = allowMultipleVotesCheck;
+	local allowMultipleVotesLabel = CreateLabel(mainFrame, "Allow multiple votes", 16);
+	allowMultipleVotesLabel:SetPoint("TOPLEFT", allowNewAnswersLabel, "TOPLEFT", 0, marginBetweenUpperBordersAndText * 1.5);
+	local allowMultipleVotesCheck = CreateCheckButton(mainFrame, "AllowMultipleVotesCheckButton");
+	allowMultipleVotesCheck:SetPoint("TOPLEFT", allowNewAnswersCheck, "TOPLEFT", 0, marginBetweenUpperBordersAndText * 1.5);
+	containingFrame.allowMultipleVotesCheck = allowMultipleVotesCheck;
 
 
 
-	--[[      QUESTION EDITBOX      ]]--
-	local questionEditBoxPosY = pollTypesListPosY - 80;
-
-	local questionEditBoxLabel = CreateLabel(newPollFrame, "Question:", 16);
-	questionEditBoxLabel:SetPoint("TOPLEFT", innerFramesMargin, questionEditBoxPosY + 26);
-
+		--[[      QUESTION EDITBOX      ]]--
+	local questionEditBoxPosY = marginBetweenUpperBordersAndText * 6;
 	local questionEditBoxSize =
 	{
-		x = optionsFrameSize.x - (innerFramesMargin * 2) - sizeDifferenceBetweenFrameAndEditBox,
+		x = innerFrameSize.x - (innerFramesMargin * 2) - sizeDifferenceBetweenFrameAndEditBox,
 		y = 44
 	}
-	local newQuestionEditBox = CreateEditBox("QuestionEditBox", newPollFrame, questionEditBoxSize, false, nil, nil, 16);
-	newQuestionEditBox:SetPoint("TOP", 0, questionEditBoxPosY);
-	mainFrame.questionEditBoxScrollFrame = newQuestionEditBox;
+	local newQuestionEditBox = CreateEditBox("QuestionEditBox", mainFrame, questionEditBoxSize, false, nil, nil, 16);
+	newQuestionEditBox:SetPoint("TOPLEFT", mainFrame.pollTypesDropDownList, "BOTTOMLEFT", innerFramesMargin + (sizeDifferenceBetweenFrameAndEditBox * 0.5), marginBetweenUpperBordersAndText * 2);
+	local questionEditBoxLabel = CreateLabel(newQuestionEditBox, "Question:", 16);
+	questionEditBoxLabel:SetPoint("TOPLEFT", 10 - (sizeDifferenceBetweenFrameAndEditBox * 0.5), (sizeDifferenceBetweenFrameAndEditBox * 0.5) - marginBetweenUpperBordersAndText);
+
+	containingFrame.questionEditBoxScrollFrame = newQuestionEditBox;
 
 
-	--[[      ANSWERS FRAME      ]]--
-	local answersEditBoxLabel = CreateLabel(newPollFrame, "Answers:", 16);
-	local answersFramePosY = questionEditBoxPosY - questionEditBoxSize.y - 58;
-	answersEditBoxLabel:SetPoint("TOPLEFT", innerFramesMargin, answersFramePosY + 20);
-
+		--[[      ANSWERS FRAME      ]]--
 	local answersFrameSize =
 	{
 		x = questionEditBoxSize.x + sizeDifferenceBetweenFrameAndEditBox,
-		y = optionsFrameSize.y - questionEditBoxSize.y + questionEditBoxPosY - 120;
+		y = 100		-- Placeholder before resizing
 	}
-	local answersFrame = CreateScrollFrame("AnswersFrame_InterfacePoll", newPollFrame, answersFrameSize);
-	answersFrame:SetPoint("TOP", 0, answersFramePosY);
+	local answersFrame = CreateScrollFrame("AnswersFrame_InterfacePoll", mainFrame, answersFrameSize);
+	answersFrame:SetPoint("TOP", newQuestionEditBox, "BOTTOM", 0, marginBetweenUpperBordersAndText * 2);
+	answersFrame:SetPoint("BOTTOM", createPollButton, "TOP", 0, (innerFramesMargin * 2) - 8);
+	local answersEditBoxLabel = CreateLabel(answersFrame, "Answers:", 16);
+	answersEditBoxLabel:SetPoint("TOPLEFT", 10, -marginBetweenUpperBordersAndText);
 
 	answersFrame.content.answersBoxes = {};
 	answersParentFrame = answersFrame.content;
@@ -98,21 +91,18 @@ function InitCreatePollFrame()
 	allowMultipleVotesCheck:SetFrameLevel(answersFrameLevel + 10);
 	newQuestionEditBox:SetFrameLevel(answersFrameLevel + 10);
 
-
-	local createPollButton = CreateButton("CreatePollButton", newPollFrame, { x = 120, y = 30 }, "Create Poll", SendNewPollAway);
-	createPollButton:SetPoint("BOTTOM", newPollFrame, "BOTTOM", 0, innerFramesMargin * 2);
 	createPollButton:SetFrameLevel(answersFrameLevel + 10);
 
 
-	g_createPollFrame.createPollFrame = newPollFrame;
-	g_createPollFrame.panel = mainFrame;
+	g_createPollFrame.createPollFrame = mainFrame;
+	g_createPollFrame.panel = containingFrame;
 end
 
 
-CreatePollTypesDropdownList = function(parentFrame, posY)
+CreatePollTypesDropdownList = function(parentFrame)
 
 	local listLabel = CreateLabel(parentFrame, "Poll Type", 16);
-	listLabel:SetPoint("TOPLEFT", innerFramesMargin + 3, posY + 22);
+	listLabel:SetPoint("TOPLEFT", innerFramesMargin + 10, marginBetweenUpperBordersAndText);
 
 	local availableOptions =
 	{
@@ -128,7 +118,7 @@ CreatePollTypesDropdownList = function(parentFrame, posY)
 	}
 
 	local pollTypesList = CreateDropDownList("PollTypesList", parentFrame, 140, availableOptions);
-	pollTypesList:SetPoint("TOPLEFT", 0, posY);
+	pollTypesList:SetPoint("TOPLEFT", 0, marginBetweenUpperBordersAndText * 2);
 	UIDropDownMenu_SetSelectedValue(pollTypesList, availableOptions[1].value, false);
 	parentFrame.pollTypesDropDownList = pollTypesList;
 end

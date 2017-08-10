@@ -1,5 +1,7 @@
 
-local innerFramesMargin = 0;
+local innerFramesMargin = GetInnerFramesMargin();
+local marginBetweenUpperBordersAndText = GetTextMarginFromUpperFramesBorders();
+local sizeDifferenceBetweenFrameAndEditBox = GetSizeDifferenceBetweenFrameAndEditBox();
 
 local answersParentFrame = nil;
 local answersScrollFrame = nil;
@@ -15,36 +17,30 @@ function InitResultsFrame()
 		return;
 	end
 
-	innerFramesMargin = GetInnerFramesMargin();
 	local motherFrameSize = GetMotherFrameSize();
-
 	local containingFrame = g_currentPollsMotherFrame.currentPollFrame;
 
-	local innerFrameSize =
-	{
-		x = motherFrameSize.x - (innerFramesMargin * 2),
-		y = motherFrameSize.y - (innerFramesMargin * 10)
-	};
 
-	local mainFrame = CreateBackdroppedFrame("PollResultsFrame", containingFrame, innerFrameSize, false);
-	mainFrame:SetPoint("BOTTOM", 0, motherFrameSize.x / 80);
+	local mainFrame = CreateBackdropTitledInnerFrame("PollResultsFrame", containingFrame, "PollCraft - Poll results");
+	local innerFrameSize = GetFrameSizeAsTable(mainFrame);
 
-	local titleFrame = CreateBackdroppedTitle("PollResultsFrameTitle", mainFrame, "PollCraft - Poll results");
-	titleFrame:SetPoint("TOP", containingFrame, "TOP", 0, -20);
+
+		--[[      CHANGE VOTE BUTTON      ]]--
+	local changeVoteButton = CreateButton("SendVoteButton", mainFrame, { x = 120, y = 30 }, "Change vote");
+	changeVoteButton:SetPoint("BOTTOM", mainFrame, "BOTTOM", 0, innerFramesMargin * 2);
 
 
 		--[[      QUESTION FRAME      ]]--
-	local questionPosY = -44;
-	local questionSectionLabel = CreateLabel(mainFrame, "Question:", 16);
-	questionSectionLabel:SetPoint("TOPLEFT", innerFramesMargin, questionPosY + 22);
-
 	local questionFrameSize =
 	{
 		x = innerFrameSize.x - (innerFramesMargin * 2),
-		y = 56
+		y = 44 + sizeDifferenceBetweenFrameAndEditBox;
 	}
 	local questionFrame = CreateBackdroppedFrame("QuestionFrame", mainFrame, questionFrameSize);
-	questionFrame:SetPoint("TOP", 0, questionPosY);
+	questionFrame:SetPoint("TOP", 0, marginBetweenUpperBordersAndText * 2);
+	local questionSectionLabel = CreateLabel(questionFrame, "Question:", 16);
+	questionSectionLabel:SetPoint("TOPLEFT", 10, -marginBetweenUpperBordersAndText);
+
 	local questionLabel = CreateLabel(questionFrame, "Question here", 16, "LEFT");
 	questionLabel:SetPoint("TOPLEFT", 13, -12);
 	questionLabel:SetPoint("BOTTOMRIGHT", -13, 12);
@@ -52,25 +48,21 @@ function InitResultsFrame()
 
 
 		--[[      ANSWERS FRAME      ]]--
-	local answersFrameLabel = CreateLabel(mainFrame, "Answers:", 16);
-	local answersFramePosY = questionPosY - questionFrameSize.y - 32;
-	answersFrameLabel:SetPoint("TOPLEFT", innerFramesMargin, answersFramePosY + 20);
-
 	local answersFrameSize =
 	{
 		x = questionFrameSize.x,
-		y = innerFrameSize.y - questionFrameSize.y + questionPosY - 80;
+		y = 100		-- Placeholder before resizing
 	}
 	local answersFrame = CreateScrollFrame("AnswersFrame_PollResults", mainFrame, answersFrameSize);
-	answersFrame:SetPoint("TOP", 0, answersFramePosY);
+	answersFrame:SetPoint("TOP", questionFrame, "BOTTOM", 0, marginBetweenUpperBordersAndText * 2);
+	answersFrame:SetPoint("BOTTOM", changeVoteButton, "TOP", 0, (innerFramesMargin * 2) - 8);
+	local answersFrameLabel = CreateLabel(answersFrame, "Answers:", 16);
+	answersFrameLabel:SetPoint("TOPLEFT", 10, -marginBetweenUpperBordersAndText);
 
 	answersFrame.content.answersBoxes = {};
 	answersParentFrame = answersFrame.content;
 	answersScrollFrame = answersFrame;
 
-
-	local changeVoteButton = CreateButton("SendVoteButton", mainFrame, { x = 120, y = 30 }, "Change vote");
-	changeVoteButton:SetPoint("BOTTOM", mainFrame, "BOTTOM", 0, innerFramesMargin * 1.6);
 	changeVoteButton:SetFrameLevel(answersParentFrame:GetFrameLevel() + 10);
 
 
@@ -82,6 +74,7 @@ end
 local answerObjects = {};
 local answerObjectsIndexList = {};
 local answersFramesSize = { x = 0, y = 70 };
+local answersTextFrameSize = table.clone(answersFramesSize);
 local totalHeightOfEachAnswer = answersFramesSize.y + (innerFramesMargin * 0.5);
 
 local function LoadAnswer(answerObject)
@@ -105,17 +98,17 @@ local function LoadAnswer(answerObject)
 	else
 		local answerIndexStr = tostring(answersCount + 1);
 
-		local answerContainingFrameWidth = answersParentFrame:GetWidth() - (innerFramesMargin * 4);
-		local textFramePosY = -((totalHeightOfEachAnswer * answersCount) + 10);
+		if answersFramesSize.x == 0 then
+			answersFramesSize.x = answersParentFrame:GetWidth() - (innerFramesMargin * 2) - answersParentFrame:GetParent().scrollbar:GetWidth();
+			answersTextFrameSize.x = answersFramesSize.x - (innerFramesMargin * 2) - 54;
+		end
 
 		local answerContainingFrame = CreateFrame("Frame", "Answer" .. answerIndexStr .. "ContainingFrame", answersParentFrame);
-		answerContainingFrame:SetSize(answerContainingFrameWidth, answersFramesSize.y);
+		answerContainingFrame:SetSize(answersFramesSize.x, answersFramesSize.y);
+		local textFramePosY = -(totalHeightOfEachAnswer * answersCount) - innerFramesMargin;
 		answerContainingFrame:SetPoint("TOPLEFT", innerFramesMargin, textFramePosY);
 
-		if answersFramesSize.x == 0 then
-			answersFramesSize.x = answerContainingFrameWidth - 70;
-		end
-		local textFrame = CreateBackdroppedFrame("Answer" .. answerIndexStr .. "TextFrame", answerContainingFrame, answersFramesSize);
+		local textFrame = CreateBackdroppedFrame("Answer" .. answerIndexStr .. "TextFrame", answerContainingFrame, answersTextFrameSize);
 		textFrame:SetPoint("TOPLEFT", innerFramesMargin + 22, 0);
 		local answerLabel = CreateLabel(textFrame, answerText, 16, "LEFT");
 		answerLabel:SetPoint("TOPLEFT", innerFramesMargin, -11);
@@ -143,7 +136,7 @@ local function LoadAnswer(answerObject)
 	end
 
 	answersCount = answersCount + 1;
-	UpdateScrollBar(answersScrollFrame, answersCount * totalHeightOfEachAnswer);
+	UpdateScrollBar(answersScrollFrame, (answersCount * totalHeightOfEachAnswer) - innerFramesMargin);
 end
 
 local function InsertAnswerObject(oldIndex, newIndex)
@@ -192,7 +185,7 @@ local function ReSortAnswers()
 
 	for i = 1, #answerObjects do
 		local currentAnswerObject = answerObjects[answerObjectsIndexList[i]];
-		currentAnswerObject.number:SetText(i);
+		currentAnswerObject.number:SetText(i .. ".");
 	end
 end
 
