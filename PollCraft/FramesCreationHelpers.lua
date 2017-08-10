@@ -2,6 +2,12 @@
 local prefix = "PollCraft_";
 
 
+function GetFrameSizeAsTable(frame)
+
+	local width, height = frame:GetSize();
+	return { x = width, y = height };
+end
+
 function MakeFrameMovable(frame)
 
 	frame:SetMovable(true);
@@ -178,19 +184,39 @@ function CreateBackdroppedFrame(name, parent, size, movable)
 end
 
 local titleFramesMargin = 0;
+local titleFontSize = 20;
+local innerFramesMargin = GetInnerFramesMargin();
 
-function CreateBackdroppedTitle(name, parent, text)
+function CreateBackdroppedTitle(name, parent, title)
 
 	if titleFramesMargin == 0 then
-		titleFramesMargin = GetInnerFramesMargin() * 2;
+		titleFramesMargin = innerFramesMargin * 2;
 	end
 
 	local titleFrame = CreateBackdroppedFrame(name, parent, { x = 300, y = 35 });	-- '300' is placeholder before resizing with text size
-	local mainFrameTitle = CreateLabel(titleFrame, text, 20);
+	local mainFrameTitle = CreateLabel(titleFrame, title, titleFontSize);
 	titleFrame:SetWidth(mainFrameTitle:GetWidth() + titleFramesMargin);
 	mainFrameTitle:SetPoint("CENTER", 0, 0);
 
 	return titleFrame;
+end
+
+function CreateBackdropTitledInnerFrame(name, parent, title)
+
+	local parentFrameSizeX, parentFrameSizeY = parent:GetSize();
+	local innerFrameSize =
+	{
+		x = parentFrameSizeX - (innerFramesMargin * 2),
+		y = parentFrameSizeY - (innerFramesMargin * 10)
+	};
+
+	local innerFrame = CreateBackdroppedFrame("VoteFrame", parent, innerFrameSize);
+	innerFrame:SetPoint("BOTTOM", 0, innerFramesMargin);
+
+	local titleFrame = CreateBackdroppedTitle("VoteFrameTitle", innerFrame, "PollCraft - Vote");
+	titleFrame:SetPoint("TOP", parent, "TOP", 0, -titleFontSize);
+
+	return innerFrame;
 end
 
 local function CreateScrollbar(scrollFrame)

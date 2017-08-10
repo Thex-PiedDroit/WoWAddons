@@ -11,10 +11,6 @@ local motherFrameSize =
 function GetMotherFrameSize()
 	return motherFrameSize;
 end
-local innerFramesMargin = (motherFrameSize.x / 80);
-function GetInnerFramesMargin()
-	return innerFramesMargin;
-end
 
 
 function InitCurrentPollsFrame()
