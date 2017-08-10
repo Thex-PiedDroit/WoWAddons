@@ -35,6 +35,14 @@ function PollCraft_Print(message)
 	print(pollCraftPrefix .. message);
 end
 
+function GetInnerFramesMargin()
+	return 8;
+end
+
+function GetTextMarginFromUpperFramesBorders()
+	return -22;
+end
+
 function GetSizeDifferenceBetweenFrameAndEditBox()
 	return 12;
 end
@@ -55,18 +63,18 @@ function math.Clamp(number, min, max)
 end
 
 function table.Len(T)
-	local count = 0
+	local count = 0;
 	for _ in pairs(T) do
 		count = count + 1;
 	end
-	return count
+	return count;
 end
 
 function table.clone(T)
 
 	local copy = {};
-	for i = 1, #T do
-		table.insert(copy, T[i]);
+	for key, value in pairs(T) do
+		copy[key] = value;
 	end
 	return copy;
 end
