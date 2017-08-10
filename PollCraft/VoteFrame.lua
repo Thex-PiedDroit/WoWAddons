@@ -1,6 +1,7 @@
 
-local innerFramesMargin = 0;
-local sizeDifferenceBetweenFrameAndEditBox = 0;
+local innerFramesMargin = GetInnerFramesMargin();
+local marginBetweenUpperBordersAndText = GetTextMarginFromUpperFramesBorders();
+local sizeDifferenceBetweenFrameAndEditBox = GetSizeDifferenceBetweenFrameAndEditBox();
 
 local answersParentFrame = nil;
 local answersScrollFrame = nil;
@@ -23,71 +24,59 @@ function InitVoteFrame()
 		return;
 	end
 
-	innerFramesMargin = GetInnerFramesMargin();
-	sizeDifferenceBetweenFrameAndEditBox = GetSizeDifferenceBetweenFrameAndEditBox();
-	local motherFrameSize = GetMotherFrameSize();
 
+	local motherFrameSize = GetMotherFrameSize();
 	local containingFrame = g_currentPollsMotherFrame.currentPollFrame;
 
+	local mainFrame = CreateBackdropTitledInnerFrame("VoteFrame", containingFrame, "PollCraft - Vote");
+	local innerFrameSize = GetFrameSizeAsTable(mainFrame);
 
-	local innerFrameSize =
-	{
-		x = motherFrameSize.x - (innerFramesMargin * 2),
-		y = motherFrameSize.y - (innerFramesMargin * 10)
-	};
 
-	local voteFrame = CreateBackdroppedFrame("VoteFrame", containingFrame, innerFrameSize);
-	voteFrame:SetPoint("BOTTOM", 0, motherFrameSize.x / 80);
-
-	local titleFrame = CreateBackdroppedTitle("VoteFrameTitle", voteFrame, "PollCraft - Vote");
-	titleFrame:SetPoint("TOP", containingFrame, "TOP", 0, -20);
+		--[[      VOTE BUTTON      ]]--
+	local sendVoteButton = CreateButton("SendVoteButton", mainFrame, { x = 120, y = 30 }, "Send vote", SendVoteAway);
+	sendVoteButton:SetPoint("BOTTOM", mainFrame, "BOTTOM", 0, innerFramesMargin * 2);
 
 
 		--[[      QUESTION FRAME      ]]--
-	local questionPosY = -44;
-	local questionSectionLabel = CreateLabel(voteFrame, "Question:", 16);
-	questionSectionLabel:SetPoint("TOPLEFT", innerFramesMargin, questionPosY + 22);
-
 	local questionFrameSize =
 	{
 		x = innerFrameSize.x - (innerFramesMargin * 2),
-		y = 56
+		y = 44 + sizeDifferenceBetweenFrameAndEditBox
 	}
-	local questionFrame = CreateBackdroppedFrame("QuestionFrame", voteFrame, questionFrameSize);
-	questionFrame:SetPoint("TOP", 0, questionPosY);
+	local questionFrame = CreateBackdroppedFrame("QuestionFrame", mainFrame, questionFrameSize);
+	questionFrame:SetPoint("TOP", 0, marginBetweenUpperBordersAndText * 2);
+	local questionSectionLabel = CreateLabel(questionFrame, "Question:", 16);
+	questionSectionLabel:SetPoint("TOPLEFT", 10, -marginBetweenUpperBordersAndText);
+
 	local questionLabel = CreateLabel(questionFrame, "Question here", 16, "LEFT");
 	questionLabel:SetPoint("TOPLEFT", 13, -12);
 	questionLabel:SetPoint("BOTTOMRIGHT", -13, 12);
-	voteFrame.questionLabel = questionLabel;
+	mainFrame.questionLabel = questionLabel;
 
 
 		--[[      ANSWERS FRAME      ]]--
-	local answersFrameLabel = CreateLabel(voteFrame, "Answers:", 16);
-	local answersFramePosY = questionPosY - questionFrameSize.y - 32;
-	answersFrameLabel:SetPoint("TOPLEFT", innerFramesMargin, answersFramePosY + 20);
-
 	local answersFrameSize =
 	{
 		x = questionFrameSize.x,
-		y = innerFrameSize.y - questionFrameSize.y + questionPosY - 80;
+		y = 100		-- Placeholder before resizing
 	}
-	local answersFrame = CreateScrollFrame("AnswersFrame_InterfacePoll", voteFrame, answersFrameSize);
-	answersFrame:SetPoint("TOP", 0, answersFramePosY);
+	local answersFrame = CreateScrollFrame("AnswersFrame_InterfacePoll", mainFrame, answersFrameSize);
+	answersFrame:SetPoint("TOP", questionFrame, "BOTTOM", 0, marginBetweenUpperBordersAndText * 2);
+	answersFrame:SetPoint("BOTTOM", sendVoteButton, "TOP", 0, (innerFramesMargin * 2) - 8);
+	local answersFrameLabel = CreateLabel(answersFrame, "Answers:", 16);
+	answersFrameLabel:SetPoint("TOPLEFT", 10, -marginBetweenUpperBordersAndText);
 
 	answersFrame.content.answersBoxes = {};
 	answersParentFrame = answersFrame.content;
 	answersScrollFrame = answersFrame;
 
-
-	local sendVoteButton = CreateButton("SendVoteButton", voteFrame, { x = 120, y = 30 }, "Send vote", SendVoteAway);
-	sendVoteButton:SetPoint("BOTTOM", voteFrame, "BOTTOM", 0, innerFramesMargin * 1.6);
 	sendVoteButton:SetFrameLevel(answersParentFrame:GetFrameLevel() + 10);
-	voteFrame.sendVoteButton = sendVoteButton;
+	mainFrame.sendVoteButton = sendVoteButton;
 
 
 	containingFrame:Hide();
-	voteFrame:Hide();
-	g_currentPollsMotherFrame.voteFrame = voteFrame;
+	mainFrame:Hide();
+	g_currentPollsMotherFrame.voteFrame = mainFrame;
 end
 
 
@@ -96,8 +85,9 @@ local RemoveAdditionalAnswer = nil;
 
 local answerObjects = {};
 local answersFramesSize = { x = 0, y = 70 };
-local totalHeightOfEachAnswer = answersFramesSize.y + (innerFramesMargin * 0.5);
+local totalHeightOfEachAnswer = answersFramesSize.y + (innerFramesMargin * 0.5);	-- "+ (innerFramesMargin * 0.5)" because backdropped frames already have a 4 pixel margin because of the backdrop border thickness
 
+local answersTextFramesSize = table.clone(answersFramesSize);
 local additionalAnswerEditBoxSize = { x = 0, y = answersFramesSize.y - GetSizeDifferenceBetweenFrameAndEditBox() };
 
 local allowAdditionalAnswers = false;
@@ -134,29 +124,33 @@ local function LoadAnswer(answerObject)
 			object.editBoxScrollFrame:Hide();
 			object.deleteButton:Hide();
 		end
-		object.number:Show();
+		object.containingFrame:Show();
 		object.GUID = answerGUID;
 	else
 		local answerIndexStr = tostring(answersCount + 1);
 
 		if answersFramesSize.x == 0 then
-			answersFramesSize.x = answersParentFrame:GetWidth() - (innerFramesMargin * 8) - 40;
+			answersFramesSize.x = answersParentFrame:GetWidth() - (innerFramesMargin * 2) - answersParentFrame:GetParent().scrollbar:GetWidth();
+			answersTextFramesSize.x = answersFramesSize.x - (innerFramesMargin * 2) - 54;
+			additionalAnswerEditBoxSize.x = answersTextFramesSize.x - sizeDifferenceBetweenFrameAndEditBox;
 		end
-		local answerFramePosX = innerFramesMargin + 30;
-		local textFramePosY = -((totalHeightOfEachAnswer * answersCount) + 10);
-		local textFrame = CreateBackdroppedFrame("Answer" .. answerIndexStr .. "TextFrame", answersParentFrame, answersFramesSize);
-		textFrame:SetPoint("TOPLEFT", answerFramePosX, textFramePosY);
+
+		local answerContainingFrame = CreateFrame("Frame", "Answer" .. answerIndexStr .. "ContainingFrame", answersParentFrame);
+		answerContainingFrame:SetSize(answersFramesSize.x, answersFramesSize.y);
+		local textFramePosY = -(totalHeightOfEachAnswer * answersCount) - innerFramesMargin;
+		answerContainingFrame:SetPoint("TOPLEFT", innerFramesMargin, textFramePosY);
+
+		local answerFramePosX = 30;
+		local textFrame = CreateBackdroppedFrame("Answer" .. answerIndexStr .. "TextFrame", answerContainingFrame, answersTextFramesSize);
+		textFrame:SetPoint("TOPLEFT", answerFramePosX, 0);
 		local answerLabel = CreateLabel(textFrame, answerText, 16, "LEFT");
 		answerLabel:SetPoint("TOPLEFT", innerFramesMargin, -11);
 		answerLabel:SetPoint("BOTTOMRIGHT", -innerFramesMargin, 11);
 
-		if additionalAnswerEditBoxSize.x == 0 then
-			additionalAnswerEditBoxSize.x = answersFramesSize.x - sizeDifferenceBetweenFrameAndEditBox;
-		end
-		local additionalAnswerEditBox = CreateEditBox("AdditionalAnswer" .. answerIndexStr .. "EditBox", answersParentFrame, additionalAnswerEditBoxSize, false, AddOrRemoveAdditionalAnswerEditBox, answersCount + 1, 16);
-		additionalAnswerEditBox:SetPoint("TOPLEFT", answerFramePosX + (sizeDifferenceBetweenFrameAndEditBox * 0.5), textFramePosY - (sizeDifferenceBetweenFrameAndEditBox * 0.5));
+		local additionalAnswerEditBox = CreateEditBox("AdditionalAnswer" .. answerIndexStr .. "EditBox", answerContainingFrame, additionalAnswerEditBoxSize, false, AddOrRemoveAdditionalAnswerEditBox, answersCount + 1, 16);
+		additionalAnswerEditBox:SetPoint("TOPLEFT", answerFramePosX + (sizeDifferenceBetweenFrameAndEditBox * 0.5), -(sizeDifferenceBetweenFrameAndEditBox * 0.5));
 
-		local deleteButton = CreateIconButton("DeleteAdditionalAnswer" .. answerIndexStr .. "Button", answersParentFrame, 20, "Interface/Buttons/Ui-grouploot-pass-up", "Interface/Buttons/Ui-grouploot-pass-down", nil, RemoveAdditionalAnswer, answersCount + 1);
+		local deleteButton = CreateIconButton("DeleteAdditionalAnswer" .. answerIndexStr .. "Button", answerContainingFrame, 20, "Interface/Buttons/Ui-grouploot-pass-up", "Interface/Buttons/Ui-grouploot-pass-down", nil, RemoveAdditionalAnswer, answersCount + 1);
 		deleteButton:SetPoint("TOPLEFT", additionalAnswerEditBox, "TOPRIGHT", innerFramesMargin + sizeDifferenceBetweenFrameAndEditBox - 6, 0);
 
 		if isAdditionalAnswer then
@@ -170,19 +164,20 @@ local function LoadAnswer(answerObject)
 			deleteButton:Hide();
 		end
 
-		local newNumber = CreateLabel(answersParentFrame, answerIndexStr .. '.', 16);
+		local newNumber = CreateLabel(answerContainingFrame, answerIndexStr .. '.', 16);
 		newNumber:SetPoint("TOPRIGHT", textFrame, "TOPLEFT", -2, - 8);
 
-		local newCheck = CreateCheckButton(answersParentFrame, "Answer" .. answerIndexStr .. "CheckButton");
+		local newCheck = CreateCheckButton(answerContainingFrame, "Answer" .. answerIndexStr .. "CheckButton");
 		newCheck:SetPoint("RIGHT", textFrame, "RIGHT", innerFramesMargin + 20, 0);
 		newCheck:Hide();
 
-		local newTick = CreateRadioCheckButton(answersParentFrame, "Answer" .. answerIndexStr .. "CheckButton");
+		local newTick = CreateRadioCheckButton(answerContainingFrame, "Answer" .. answerIndexStr .. "CheckButton");
 		newTick:SetPoint("RIGHT", textFrame, "RIGHT", innerFramesMargin + 18, 0);
 		newTick:Hide();
 
 		object =
 		{
+			containingFrame = answerContainingFrame,
 			textFrame = textFrame,
 			text = answerLabel,
 			editBoxScrollFrame = additionalAnswerEditBox,
@@ -332,11 +327,11 @@ local function ChangeAnswerObjectToStaticAnswer(answerObject)
 end
 
 local function HideAnswer(answerObject)
+	answerObject.containingFrame:Hide();
 	answerObject.textFrame:Hide();
 	answerObject.text:Hide();
 	answerObject.editBoxScrollFrame:Hide();
 	answerObject.deleteButton:Hide();
-	answerObject.number:Hide();
 	answerObject.voteCheck:Hide();
 	answerObject.voteTick:Hide();
 	answerObject.GUID = nil;
@@ -404,7 +399,7 @@ UpdateAnswersScrollbar = function()
 		answersCountForUpdateScrollbar = answersCount + addition;
 	end
 
-	UpdateScrollBar(answersScrollFrame, answersCountForUpdateScrollbar * totalHeightOfEachAnswer);
+	UpdateScrollBar(answersScrollFrame, (answersCountForUpdateScrollbar * totalHeightOfEachAnswer) - innerFramesMargin);
 end
 
 local pollGUID = 0;
