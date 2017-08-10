@@ -73,14 +73,14 @@ function CreateRadioCheckButton(parent, name, onCheckCallback, callbackArguments
 	return checkButton;
 end
 
-function CreateEditBox(name, parent, width, height, onlyNumeric, onEnterPressedCallback, callbackArguments, fontSize)
+function CreateEditBox(name, parent, size, onlyNumeric, onEnterPressedCallback, callbackArguments, fontSize)
 	local scrollFrame = CreateFrame("ScrollFrame", prefix .. name .. "_Scrollframe", parent, "InputScrollFrameTemplate");
-	scrollFrame:SetSize(width, height);
+	scrollFrame:SetSize(size.x, size.y);
 
 	local editBox = scrollFrame.EditBox;
 	editBox:SetMultiLine(true);
 	editBox:SetAutoFocus(false);
-	editBox:SetSize(width, height);
+	editBox:SetSize(size.x, size.y);
 	editBox:SetNumeric(onlyNumeric);
 	editBox:SetMaxLetters(125);
 	if fontSize ~= nil then
@@ -135,10 +135,10 @@ function CreateDropDownList(name, parent, width, options, buttonSelectedCallback
 	return dropDownList;
 end
 
-function CreateButton(name, parent, width, height, text, onClickCallback, callbackArguments)
+function CreateButton(name, parent, size, text, onClickCallback, callbackArguments)
 
 	local button = CreateFrame("Button", prefix .. name, parent, "UIPanelButtonTemplate");
-	button:SetSize(width, height);
+	button:SetSize(size.x, size.y);
 	button:SetText(text);
 
 	if onClickCallback ~= nil then
@@ -163,10 +163,10 @@ function CreateIconButton(name, parent, size, iconUp, iconDown, iconHighlight, o
 	return button;
 end
 
-function CreateBackdroppedFrame(name, parent, width, height, movable)
+function CreateBackdroppedFrame(name, parent, size, movable)
 
 	local newFrame = CreateFrame("Frame", prefix .. name, parent);
-	newFrame:SetSize(width, height);
+	newFrame:SetSize(size.x, size.y);
 
 	CreateBackdrop(newFrame, 0.5);
 
@@ -185,7 +185,7 @@ function CreateBackdroppedTitle(name, parent, text)
 		titleFramesMargin = GetInnerFramesMargin() * 2;
 	end
 
-	local titleFrame = CreateBackdroppedFrame(name, parent, 300, 35);	-- '300' is placeholder before resizing with text size
+	local titleFrame = CreateBackdroppedFrame(name, parent, { x = 300, y = 35 });	-- '300' is placeholder before resizing with text size
 	local mainFrameTitle = CreateLabel(titleFrame, text, 20);
 	titleFrame:SetWidth(mainFrameTitle:GetWidth() + titleFramesMargin);
 	mainFrameTitle:SetPoint("CENTER", 0, 0);
@@ -229,21 +229,21 @@ function UpdateScrollBar(scrollFrame, contentHeight)
 	end
 end
 
-function CreateScrollFrame(name, parent, width, height)
+function CreateScrollFrame(name, parent, size)
 
 	local scrollableFrame = CreateFrame("ScrollFrame", prefix .. name, parent);
 	CreateBackdrop(scrollableFrame, 0.5);
-	scrollableFrame:SetSize(width, height);
+	scrollableFrame:SetSize(size.x, size.y);
 	scrollableFrame:SetHitRectInsets(4, 4, 4, 4);
 
 	scrollableFrame.scrollbar = CreateScrollbar(scrollableFrame);
 	scrollableFrame.scrollbar:Hide();
 	scrollableFrame.content = CreateFrame("Frame", prefix .. name .. "_Content", scrollableFrame);
-	scrollableFrame.content:SetSize(width, height);
+	scrollableFrame.content:SetSize(size.x, size.y);
 	scrollableFrame:SetScrollChild(scrollableFrame.content);
 
 	local mouseWheelFrameCapture = CreateFrame("Frame", prefix .. name .. "_MouseWheelCapture", scrollableFrame);
-	mouseWheelFrameCapture:SetSize(width, height);
+	mouseWheelFrameCapture:SetSize(size.x, size.y);
 	mouseWheelFrameCapture:SetAllPoints(true);
 	mouseWheelFrameCapture:SetFrameLevel(scrollableFrame:GetFrameLevel() + 2);
 	mouseWheelFrameCapture:EnableMouseWheel(true);
@@ -289,9 +289,9 @@ local function CreateTab(parent, width, text, id)
 	return tab;
 end
 
-function CreateTabbedFrame(name, parent, width, height, movable, tabsNamesList)
+function CreateTabbedFrame(name, parent, size, movable, tabsNamesList)
 
-	local mainFrame = CreateBackdroppedFrame(name, parent, width, height, movable);
+	local mainFrame = CreateBackdroppedFrame(name, parent, size, movable);
 	mainFrame.tabsButtons = {};
 
 	local previousTextSize = 0;
