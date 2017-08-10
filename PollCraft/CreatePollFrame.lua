@@ -6,7 +6,7 @@ local mainFrameSize =
 	x = 800,
 	y = 600
 };
-local innerFramesMargin = (mainFrameSize.x / 80);
+local innerFramesMargin = mainFrameSize.x / 80;
 local sizeDifferenceBetweenFrameAndEditBox = 0;
 
 local CreatePollTypesDropdownList = nil;
@@ -25,7 +25,7 @@ function InitCreatePollFrame()
 
 	sizeDifferenceBetweenFrameAndEditBox = GetSizeDifferenceBetweenFrameAndEditBox();
 
-	local mainFrame = CreateBackdroppedFrame("CreatePollFrame", UIParent, mainFrameSize.x, mainFrameSize.y, true);
+	local mainFrame = CreateBackdroppedFrame("CreatePollFrame", UIParent, mainFrameSize, true);
 	mainFrame:SetPoint("CENTER", 0, 0);
 
 	local titleFrame = CreateBackdroppedTitle("CreatePollFrameTitle", mainFrame, "PollCraft - Create Poll")
@@ -39,7 +39,7 @@ function InitCreatePollFrame()
 		y = mainFrameSize.y - (innerFramesMargin * 8)
 	};
 
-	local newPollFrame = CreateBackdroppedFrame("CreatePollFrame", mainFrame, optionsFrameSize.x, optionsFrameSize.y);
+	local newPollFrame = CreateBackdroppedFrame("CreatePollFrame", mainFrame, optionsFrameSize);
 	newPollFrame:SetPoint("BOTTOM", 0, mainFrameSize.x / 80);
 
 	local pollTypesListPosY = -50;
@@ -71,7 +71,7 @@ function InitCreatePollFrame()
 		x = optionsFrameSize.x - (innerFramesMargin * 2) - sizeDifferenceBetweenFrameAndEditBox,
 		y = 44
 	}
-	local newQuestionEditBox = CreateEditBox("QuestionEditBox", newPollFrame, questionEditBoxSize.x, questionEditBoxSize.y, false, nil, nil, 16);
+	local newQuestionEditBox = CreateEditBox("QuestionEditBox", newPollFrame, questionEditBoxSize, false, nil, nil, 16);
 	newQuestionEditBox:SetPoint("TOP", 0, questionEditBoxPosY);
 	mainFrame.questionEditBoxScrollFrame = newQuestionEditBox;
 
@@ -86,7 +86,7 @@ function InitCreatePollFrame()
 		x = questionEditBoxSize.x + sizeDifferenceBetweenFrameAndEditBox,
 		y = optionsFrameSize.y - questionEditBoxSize.y + questionEditBoxPosY - 120;
 	}
-	local answersFrame = CreateScrollFrame("AnswersFrame_InterfacePoll", newPollFrame, answersFrameSize.x, answersFrameSize.y);
+	local answersFrame = CreateScrollFrame("AnswersFrame_InterfacePoll", newPollFrame, answersFrameSize);
 	answersFrame:SetPoint("TOP", 0, answersFramePosY);
 
 	answersFrame.content.answersBoxes = {};
@@ -99,7 +99,7 @@ function InitCreatePollFrame()
 	newQuestionEditBox:SetFrameLevel(answersFrameLevel + 10);
 
 
-	local createPollButton = CreateButton("CreatePollButton", newPollFrame, 120, 30, "Create Poll", SendNewPollAway);
+	local createPollButton = CreateButton("CreatePollButton", newPollFrame, { x = 120, y = 30 }, "Create Poll", SendNewPollAway);
 	createPollButton:SetPoint("BOTTOM", newPollFrame, "BOTTOM", 0, innerFramesMargin * 2);
 	createPollButton:SetFrameLevel(answersFrameLevel + 10);
 
@@ -136,8 +136,8 @@ end
 
 local answersCount = 0;
 local marginBetweenAnswers = 20;
-local answerEditBoxHeight = 44;
-local totalHeightOfEachAnswer = answerEditBoxHeight + marginBetweenAnswers;
+local answerEditBoxSize = { x = 0, y = 44 };
+local totalHeightOfEachAnswer = answerEditBoxSize.y + marginBetweenAnswers;
 local AddOrRemoveAnswerEditBox = nil;
 local RemoveAnswer = nil;
 local answerObjects = {};
@@ -148,11 +148,13 @@ CreateAnswerEditBox = function()
 
 	local answerNumberStr = tostring(answersCount + 1);
 
-	local answerEditBoxWidth = answersParentFrame:GetWidth() - (innerFramesMargin * 2) - 90;
+	if answerEditBoxSize.x == 0 then
+		answerEditBoxSize.x = answersParentFrame:GetWidth() - (innerFramesMargin * 2) - 90;
+	end
 
 	local boxPosY = -((totalHeightOfEachAnswer * answersCount) + marginBetweenAnswers);
 
-	local newAnswerEditBox = CreateEditBox("AnswerEditBox", answersParentFrame, answerEditBoxWidth, answerEditBoxHeight, false, AddOrRemoveAnswerEditBox, answersCount + 1, 16);
+	local newAnswerEditBox = CreateEditBox("AnswerEditBox", answersParentFrame, answerEditBoxSize, false, AddOrRemoveAnswerEditBox, answersCount + 1, 16);
 	newAnswerEditBox:SetPoint("TOPLEFT", innerFramesMargin + 40, boxPosY);
 
 	local answerNumber = CreateLabel(answersParentFrame, answerNumberStr .. ".", 16);

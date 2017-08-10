@@ -23,7 +23,7 @@ function InitCurrentPollsFrame()
 		return;
 	end
 
-	local mainFrame = CreateTabbedFrame("CurrentPollsMotherFrame", UIParent, motherFrameSize.x, motherFrameSize.y, true, { "Poll", "Current polls list" });
+	local mainFrame = CreateTabbedFrame("CurrentPollsMotherFrame", UIParent, motherFrameSize, true, { "Poll", "Current polls list" });
 	mainFrame:SetPoint("CENTER", 0, 0);
 	MakeFrameClosable(mainFrame, "CurrentPollsMotherFrame");
 

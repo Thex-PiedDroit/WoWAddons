@@ -26,7 +26,7 @@ function InitResultsFrame()
 		y = motherFrameSize.y - (innerFramesMargin * 10)
 	};
 
-	local mainFrame = CreateBackdroppedFrame("PollResultsFrame", containingFrame, innerFrameSize.x, innerFrameSize.y, false);
+	local mainFrame = CreateBackdroppedFrame("PollResultsFrame", containingFrame, innerFrameSize, false);
 	mainFrame:SetPoint("BOTTOM", 0, motherFrameSize.x / 80);
 
 	local titleFrame = CreateBackdroppedTitle("PollResultsFrameTitle", mainFrame, "PollCraft - Poll results");
@@ -43,7 +43,7 @@ function InitResultsFrame()
 		x = innerFrameSize.x - (innerFramesMargin * 2),
 		y = 56
 	}
-	local questionFrame = CreateBackdroppedFrame("QuestionFrame", mainFrame, questionFrameSize.x, questionFrameSize.y);
+	local questionFrame = CreateBackdroppedFrame("QuestionFrame", mainFrame, questionFrameSize);
 	questionFrame:SetPoint("TOP", 0, questionPosY);
 	local questionLabel = CreateLabel(questionFrame, "Question here", 16, "LEFT");
 	questionLabel:SetPoint("TOPLEFT", 13, -12);
@@ -61,7 +61,7 @@ function InitResultsFrame()
 		x = questionFrameSize.x,
 		y = innerFrameSize.y - questionFrameSize.y + questionPosY - 80;
 	}
-	local answersFrame = CreateScrollFrame("AnswersFrame_PollResults", mainFrame, answersFrameSize.x, answersFrameSize.y);
+	local answersFrame = CreateScrollFrame("AnswersFrame_PollResults", mainFrame, answersFrameSize);
 	answersFrame:SetPoint("TOP", 0, answersFramePosY);
 
 	answersFrame.content.answersBoxes = {};
@@ -69,7 +69,7 @@ function InitResultsFrame()
 	answersScrollFrame = answersFrame;
 
 
-	local changeVoteButton = CreateButton("SendVoteButton", mainFrame, 120, 30, "Change vote");
+	local changeVoteButton = CreateButton("SendVoteButton", mainFrame, { x = 120, y = 30 }, "Change vote");
 	changeVoteButton:SetPoint("BOTTOM", mainFrame, "BOTTOM", 0, innerFramesMargin * 1.6);
 	changeVoteButton:SetFrameLevel(answersParentFrame:GetFrameLevel() + 10);
 
@@ -81,8 +81,8 @@ end
 
 local answerObjects = {};
 local answerObjectsIndexList = {};
-local answersFramesHeight = 70;
-local totalHeightOfEachAnswer = answersFramesHeight + (innerFramesMargin * 0.5);
+local answersFramesSize = { x = 0, y = 70 };
+local totalHeightOfEachAnswer = answersFramesSize.y + (innerFramesMargin * 0.5);
 
 local function LoadAnswer(answerObject)
 
@@ -109,11 +109,13 @@ local function LoadAnswer(answerObject)
 		local textFramePosY = -((totalHeightOfEachAnswer * answersCount) + 10);
 
 		local answerContainingFrame = CreateFrame("Frame", "Answer" .. answerIndexStr .. "ContainingFrame", answersParentFrame);
-		answerContainingFrame:SetSize(answerContainingFrameWidth, answersFramesHeight);
+		answerContainingFrame:SetSize(answerContainingFrameWidth, answersFramesSize.y);
 		answerContainingFrame:SetPoint("TOPLEFT", innerFramesMargin, textFramePosY);
 
-		local answerFrameWidth = answerContainingFrameWidth - 70;
-		local textFrame = CreateBackdroppedFrame("Answer" .. answerIndexStr .. "TextFrame", answerContainingFrame, answerFrameWidth, answersFramesHeight);
+		if answersFramesSize.x == 0 then
+			answersFramesSize.x = answerContainingFrameWidth - 70;
+		end
+		local textFrame = CreateBackdroppedFrame("Answer" .. answerIndexStr .. "TextFrame", answerContainingFrame, answersFramesSize);
 		textFrame:SetPoint("TOPLEFT", innerFramesMargin + 22, 0);
 		local answerLabel = CreateLabel(textFrame, answerText, 16, "LEFT");
 		answerLabel:SetPoint("TOPLEFT", innerFramesMargin, -11);
