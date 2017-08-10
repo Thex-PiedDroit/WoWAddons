@@ -3,7 +3,11 @@
 local testPollData =
 {
 	pollGUID = "TEST_POLL",
+	pollMasterFullName = PollCraft_Me(),
+	pollMasterRealm = PollCraft_MyRealm(),
 	pollType = "RAID",
+	multiVotes = false,
+	allowNewAnswers = false,
 	question = "qEDGTEgzergrzegzrgh zregyzer sihgoz zrziog zrghzo rzgv zpzrosd zreoigvzrô gvze r^gzreneô zeg ôzg ozeg ozgoh ozeg zeg zergo ze",
 	answers =
 	{
@@ -38,9 +42,14 @@ local testPollData =
 	}
 }
 
+function TestCreateSimplePoll()
+
+	SendPollData(testPollData);
+end
+
 function TestOneSimpleVote()
 
-	LoadAndOpenPollResultsFrame(testPollData);
+	TestCreateSimplePoll();
 
 	local voteData =
 	{
@@ -56,7 +65,7 @@ end
 
 function TestSomeVotes()
 
-	LoadAndOpenPollResultsFrame(testPollData);
+	TestCreateSimplePoll();
 
 	local voteData =
 	{
