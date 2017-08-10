@@ -217,10 +217,19 @@ local function GeneratePollGUID()
 	return PollCraft_MyGUID() .. tostring(math.random(1000000, 9999999));
 end
 
+function SendPollData(pollData)
+
+	SendPollMessage({ poll = pollData }, "NewPoll", pollData.pollType);
+	LoadAndOpenVoteFrame(pollData, PollCraft_Me(), PollCraft_MyRealm());
+
+	g_currentPollsMotherFrame.panel:ClearAllPoints();
+	g_currentPollsMotherFrame.panel:SetPoint("TOPLEFT", g_createPollFrame.panel, "TOPRIGHT", 0, 0);
+end
+
 SendNewPollAway = function()
 
 	local data = g_createPollFrame.panel;
-	local newPoll =
+	local newPollData =
 	{
 		pollGUID = GeneratePollGUID(),
 		pollMasterFullName = PollCraft_Me(),
@@ -238,17 +247,14 @@ SendNewPollAway = function()
 			text = answerObjects[i].editBoxScrollFrame.EditBox:GetText(),
 			GUID = tostring(i)
 		}
-		table.insert(newPoll.answers, answerObject);
+		table.insert(newPollData.answers, answerObject);
 	end
 
-	if newPoll.question == nil or newPoll.question == ""
-		or newPoll.answers == nil or #newPoll.answers < 2
-		or newPoll.answers[2] == nil or newPoll.answers[2].text == nil or newPoll.answers[2].text == "" then
+	if newPollData.question == nil or newPollData.question == ""
+		or newPollData.answers == nil or #newPollData.answers < 2
+		or newPollData.answers[2] == nil or newPollData.answers[2].text == nil or newPollData.answers[2].text == "" then
 		return;
 	end
 
-	SendPollMessage({ poll = newPoll }, "NewPoll", newPoll.pollType);
-	LoadAndOpenVoteFrame(newPoll, PollCraft_Me(), PollCraft_MyRealm());
-	g_currentPollsMotherFrame.panel:ClearAllPoints();
-	g_currentPollsMotherFrame.panel:SetPoint("TOPLEFT", g_createPollFrame.panel, "TOPRIGHT", 0, 0);
+	SendPollData(newPollData);
 end
