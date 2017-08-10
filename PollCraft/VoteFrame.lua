@@ -36,7 +36,7 @@ function InitVoteFrame()
 		y = motherFrameSize.y - (innerFramesMargin * 10)
 	};
 
-	local voteFrame = CreateBackdroppedFrame("VoteFrame", containingFrame, innerFrameSize.x, innerFrameSize.y);
+	local voteFrame = CreateBackdroppedFrame("VoteFrame", containingFrame, innerFrameSize);
 	voteFrame:SetPoint("BOTTOM", 0, motherFrameSize.x / 80);
 
 	local titleFrame = CreateBackdroppedTitle("VoteFrameTitle", voteFrame, "PollCraft - Vote");
@@ -53,7 +53,7 @@ function InitVoteFrame()
 		x = innerFrameSize.x - (innerFramesMargin * 2),
 		y = 56
 	}
-	local questionFrame = CreateBackdroppedFrame("QuestionFrame", voteFrame, questionFrameSize.x, questionFrameSize.y);
+	local questionFrame = CreateBackdroppedFrame("QuestionFrame", voteFrame, questionFrameSize);
 	questionFrame:SetPoint("TOP", 0, questionPosY);
 	local questionLabel = CreateLabel(questionFrame, "Question here", 16, "LEFT");
 	questionLabel:SetPoint("TOPLEFT", 13, -12);
@@ -71,7 +71,7 @@ function InitVoteFrame()
 		x = questionFrameSize.x,
 		y = innerFrameSize.y - questionFrameSize.y + questionPosY - 80;
 	}
-	local answersFrame = CreateScrollFrame("AnswersFrame_InterfacePoll", voteFrame, answersFrameSize.x, answersFrameSize.y);
+	local answersFrame = CreateScrollFrame("AnswersFrame_InterfacePoll", voteFrame, answersFrameSize);
 	answersFrame:SetPoint("TOP", 0, answersFramePosY);
 
 	answersFrame.content.answersBoxes = {};
@@ -79,7 +79,7 @@ function InitVoteFrame()
 	answersScrollFrame = answersFrame;
 
 
-	local sendVoteButton = CreateButton("SendVoteButton", voteFrame, 120, 30, "Send vote", SendVoteAway);
+	local sendVoteButton = CreateButton("SendVoteButton", voteFrame, { x = 120, y = 30 }, "Send vote", SendVoteAway);
 	sendVoteButton:SetPoint("BOTTOM", voteFrame, "BOTTOM", 0, innerFramesMargin * 1.6);
 	sendVoteButton:SetFrameLevel(answersParentFrame:GetFrameLevel() + 10);
 	voteFrame.sendVoteButton = sendVoteButton;
@@ -95,10 +95,10 @@ local AddOrRemoveAdditionalAnswerEditBox = nil;
 local RemoveAdditionalAnswer = nil;
 
 local answerObjects = {};
-local answersFramesHeight = 70;
-local totalHeightOfEachAnswer = answersFramesHeight + (innerFramesMargin * 0.5);
+local answersFramesSize = { x = 0, y = 70 };
+local totalHeightOfEachAnswer = answersFramesSize.y + (innerFramesMargin * 0.5);
 
-local additionalAnswerEditBoxHeight = answersFramesHeight - sizeDifferenceBetweenFrameAndEditBox;
+local additionalAnswerEditBoxSize = { x = 0, y = answersFramesSize.y - GetSizeDifferenceBetweenFrameAndEditBox() };
 
 local allowAdditionalAnswers = false;
 local allowMultipleVotes = false;
@@ -139,17 +139,21 @@ local function LoadAnswer(answerObject)
 	else
 		local answerIndexStr = tostring(answersCount + 1);
 
-		local answerFrameWidth = answersParentFrame:GetWidth() - (innerFramesMargin * 8) - 40;
+		if answersFramesSize.x == 0 then
+			answersFramesSize.x = answersParentFrame:GetWidth() - (innerFramesMargin * 8) - 40;
+		end
 		local answerFramePosX = innerFramesMargin + 30;
 		local textFramePosY = -((totalHeightOfEachAnswer * answersCount) + 10);
-		local textFrame = CreateBackdroppedFrame("Answer" .. answerIndexStr .. "TextFrame", answersParentFrame, answerFrameWidth, answersFramesHeight);
+		local textFrame = CreateBackdroppedFrame("Answer" .. answerIndexStr .. "TextFrame", answersParentFrame, answersFramesSize);
 		textFrame:SetPoint("TOPLEFT", answerFramePosX, textFramePosY);
 		local answerLabel = CreateLabel(textFrame, answerText, 16, "LEFT");
 		answerLabel:SetPoint("TOPLEFT", innerFramesMargin, -11);
 		answerLabel:SetPoint("BOTTOMRIGHT", -innerFramesMargin, 11);
 
-		local additionalAnswerEditBoxWidth = answerFrameWidth - sizeDifferenceBetweenFrameAndEditBox;
-		local additionalAnswerEditBox = CreateEditBox("AdditionalAnswer" .. answerIndexStr .. "EditBox", answersParentFrame, additionalAnswerEditBoxWidth, additionalAnswerEditBoxHeight - sizeDifferenceBetweenFrameAndEditBox, false, AddOrRemoveAdditionalAnswerEditBox, answersCount + 1, 16);
+		if additionalAnswerEditBoxSize.x == 0 then
+			additionalAnswerEditBoxSize.x = answersFramesSize.x - sizeDifferenceBetweenFrameAndEditBox;
+		end
+		local additionalAnswerEditBox = CreateEditBox("AdditionalAnswer" .. answerIndexStr .. "EditBox", answersParentFrame, additionalAnswerEditBoxSize, false, AddOrRemoveAdditionalAnswerEditBox, answersCount + 1, 16);
 		additionalAnswerEditBox:SetPoint("TOPLEFT", answerFramePosX + (sizeDifferenceBetweenFrameAndEditBox * 0.5), textFramePosY - (sizeDifferenceBetweenFrameAndEditBox * 0.5));
 
 		local deleteButton = CreateIconButton("DeleteAdditionalAnswer" .. answerIndexStr .. "Button", answersParentFrame, 20, "Interface/Buttons/Ui-grouploot-pass-up", "Interface/Buttons/Ui-grouploot-pass-down", nil, RemoveAdditionalAnswer, answersCount + 1);
