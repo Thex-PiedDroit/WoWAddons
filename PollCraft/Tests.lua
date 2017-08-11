@@ -1,8 +1,12 @@
 
 
-local testPollData =
+local function GenerateTestPollGUID()
+	return "TEST_POLL_" .. PollCraft_MyGUID() .. tostring(math.random(1000000, 9999999));
+end
+
+local globalTestPollData =
 {
-	pollGUID = "TEST_POLL",
+	pollGUID = GenerateTestPollGUID(),
 	pollMasterFullName = PollCraft_Me(),
 	pollMasterRealm = PollCraft_MyRealm(),
 	pollType = "RAID",
@@ -42,9 +46,80 @@ local testPollData =
 	}
 }
 
+local randomPollMastersNames =
+{
+	"Giovanni", "Gwiratha", "Falenidd", "Galeamos", "Morlune", "Miriawan", "Higo", "Woep", "Yilitha", "Erirekor", "Eledon", "Vulcun", "Edardo", "Shal", "Dante", "Aeratha", "Laralilath", "Lendaseth", "Qerrahar", "Sevardomas", "Geiwyr", "Geron", "Erlwin", "Galirakath", "Glerind", "Priranidd", "Xantis", "Trieron", "Gwoash", "Poich", "Zigog", "Trigo"
+};
+local randomRealms =
+{
+	"Aerie Peak", "Anvilmar", "Arathor", "Antonidas", "Azuremyst", "Baelgun", "Blade's Edge", "Bladefist", "Bronzebeard", "Cenarius", "Darrowmere", "Draenor", "Dragonblight", "Echo Isles", "Galakrond", "Gnomeregan", "Hyjal", "Kilrogg", "Korialstrasz", "Lightbringer", "Misha", "Moonrunner", "Nordrassil", "Proudmoore", "Shadowsong", "Shu'Halo", "Silvermoon", "Skywall", "Suramar", "Uldum", "Uther", "Velen", "Windrunner"
+};
+local function GenerateRandomPollMaster()
+	local realm = randomRealms[math.random(1, #randomRealms)];
+	local name = randomPollMastersNames[math.random(1, #randomPollMastersNames)] .. realm;
+	return name, realm;
+end
+
+local function CreateTestPollData(mine, question, answersCount, multiVotes, allowNewAnswers)
+
+	local pollMasterFullName = nil;
+	local pollMasterRealm = nil;
+	if mine then
+		pollMasterFullName = PollCraft_Me();
+		pollMasterRealm = PollCraft_MyRealm();
+	else
+		pollMasterFullName, pollMasterRealm = GenerateRandomPollMaster();
+	end
+
+	local testPollData =
+	{
+		pollGUID = GenerateTestPollGUID(),
+		pollMasterFullName = pollMasterFullName,
+		pollMasterRealm = pollMasterRealm,
+		pollType = "RAID",
+		multiVotes = multiVotes,
+		allowNewAnswers = allowNewAnswers,
+		question = question,
+		answers = {}
+	};
+
+	for i = 1, answersCount do
+		local answer =
+		{
+			text = "Answer " .. tostring(i),
+			GUID = tostring(i)
+		}
+		table.insert(testPollData.answers, answer);
+	end
+
+	return testPollData;
+end
+
 function TestCreateSimplePoll()
 
 	SendPollData(testPollData);
+end
+
+function TestAddSomePollsToData()
+
+	local pollDataTest1 = CreateTestPollData(true, "First question", 3, false, true);
+	local pollDataTest2 = CreateTestPollData(false, "Third question", 6, true, true);
+	local pollDataTest3 = CreateTestPollData(false, "Fourth question", 2, true, false);
+	local pollDataTest4 = CreateTestPollData(false, "Fourth question", 2, true, false);
+	local pollDataTest5 = CreateTestPollData(false, "Fourth question", 2, true, false);
+	local pollDataTest6 = CreateTestPollData(false, "Fourth question", 2, true, false);
+	local pollDataTest7 = CreateTestPollData(false, "Fourth question", 2, true, false);
+	local pollDataTest8 = CreateTestPollData(false, "Fourth question", 2, true, false);
+
+	AddPollDataToMemory(pollDataTest1);
+	AddPollDataToMemory(globalTestPollData);
+	AddPollDataToMemory(pollDataTest2);
+	AddPollDataToMemory(pollDataTest3);
+	AddPollDataToMemory(pollDataTest4);
+	AddPollDataToMemory(pollDataTest5);
+	AddPollDataToMemory(pollDataTest6);
+	AddPollDataToMemory(pollDataTest7);
+	AddPollDataToMemory(pollDataTest8);
 end
 
 function TestOneSimpleVote()
@@ -53,7 +128,7 @@ function TestOneSimpleVote()
 
 	local voteData =
 	{
-		pollGUID = testPollData.pollGUID,
+		pollGUID = globalTestPollData.pollGUID,
 		newAnswers = {},
 		vote =
 		{
@@ -69,7 +144,7 @@ function TestSomeVotes()
 
 	local voteData =
 	{
-		pollGUID = testPollData.pollGUID,
+		pollGUID = globalTestPollData.pollGUID,
 		newAnswers =
 		{
 			{
