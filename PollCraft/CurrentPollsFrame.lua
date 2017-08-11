@@ -28,13 +28,22 @@ function InitCurrentPollsFrame()
 	currentPollFrame:SetPoint("CENTER", 0, 0);
 	g_currentPollsMotherFrame.currentPollFrame = currentPollFrame;
 
+	local pollsListFrame = CreateFrame("Frame", "PollCraft_PollListContainerFrame", mainFrame);
+	pollsListFrame:SetSize(motherFrameSize.x, motherFrameSize.y);
+	pollsListFrame:SetPoint("CENTER", 0, 0);
+	g_currentPollsMotherFrame.pollsListFrame = pollsListFrame;
+
+
 	g_currentPollsMotherFrame.panel = mainFrame;
-	g_currentPollsMotherFrame.currentPollFrame = currentPollFrame;
 
 	InitVoteFrame();
 	InitResultsFrame();
+	InitPollsListFrame();
 
 	table.insert(mainFrame.tabFrames, currentPollFrame);
+	table.insert(mainFrame.tabFrames, pollsListFrame);
 
+	--PanelTemplates_SetTab(mainFrame, 2);
+	pollsListFrame:Hide();
 	mainFrame:Hide();
 end
