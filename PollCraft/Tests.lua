@@ -105,11 +105,21 @@ function TestAddSomePollsToData()
 	local pollDataTest1 = CreateTestPollData(true, "First question", 3, false, true);
 	local pollDataTest2 = CreateTestPollData(false, "Third question", 6, true, true);
 	local pollDataTest3 = CreateTestPollData(false, "Fourth question", 2, true, false);
+	local pollDataTest4 = CreateTestPollData(false, "Fourth question", 2, true, false);
+	local pollDataTest5 = CreateTestPollData(false, "Fourth question", 2, true, false);
+	local pollDataTest6 = CreateTestPollData(false, "Fourth question", 2, true, false);
+	local pollDataTest7 = CreateTestPollData(false, "Fourth question", 2, true, false);
+	local pollDataTest8 = CreateTestPollData(false, "Fourth question", 2, true, false);
 
 	AddPollDataToMemory(pollDataTest1);
 	AddPollDataToMemory(globalTestPollData);
 	AddPollDataToMemory(pollDataTest2);
 	AddPollDataToMemory(pollDataTest3);
+	AddPollDataToMemory(pollDataTest4);
+	AddPollDataToMemory(pollDataTest5);
+	AddPollDataToMemory(pollDataTest6);
+	AddPollDataToMemory(pollDataTest7);
+	AddPollDataToMemory(pollDataTest8);
 end
 
 function TestOneSimpleVote()

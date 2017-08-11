@@ -70,6 +70,20 @@ function table.Len(T)
 	return count;
 end
 
+function table.LenRecursive(T)
+
+	local count = 0;
+	for key, value in pairs(T) do
+		if type(value) == "table" then
+			count = count + table.LenRecursive(value);
+		else
+			count = count + 1;
+		end
+	end
+
+	return count;
+end
+
 function table.clone(T)
 
 	local copy = {};

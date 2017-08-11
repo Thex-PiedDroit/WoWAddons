@@ -18,9 +18,11 @@ function events:ADDON_LOADED(addonName)
 	InitCreatePollFrame();
 	InitCurrentPollsFrame();
 	--TestCreateSimplePoll();
-	--TestAddSomePollsToData();
+	TestAddSomePollsToData();
 	--TestOneSimpleVote();
 	--TestSomeVotes();
+	PanelTemplates_SetTab(g_currentPollsMotherFrame.panel, 2);
+	g_currentPollsMotherFrame.pollsListFrame:Show();
 end
 
 pollCraftEventListener:SetScript("OnEvent", function(self, event, ...)

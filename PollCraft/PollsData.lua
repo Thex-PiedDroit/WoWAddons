@@ -36,6 +36,8 @@ function AddPollDataToMemory(pollData)
 	else
 		currentPollsInMemory[pollGUID] = pollData;
 	end
+
+	RequestPollsListsUpdate();
 end
 
 function RemovePollDataFromMemory(pollGUID)
@@ -44,6 +46,10 @@ end
 
 function GetPollData(pollGUID)
 	return currentPollsInMemory[pollGUID];
+end
+
+function GetAllPolls()
+	return currentPollsInMemory;
 end
 
 
