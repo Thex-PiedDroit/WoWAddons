@@ -20,6 +20,7 @@ HandleVote.lua
 CurrentPollsFrame.lua
 VoteFrame.lua
 PollResultsFrame.lua
+PollsListFrame.lua
 CreatePollFrame.lua
 Core.lua
 
