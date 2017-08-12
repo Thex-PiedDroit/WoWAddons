@@ -8,6 +8,8 @@ SlashCmdList.RELOADUI = ReloadUI
 local pollCraftEventListener = CreateFrame("Frame");
 local events = {};
 
+DEBUG_VERSION = true;
+
 
 function events:ADDON_LOADED(addonName)
 
@@ -17,10 +19,13 @@ function events:ADDON_LOADED(addonName)
 
 	InitCreatePollFrame();
 	InitCurrentPollsFrame();
-	--TestCreateSimplePoll();
-	--TestAddSomePollsToData();
-	--TestOneSimpleVote();
-	--TestSomeVotes();
+
+	if DEBUG_VERSION then
+		--TestCreateSimplePoll();
+		--TestAddSomePollsToData();
+		--TestOneSimpleVote();
+		--TestSomeVotes();
+	end
 end
 
 pollCraftEventListener:SetScript("OnEvent", function(self, event, ...)
