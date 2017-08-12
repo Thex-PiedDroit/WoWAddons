@@ -1,4 +1,8 @@
 
+if not DEBUG_VERSION then
+	return;
+end
+
 
 local function GenerateTestPollGUID()
 	return "TEST_POLL_" .. PollCraft_MyGUID() .. tostring(math.random(1000000, 9999999));
