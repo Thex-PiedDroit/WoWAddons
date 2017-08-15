@@ -2,39 +2,39 @@
 g_cerberus.RegisterAddon("PollCraft");
 
 
-local _, playerBTag = BNGetInfo();
+local _, sPlayerBTag = BNGetInfo();
 function MyBTag()
-	if playerBTag == nil then
-		local _, newBTag = BNGetInfo();
-		playerBTag = newBTag;
+	if sPlayerBTag == nil then
+		local _, sNewBTag = BNGetInfo();
+		sPlayerBTag = sNewBTag;
 	end
-	return playerBTag;
+	return sPlayerBTag;
 end
-local playerGUID = UnitGUID("player");
+local sPlayerGUID = UnitGUID("player");
 function MyGUID()
-	if playerGUID == nil then
-		playerGUID = UnitGUID("player");
+	if sPlayerGUID == nil then
+		sPlayerGUID = UnitGUID("player");
 	end
-	return playerGUID;
+	return sPlayerGUID;
 end
-local playerName = UnitName("player");
+local sPlayerName = UnitName("player");
 function MyName()
-	return playerName;
+	return sPlayerName;
 end
-local playerRealm = GetRealmName();
+local sPlayerRealm = GetRealmName();
 function MyRealm()
-	return playerRealm;
+	return sPlayerRealm;
 end
-local playerFullName = playerName .. "-" .. playerRealm;
+local playerFullName = sPlayerName .. "-" .. sPlayerRealm;
 function Me()
 	return playerFullName;
 end
 
 
-local addonTextColour = "ff25de32";
-local pollCraftPrefix = "|c" .. addonTextColour .. "PollCraft: |r"
-function PollCraft_Print(message)
-	print(pollCraftPrefix .. message);
+local cAddonTextColour = "ff25de32";
+local sPollCraftPrefix = "|c" .. cAddonTextColour .. "PollCraft: |r"
+function PollCraft_Print(sMessage)
+	print(sPollCraftPrefix .. sMessage);
 end
 
 function GetInnerFramesMargin()
@@ -50,26 +50,26 @@ function GetSizeDifferenceBetweenFrameAndEditBox()
 end
 
 
-function GetNameForPrint(targetName, targetRealm)
+function GetNameForPrint(sTargetName, sTargetRealm)
 
-	if targetRealm ~= MyRealm() then
-		targetName = targetName .. "-" .. targetRealm;
+	if sTargetRealm ~= MyRealm() then
+		sTargetName = sTargetName .. "-" .. sTargetRealm;
 	end
 
-	return targetName;
+	return sTargetName;
 end
 
-function math.Clamp(number, min, max)
+function math.Clamp(fNumber, fMin, fMax)
 
-	return math.min(max, math.max(number, min));
+	return math.min(fMax, math.max(fNumber, fMin));
 end
 
 function table.Len(T)
-	local count = 0;
+	local iCount = 0;
 	for _ in pairs(T) do
-		count = count + 1;
+		iCount = iCount + 1;
 	end
-	return count;
+	return iCount;
 end
 
 function table.clone(T)

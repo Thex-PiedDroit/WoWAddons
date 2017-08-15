@@ -1,13 +1,13 @@
 
 Cerberus_HookThisFile();
 
-local prefix = "PollCraft_";
+local sPrefix = "PollCraft_";
 
 
 function GetFrameSizeAsTable(frame)
 
-	local width, height = frame:GetSize();
-	return { x = width, y = height };
+	local fWidth, fHeight = frame:GetSize();
+	return { x = fWidth, y = fHeight };
 end
 
 local function MakeFrameMovable(frame)
@@ -18,17 +18,17 @@ local function MakeFrameMovable(frame)
 	frame:SetScript("OnMouseUp", function(self) self:StopMovingOrSizing() end);
 end
 
-function MakeFrameClosable(frame, name, onCloseCallback)
+function MakeFrameClosable(frame, sName, OnCloseCallback)
 
-	local closeButton = CreateFrame("Button", prefix .. name, frame, "UIPanelCloseButton");
+	local closeButton = CreateFrame("Button", sPrefix .. sName, frame, "UIPanelCloseButton");
 	closeButton:SetPoint("TOPRIGHT", 0, 0);
 
-	if onCloseCallback ~= nil then
-		closeButton:SetScript("OnClick", onCloseCallback);
+	if OnCloseCallback ~= nil then
+		closeButton:SetScript("OnClick", OnCloseCallback);
 	end
 end
 
-local function CreateBackdrop(frame, alpha)
+local function CreateBackdrop(frame, fAlpha)
 
 	frame:SetBackdrop(
 	{
@@ -39,66 +39,66 @@ local function CreateBackdrop(frame, alpha)
 		edgeSize = 16,
 		insets = { left = 4, right = 4, top = 4, bottom = 4 },
 	});
-	frame:SetBackdropColor(0, 0, 0, alpha);
+	frame:SetBackdropColor(0, 0, 0, fAlpha);
 end
 
 
-function CreateLabel(parent, text, fontSize, alignment)
+function CreateLabel(parent, sText, fFontSize, sAlignment)
 	local label = parent:CreateFontString(nil, "ARTWORK", "GameFontHighlight");
-	label:SetText(text);
+	label:SetText(sText);
 
-	if alignment ~= nil then
-		label:SetJustifyH(alignment);
+	if sAlignment ~= nil then
+		label:SetJustifyH(sAlignment);
 		label:SetJustifyV("TOP");
 	end
 
-	if fontSize ~= nil then
-		label:SetFont("Fonts\\FRIZQT__.TTF", fontSize);
+	if fFontSize ~= nil then
+		label:SetFont("Fonts\\FRIZQT__.TTF", fFontSize);
 	end
 
 	return label;
 end
 
-function CreateCheckButton(parent, name, onCheckCallback, callbackArguments)
-	local checkButton = CreateFrame("CheckButton", prefix .. name, parent, "OptionsCheckButtonTemplate");
+function CreateCheckButton(parent, sName, OnCheckCallback, callbackArguments)
+	local checkButton = CreateFrame("CheckButton", sPrefix .. sName, parent, "OptionsCheckButtonTemplate");
 	checkButton:SetSize(22, 22);
 
-	if onCheckCallback ~= nil then
-		button:SetScript("OnClick", function(self) onCheckCallback(self, callbackArguments) end);
+	if OnCheckCallback ~= nil then
+		button:SetScript("OnClick", function(self) OnCheckCallback(self, callbackArguments) end);
 	end
 
 	return checkButton;
 end
 
-function CreateRadioCheckButton(parent, name, onCheckCallback, callbackArguments)
-	local checkButton = CreateFrame("CheckButton", prefix .. name, parent, "UIRadioButtonTemplate");
+function CreateRadioCheckButton(parent, sName, OnCheckCallback, callbackArguments)
+	local checkButton = CreateFrame("CheckButton", sPrefix .. sName, parent, "UIRadioButtonTemplate");
 	checkButton:SetSize(18, 18);
 
-	if onCheckCallback ~= nil then
-		button:SetScript("OnClick", function(self) onCheckCallback(self, callbackArguments) end);
+	if OnCheckCallback ~= nil then
+		button:SetScript("OnClick", function(self) OnCheckCallback(self, callbackArguments) end);
 	end
 
 	return checkButton;
 end
 
-function CreateEditBox(name, parent, size, onlyNumeric, onEnterPressedCallback, callbackArguments, fontSize)
-	local scrollFrame = CreateFrame("ScrollFrame", prefix .. name .. "_Scrollframe", parent, "InputScrollFrameTemplate");
+function CreateEditBox(sName, parent, size, bOnlyNumeric, OnEnterPressedCallback, callbackArguments, fFontSize)
+	local scrollFrame = CreateFrame("ScrollFrame", sPrefix .. sName .. "_Scrollframe", parent, "InputScrollFrameTemplate");
 	scrollFrame:SetSize(size.x, size.y);
 
 	local editBox = scrollFrame.EditBox;
 	editBox:SetMultiLine(true);
 	editBox:SetAutoFocus(false);
 	editBox:SetSize(size.x, size.y);
-	editBox:SetNumeric(onlyNumeric);
+	editBox:SetNumeric(bOnlyNumeric);
 	editBox:SetMaxLetters(125);
-	if fontSize ~= nil then
-		editBox:SetFont("Fonts\\FRIZQT__.TTF", fontSize);
+	if fFontSize ~= nil then
+		editBox:SetFont("Fonts\\FRIZQT__.TTF", fFontSize);
 	end
 
 	editBox:SetScript("OnEnterPressed", function()
 
-		if onEnterPressedCallback ~= nil then
-			onEnterPressedCallback(callbackArguments);
+		if OnEnterPressedCallback ~= nil then
+			OnEnterPressedCallback(callbackArguments);
 		end
 
 		editBox:ClearFocus();
@@ -106,8 +106,8 @@ function CreateEditBox(name, parent, size, onlyNumeric, onEnterPressedCallback, 
 	end);
 	editBox:SetScript("OnEscapePressed", function()
 
-		if onEnterPressedCallback ~= nil then
-			onEnterPressedCallback(callbackArguments);
+		if OnEnterPressedCallback ~= nil then
+			OnEnterPressedCallback(callbackArguments);
 		end
 
 		editBox:ClearFocus();
@@ -117,23 +117,23 @@ function CreateEditBox(name, parent, size, onlyNumeric, onEnterPressedCallback, 
 	return scrollFrame;
 end
 
-function CreateDropDownList(name, parent, width, options, buttonSelectedCallback)
-	local dropDownList = CreateFrame("Frame", prefix .. name, parent, "UIDropDownMenuTemplate");
-	UIDropDownMenu_SetWidth(dropDownList, width);
+function CreateDropDownList(sName, parent, fWidth, options, OnButtonSelectedCallback)
+	local dropDownList = CreateFrame("Frame", sPrefix .. sName, parent, "UIDropDownMenuTemplate");
+	UIDropDownMenu_SetWidth(dropDownList, fWidth);
 
 	UIDropDownMenu_Initialize(dropDownList, function(self)
 
 		local buttons = UIDropDownMenu_CreateInfo();
 		buttons.func = function(self)
 			UIDropDownMenu_SetSelectedValue(dropDownList, self.value, false);
-			if buttonSelectedCallback ~= nil then
-				buttonSelectedCallback(self.value);
+			if OnButtonSelectedCallback ~= nil then
+				OnButtonSelectedCallback(self.value);
 			end
 			CloseDropDownMenus();
 		end;
 
 		for i = 1, #options do
-			buttons.text = options[i].text;
+			buttons.text = options[i].sText;
 			buttons.value = options[i].value;
 			buttons.checked = false;
 			UIDropDownMenu_AddButton(buttons);
@@ -143,80 +143,80 @@ function CreateDropDownList(name, parent, width, options, buttonSelectedCallback
 	return dropDownList;
 end
 
-function CreateButton(name, parent, size, text, onClickCallback, callbackArguments)
+function CreateButton(sName, parent, size, sText, OnClickCallback, callbackArguments)
 
-	local button = CreateFrame("Button", prefix .. name, parent, "UIPanelButtonTemplate");
+	local button = CreateFrame("Button", sPrefix .. sName, parent, "UIPanelButtonTemplate");
 	button:SetSize(size.x, size.y);
-	button:SetText(text);
+	button:SetText(sText);
 
-	if onClickCallback ~= nil then
-		button:SetScript("OnClick", function(self) onClickCallback(self, callbackArguments) end);
+	if OnClickCallback ~= nil then
+		button:SetScript("OnClick", function(self) OnClickCallback(self, callbackArguments) end);
 	end
 
 	return button;
 end
 
-function CreateIconButton(name, parent, size, iconUp, iconDown, iconHighlight, onClickCallback, callbackArguments)
+function CreateIconButton(sName, parent, size, iconUp, iconDown, iconHighlight, OnClickCallback, callbackArguments)
 
-	local button = CreateFrame("Button", prefix .. name, parent);
+	local button = CreateFrame("Button", sPrefix .. sName, parent);
 	button:SetSize(size, size);
 	button:SetNormalTexture(iconUp);
 	button:SetPushedTexture(iconDown);
 	button:SetHighlightTexture(iconHighlight);
 
-	if onClickCallback ~= nil then
-		button:SetScript("OnClick", function() onClickCallback(callbackArguments) end);
+	if OnClickCallback ~= nil then
+		button:SetScript("OnClick", function() OnClickCallback(callbackArguments) end);
 	end
 
 	return button;
 end
 
-function CreateBackdroppedFrame(name, parent, size, movable)
+function CreateBackdroppedFrame(sName, parent, size, bMovable)
 
-	local newFrame = CreateFrame("Frame", prefix .. name, parent);
+	local newFrame = CreateFrame("Frame", sPrefix .. sName, parent);
 	newFrame:SetSize(size.x, size.y);
 
 	CreateBackdrop(newFrame, 0.5);
 
-	if movable then
+	if bMovable then
 		MakeFrameMovable(newFrame);
 	end
 
 	return newFrame;
 end
 
-local titleFramesMargin = 0;
-local titleFontSize = 20;
-local innerFramesMargin = GetInnerFramesMargin();
+local fTitleFramesMargin = 0;
+local fTitleFontSize = 20;
+local fInnerFramesMargin = GetInnerFramesMargin();
 
-function CreateBackdroppedTitle(name, parent, title)
+function CreateBackdroppedTitle(sName, parent, sTitle)
 
-	if titleFramesMargin == 0 then
-		titleFramesMargin = innerFramesMargin * 2;
+	if fTitleFramesMargin == 0 then
+		fTitleFramesMargin = fInnerFramesMargin * 2;
 	end
 
-	local titleFrame = CreateBackdroppedFrame(name, parent, { x = 300, y = 35 });	-- '300' is placeholder before resizing with text size
-	local mainFrameTitle = CreateLabel(titleFrame, title, titleFontSize);
-	titleFrame:SetWidth(mainFrameTitle:GetWidth() + titleFramesMargin);
+	local titleFrame = CreateBackdroppedFrame(sName, parent, { x = 300, y = 35 });	-- '300' is placeholder before resizing with text size
+	local mainFrameTitle = CreateLabel(titleFrame, sTitle, fTitleFontSize);
+	titleFrame:SetWidth(mainFrameTitle:GetWidth() + fTitleFramesMargin);
 	mainFrameTitle:SetPoint("CENTER", 0, 0);
 
 	return titleFrame;
 end
 
-function CreateBackdropTitledInnerFrame(name, parent, title)
+function CreateBackdropTitledInnerFrame(sName, parent, sTitle)
 
-	local parentFrameSizeX, parentFrameSizeY = parent:GetSize();
+	local fParentFrameSizeX, fParentFrameSizeY = parent:GetSize();
 	local innerFrameSize =
 	{
-		x = parentFrameSizeX - (innerFramesMargin * 2),
-		y = parentFrameSizeY - (innerFramesMargin * 10)
+		x = fParentFrameSizeX - (fInnerFramesMargin * 2),
+		y = fParentFrameSizeY - (fInnerFramesMargin * 10)
 	};
 
-	local innerFrame = CreateBackdroppedFrame("VoteFrame", parent, innerFrameSize);
-	innerFrame:SetPoint("BOTTOM", 0, innerFramesMargin);
+	local innerFrame = CreateBackdroppedFrame(sName, parent, innerFrameSize);
+	innerFrame:SetPoint("BOTTOM", 0, fInnerFramesMargin);
 
-	local titleFrame = CreateBackdroppedTitle("VoteFrameTitle", innerFrame, "PollCraft - Vote");
-	titleFrame:SetPoint("TOP", parent, "TOP", 0, -titleFontSize);
+	local titleFrame = CreateBackdroppedTitle(sName .. "Title", innerFrame, sTitle);
+	titleFrame:SetPoint("TOP", parent, "TOP", 0, -fTitleFontSize);
 
 	return innerFrame;
 end
@@ -232,7 +232,7 @@ local function CreateScrollbar(scrollFrame)
 	scrollbar:SetValue(0);
 	scrollbar:SetWidth(16);
 
-	scrollbar:SetScript("OnValueChanged", function (self, value)
+	scrollbar:SetScript("OnValueChanged", function(self, value)
 		scrollFrame:SetVerticalScroll(value);
 	end);
 
@@ -245,46 +245,46 @@ local function CreateScrollbar(scrollFrame)
 	return scrollbar;
 end
 
-function UpdateScrollBar(scrollFrame, contentHeight)
+function UpdateScrollBar(scrollFrame, fContentHeight)
 
 	scrollbar = scrollFrame.scrollbar;
-	local scrollFrameHeight = scrollFrame:GetHeight() - 20;
-	scrollbar:SetMinMaxValues(0, math.max(1, contentHeight - scrollFrameHeight));
-	if contentHeight <= scrollFrameHeight then
+	local fScrollFrameHeight = scrollFrame:GetHeight() - 20;
+	scrollbar:SetMinMaxValues(0, math.max(1, fContentHeight - fScrollFrameHeight));
+	if fContentHeight <= fScrollFrameHeight then
 		scrollbar:Hide();
 	else
 		scrollbar:Show();
 	end
 end
 
-function CreateScrollFrame(name, parent, size)
+function CreateScrollFrame(sName, parent, size)
 
-	local scrollableFrame = CreateFrame("ScrollFrame", prefix .. name, parent);
+	local scrollableFrame = CreateFrame("ScrollFrame", sPrefix .. sName, parent);
 	CreateBackdrop(scrollableFrame, 0.5);
 	scrollableFrame:SetSize(size.x, size.y);
 	scrollableFrame:SetHitRectInsets(4, 4, 4, 4);
 
 	scrollableFrame.scrollbar = CreateScrollbar(scrollableFrame);
 	scrollableFrame.scrollbar:Hide();
-	scrollableFrame.content = CreateFrame("Frame", prefix .. name .. "_Content", scrollableFrame);
+	scrollableFrame.content = CreateFrame("Frame", sPrefix .. sName .. "_Content", scrollableFrame);
 	scrollableFrame.content:SetSize(size.x, size.y);
 	scrollableFrame:SetScrollChild(scrollableFrame.content);
 
-	local mouseWheelFrameCapture = CreateFrame("Frame", prefix .. name .. "_MouseWheelCapture", scrollableFrame);
+	local mouseWheelFrameCapture = CreateFrame("Frame", sPrefix .. sName .. "_MouseWheelCapture", scrollableFrame);
 	mouseWheelFrameCapture:SetSize(size.x, size.y);
 	mouseWheelFrameCapture:SetAllPoints(true);
 	mouseWheelFrameCapture:SetFrameLevel(scrollableFrame:GetFrameLevel() + 2);
 	mouseWheelFrameCapture:EnableMouseWheel(true);
 
-	mouseWheelFrameCapture:SetScript("OnMouseWheel", function(self, delta)
+	mouseWheelFrameCapture:SetScript("OnMouseWheel", function(self, fDelta)
 
 		local scrollFrame = self:GetParent();
 		if not scrollFrame.scrollbar:IsVisible() then
 			return;
 		end
 
-		local newValue = math.Clamp(scrollFrame:GetVerticalScroll() - (delta * 40), scrollFrame.scrollbar:GetMinMaxValues());
-		scrollFrame.scrollbar:SetValue(newValue);
+		local fNewValue = math.Clamp(scrollFrame:GetVerticalScroll() - (fDelta * 40), scrollFrame.scrollbar:GetMinMaxValues());
+		scrollFrame.scrollbar:SetValue(fNewValue);
 	end);
 
 	scrollableFrame.mouseWheelFrameCapture = mouseWheelFrameCapture;
@@ -293,41 +293,40 @@ function CreateScrollFrame(name, parent, size)
 end
 
 
-local function CreateTab(parent, width, text, id)
+local function CreateTab(parent, fWidth, sText, iId)
 
-	local tab = CreateFrame("Button", parent:GetName() .. "Tab" .. id, parent, "OptionsFrameTabButtonTemplate");
-	tab:SetText(text);
-	local newWidth = tab:GetTextWidth();
-	tab.id = id;
-	PanelTemplates_TabResize(tab, newWidth);
+	local tab = CreateFrame("Button", parent:GetName() .. "Tab" .. iId, parent, "OptionsFrameTabButtonTemplate");
+	tab:SetText(sText);
+	tab.iId = iId;
+	PanelTemplates_TabResize(tab, tab:GetTextWidth());
 
 	tab:SetScript("OnClick", function()
 
 		for i = 1, #parent.tabFrames do
-			if i == id then
+			if i == iId then
 				parent.tabFrames[i]:Show();
 			else
 				parent.tabFrames[i]:Hide();
 			end
 		end
 
-		PanelTemplates_SetTab(parent, id);
+		PanelTemplates_SetTab(parent, iId);
 	end);
 
 	return tab;
 end
 
-function CreateTabbedFrame(name, parent, size, movable, tabsNamesList)
+function CreateTabbedFrame(sName, parent, size, bMovable, tabsNamesList)
 
-	local mainFrame = CreateBackdroppedFrame(name, parent, size, movable);
+	local mainFrame = CreateBackdroppedFrame(sName, parent, size, bMovable);
 	mainFrame.tabsButtons = {};
 
-	local previousTextSize = 0;
+	local fPreviousTextSize = 0;
 
 	for i = 1, #tabsNamesList do
-		local newTab = CreateTab(mainFrame, 10, tabsNamesList[i], i);	-- '10' is placeholder width for tabs, before they get automatically resized
-		newTab:SetPoint("TOPLEFT", previousTextSize, 23);
-		previousTextSize = previousTextSize + newTab:GetTextWidth() + 31;
+		local newTab = CreateTab(mainFrame, 10, tabsNamesList[i], i);	-- '10' is placeholder fWidth for tabs, before they get automatically resized
+		newTab:SetPoint("TOPLEFT", fPreviousTextSize, 23);
+		fPreviousTextSize = fPreviousTextSize + newTab:GetTextWidth() + 31;
 		table.insert(mainFrame.tabsButtons, newTab);
 	end
 

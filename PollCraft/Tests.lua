@@ -12,42 +12,42 @@ end
 
 local globalTestPollData =
 {
-	pollGUID = GenerateTestPollGUID(),
-	pollMasterFullName = Me(),
-	pollMasterRealm = MyRealm(),
-	pollType = "RAID",
-	multiVotes = false,
-	allowNewAnswers = false,
+	sPollGUID = GenerateTestPollGUID(),
+	sPollMasterFullName = Me(),
+	sPollMasterRealm = MyRealm(),
+	sPollType = "RAID",
+	bMultiVotes = false,
+	bAllowNewAnswers = false,
 	question = "qEDGTEgzergrzegzrgh zregyzer sihgoz zrziog zrghzo rzgv zpzrosd zreoigvzrô gvze r^gzreneô zeg ôzg ozeg ozgoh ozeg zeg zergo ze",
 	answers =
 	{
 		{
-			text = "qEDGTEgzergrzegzrgh zregyzer sihgoz zrziog zrghzo rzgv zpzrosd zreoigvzrô gvze r^gzreneô zeg ôzg ozeg ozgoh ozeg zeg zergo ze",
-			GUID = "1"
+			sText = "qEDGTEgzergrzegzrgh zregyzer sihgoz zrziog zrghzo rzgv zpzrosd zreoigvzrô gvze r^gzreneô zeg ôzg ozeg ozgoh ozeg zeg zergo ze",
+			sGUID = "1"
 		},
 		{
-			text = "Answer two",
-			GUID = "2"
+			sText = "Answer two",
+			sGUID = "2"
 		},
 		{
-			text = "Answer three",
-			GUID = "3"
+			sText = "Answer three",
+			sGUID = "3"
 		},
 		{
-			text = "Answer four",
-			GUID = "4"
+			sText = "Answer four",
+			sGUID = "4"
 		},
 		{
-			text = "Answer five",
-			GUID = "5"
+			sText = "Answer five",
+			sGUID = "5"
 		},
 		{
-			text = "Answer six",
-			GUID = "6"
+			sText = "Answer six",
+			sGUID = "6"
 		},
 		{
-			text = "Answer seven",
-			GUID = "7"
+			sText = "Answer seven",
+			sGUID = "7"
 		},
 	}
 }
@@ -61,39 +61,39 @@ local randomRealms =
 	"Aerie Peak", "Anvilmar", "Arathor", "Antonidas", "Azuremyst", "Baelgun", "Blade's Edge", "Bladefist", "Bronzebeard", "Cenarius", "Darrowmere", "Draenor", "Dragonblight", "Echo Isles", "Galakrond", "Gnomeregan", "Hyjal", "Kilrogg", "Korialstrasz", "Lightbringer", "Misha", "Moonrunner", "Nordrassil", "Proudmoore", "Shadowsong", "Shu'Halo", "Silvermoon", "Skywall", "Suramar", "Uldum", "Uther", "Velen", "Windrunner"
 };
 local function GenerateRandomPollMaster()
-	local realm = randomRealms[math.random(1, #randomRealms)];
-	local name = randomPollMastersNames[math.random(1, #randomPollMastersNames)] .. realm;
-	return name, realm;
+	local sRealm = randomRealms[math.random(1, #randomRealms)];
+	local sName = randomPollMastersNames[math.random(1, #randomPollMastersNames)] .. sRealm;
+	return sName, sRealm;
 end
 
-local function CreateTestPollData(mine, question, answersCount, multiVotes, allowNewAnswers)
+local function CreateTestPollData(bMine, question, iAnswersCount, bMultiVotes, bAllowNewAnswers)
 
-	local pollMasterFullName = nil;
-	local pollMasterRealm = nil;
-	if mine then
-		pollMasterFullName = Me();
-		pollMasterRealm = MyRealm();
+	local sPollMasterFullName = nil;
+	local sPollMasterRealm = nil;
+	if bMine then
+		sPollMasterFullName = Me();
+		sPollMasterRealm = MyRealm();
 	else
-		pollMasterFullName, pollMasterRealm = GenerateRandomPollMaster();
+		sPollMasterFullName, sPollMasterRealm = GenerateRandomPollMaster();
 	end
 
 	local testPollData =
 	{
-		pollGUID = GenerateTestPollGUID(),
-		pollMasterFullName = pollMasterFullName,
-		pollMasterRealm = pollMasterRealm,
-		pollType = "RAID",
-		multiVotes = multiVotes,
-		allowNewAnswers = allowNewAnswers,
+		sPollGUID = GenerateTestPollGUID(),
+		sPollMasterFullName = sPollMasterFullName,
+		sPollMasterRealm = sPollMasterRealm,
+		sPollType = "RAID",
+		bMultiVotes = bMultiVotes,
+		bAllowNewAnswers = bAllowNewAnswers,
 		question = question,
 		answers = {}
 	};
 
-	for i = 1, answersCount do
+	for i = 1, iAnswersCount do
 		local answer =
 		{
-			text = "Answer " .. tostring(i),
-			GUID = tostring(i)
+			sText = "Answer " .. tostring(i),
+			sGUID = tostring(i)
 		}
 		table.insert(testPollData.answers, answer);
 	end
@@ -134,7 +134,7 @@ function TestOneSimpleVote()
 
 	local voteData =
 	{
-		pollGUID = globalTestPollData.pollGUID,
+		sPollGUID = globalTestPollData.sPollGUID,
 		newAnswers = {},
 		vote =
 		{
@@ -150,7 +150,7 @@ function TestSomeVotes()
 
 	local voteData =
 	{
-		pollGUID = globalTestPollData.pollGUID,
+		sPollGUID = globalTestPollData.sPollGUID,
 		newAnswers =
 		{
 			{
