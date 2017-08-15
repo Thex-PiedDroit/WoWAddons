@@ -1,8 +1,5 @@
 
-SLASH_RELOADUI1 = "/rl"
-SlashCmdList.RELOADUI = ReloadUI
-
---------------------------------
+Cerberus_HookThisFile();
 
 
 local pollCraftEventListener = CreateFrame("Frame");

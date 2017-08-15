@@ -1,18 +1,20 @@
 
+Cerberus_HookThisFile();
+
 if not DEBUG_VERSION then
 	return;
 end
 
 
 local function GenerateTestPollGUID()
-	return "TEST_POLL_" .. PollCraft_MyGUID() .. tostring(math.random(1000000, 9999999));
+	return "TEST_POLL_" .. MyGUID() .. tostring(math.random(1000000, 9999999));
 end
 
 local globalTestPollData =
 {
 	pollGUID = GenerateTestPollGUID(),
-	pollMasterFullName = PollCraft_Me(),
-	pollMasterRealm = PollCraft_MyRealm(),
+	pollMasterFullName = Me(),
+	pollMasterRealm = MyRealm(),
 	pollType = "RAID",
 	multiVotes = false,
 	allowNewAnswers = false,
@@ -69,8 +71,8 @@ local function CreateTestPollData(mine, question, answersCount, multiVotes, allo
 	local pollMasterFullName = nil;
 	local pollMasterRealm = nil;
 	if mine then
-		pollMasterFullName = PollCraft_Me();
-		pollMasterRealm = PollCraft_MyRealm();
+		pollMasterFullName = Me();
+		pollMasterRealm = MyRealm();
 	else
 		pollMasterFullName, pollMasterRealm = GenerateRandomPollMaster();
 	end

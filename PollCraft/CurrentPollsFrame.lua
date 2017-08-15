@@ -1,4 +1,5 @@
 
+Cerberus_HookThisFile();
 
 g_currentPollsMotherFrame = {};
 

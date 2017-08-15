@@ -1,4 +1,6 @@
 
+Cerberus_HookThisFile();
+
 local innerFramesMargin = GetInnerFramesMargin();
 local marginBetweenUpperBordersAndText = GetTextMarginFromUpperFramesBorders();
 local sizeDifferenceBetweenFrameAndEditBox = GetSizeDifferenceBetweenFrameAndEditBox();
@@ -409,7 +411,7 @@ function LoadAndOpenVoteFrame(pollData)
 	if pollData.pollType == "RAID" then
 
 		if g_currentlyBusy then
-			if sender ~= nil and sender ~= PollCraft_Me() then
+			if sender ~= nil and sender ~= Me() then
 				SendPollMessage({}, "Busy", "WHISPER", pollData.pollMasterFullName, pollData.pollMasterRealm);
 			end
 
@@ -448,7 +450,7 @@ end
 
 
 local function CreateAnswerGUID(index)
-	return PollCraft_Me() .. index;
+	return Me() .. index;
 end
 
 function GetVoteData()
