@@ -1,6 +1,12 @@
 
 g_cerberus.HookThisFile();
 
+local currentPollGUID = 0;
+
+function GetPollCurrentlyVotingFor()
+	return currentPollGUID;
+end
+
 local innerFramesMargin = GetInnerFramesMargin();
 local marginBetweenUpperBordersAndText = GetTextMarginFromUpperFramesBorders();
 local sizeDifferenceBetweenFrameAndEditBox = GetSizeDifferenceBetweenFrameAndEditBox();
@@ -79,6 +85,8 @@ function InitVoteFrame()
 	containingFrame:Hide();
 	mainFrame:Hide();
 	g_currentPollsMotherFrame.voteFrame = mainFrame;
+
+	mainFrame:SetScript("OnHide", function(self) if not self:IsShown() then currentPollGUID = 0; end end);
 end
 
 
@@ -404,13 +412,12 @@ UpdateAnswersScrollbar = function()
 	UpdateScrollBar(answersScrollFrame, (answersCountForUpdateScrollbar * totalHeightOfEachAnswer) - innerFramesMargin);
 end
 
-local pollGUID = 0;
 
 function LoadAndOpenVoteFrame(pollData)
 
 	if pollData.pollType == "RAID" then
 
-		if g_currentlyBusy then
+		if GetPollCurrentlyVotingFor() ~= 0 then
 			if sender ~= nil and sender ~= Me() then
 				SendPollMessage({}, "Busy", "WHISPER", pollData.pollMasterFullName, pollData.pollMasterRealm);
 			end
@@ -432,7 +439,7 @@ function LoadAndOpenVoteFrame(pollData)
 			LoadAnswer(nil);
 		end
 
-		pollGUID = pollData.pollGUID;
+		currentPollGUID = pollData.pollGUID;
 		g_currentPollsMotherFrame.voteFrame:Show();
 		g_currentPollsMotherFrame.panel:Show();
 		g_currentPollsMotherFrame.currentPollFrame:Show();
@@ -457,7 +464,7 @@ function GetVoteData()
 
 	local voteObject =
 	{
-		pollGUID = pollGUID,
+		pollGUID = currentPollGUID,
 		newAnswers = {},
 		vote = {}
 	}
