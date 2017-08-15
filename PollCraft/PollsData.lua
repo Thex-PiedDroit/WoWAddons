@@ -1,5 +1,4 @@
 
-
 --[[
 pollData =
 {
@@ -19,6 +18,10 @@ pollData =
 
 -- Polls each have "unique" IDs composed like so: "PlayerGUIDXXXXXXX" where "XXXXXXX" is a random number between 1000000 and 9999999 (not really unique, but close enough)
 ]]
+
+
+Cerberus_HookThisFile();
+
 
 local currentPollsInMemory = {};
 

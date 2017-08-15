@@ -14,6 +14,8 @@ voteData =
 ]]
 
 
+Cerberus_HookThisFile();
+
 function SendVoteAway(self, args)
 
 	self:Disable();
@@ -34,8 +36,8 @@ end
 function HandleVoteMessageReception(voteMessage, senderFullName, senderRealm)
 
 	if voteMessage.isBroadcast and
-		((senderFullName ~= nil and senderFullName == PollCraft_Me())
-		or (voteMessage.excludedGuyFromBroadcast == PollCraft_Me())) then
+		((senderFullName ~= nil and senderFullName == Me())
+		or (voteMessage.excludedGuyFromBroadcast == Me())) then
 		return;
 	end
 
@@ -49,7 +51,7 @@ function HandleVoteMessageReception(voteMessage, senderFullName, senderRealm)
 		registeredVote = true;
 	end
 
-	if pollData.pollMasterFullName == PollCraft_Me() then
+	if pollData.pollMasterFullName == Me() then
 		if not registeredVote then
 			RegisterVote(voteData);
 		end

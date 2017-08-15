@@ -1,4 +1,6 @@
 
+Cerberus_HookThisFile();
+
 local innerFramesMargin = GetInnerFramesMargin();
 local marginBetweenUpperBordersAndText = GetTextMarginFromUpperFramesBorders();
 local sizeDifferenceBetweenFrameAndEditBox = GetSizeDifferenceBetweenFrameAndEditBox();
