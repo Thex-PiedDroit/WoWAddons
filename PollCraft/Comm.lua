@@ -5,9 +5,6 @@ local comm = LibStub("AceComm-3.0");
 local serializer = LibStub("AceSerializer-3.0");
 
 
-g_currentlyBusy = false;
-
-
 local function ReceiveMessage(prefix, message)
 
 	local success, messageObject = serializer:Deserialize(message);
@@ -31,7 +28,7 @@ local function ReceiveMessage(prefix, message)
 			return;
 		end
 
-		LoadAndOpenReceivePollFrame(actualMessage.poll, messageObject.senderFullName, messageObject.senderRealm);
+		LoadAndOpenVoteFrame(actualMessage.poll, messageObject.senderFullName, messageObject.senderRealm);
 
 	elseif messageType == "Busy" then
 		PollCraft_Print(GetNameForPrint(messageObject.senderName, messageObject.senderRealm) .. " could not receive your poll because they were busy.");

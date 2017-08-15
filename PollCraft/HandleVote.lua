@@ -44,8 +44,10 @@ function HandleVoteMessageReception(voteMessage, senderFullName, senderRealm)
 	local voteData = voteMessage.voteData;
 	local pollData = GetPollData(voteData.pollGUID);
 
+	local bCurrentlyVoting = GetPollCurrentlyVotingFor() == voteData.pollGUID;
+
 	local registeredVote = false;
-	if not g_currentlyBusy then
+	if not bCurrentlyVoting then
 		RegisterVote(voteData);
 		AddVoteToResultsDisplay(voteData);
 		registeredVote = true;
@@ -65,7 +67,7 @@ function HandleVoteMessageReception(voteMessage, senderFullName, senderRealm)
 		BroadcastVote(voteData, senderFullName);
 	end
 
-	if g_currentlyBusy then
+	if bCurrentlyVoting then
 		LoadAdditionalAnswersForVoting(voteData.newAnswers);
 	end
 end
