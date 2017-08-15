@@ -5,11 +5,11 @@ local comm = LibStub("AceComm-3.0");
 local serializer = LibStub("AceSerializer-3.0");
 
 
-local function ReceiveMessage(prefix, message)
+local function ReceiveMessage(_, sMessage)
 
-	local success, messageObject = serializer:Deserialize(message);
+	local bSuccess, messageObject = serializer:Deserialize(sMessage);
 
-	if not success then
+	if not bSuccess then
 		PollCraft_Print("Could not deserialize a message. Error message:");
 		print(messageObject);
 		return;
@@ -17,63 +17,63 @@ local function ReceiveMessage(prefix, message)
 
 	local actualMessage = messageObject.message;
 
-	if actualMessage.specificTarget ~= nil and actualMessage.specificTarget ~= Me() then
+	if actualMessage.sSpecificTarget ~= nil and actualMessage.sSpecificTarget ~= Me() then
 		return;		-- Because for some reason, blizzard decided that cross-realm WHISPERS do not work in parties and raid groups
 	end
 
-	local messageType = actualMessage.messageType;
+	local sMessageType = actualMessage.sMessageType;
 
-	if messageType == "NewPoll" then
-		if messageObject.senderFullName ~= nil and messageObject.senderFullName == Me() then
+	if sMessageType == "NewPoll" then
+		if messageObject.sSenderFullName ~= nil and messageObject.sSenderFullName == Me() then
 			return;
 		end
 
-		LoadAndOpenVoteFrame(actualMessage.poll, messageObject.senderFullName, messageObject.senderRealm);
+		LoadAndOpenVoteFrame(actualMessage.poll, messageObject.sSenderFullName, messageObject.sSenderRealm);
 
-	elseif messageType == "Busy" then
-		PollCraft_Print(GetNameForPrint(messageObject.senderName, messageObject.senderRealm) .. " could not receive your poll because they were busy.");
+	elseif sMessageType == "Busy" then
+		PollCraft_Print(GetNameForPrint(messageObject.sSenderName, messageObject.sSenderRealm) .. " could not receive your poll because they were busy.");
 
-	elseif messageType == "Vote" then
-		HandleVoteMessageReception(actualMessage, messageObject.senderFullName, messageObject.senderRealm);
+	elseif sMessageType == "Vote" then
+		HandleVoteMessageReception(actualMessage, messageObject.sSenderFullName, messageObject.sSenderRealm);
 
-	elseif messageType == "Results" then
+	elseif sMessageType == "Results" then
 		local resultsData = actualMessage.resultsData;
 		RegisterResults(resultsData);
-		LoadAndOpenPollResultsFrame(GetPollData(resultsData.pollGUID));
+		LoadAndOpenPollResultsFrame(GetPollData(resultsData.sPollGUID));
 	end
 end
 
 comm:RegisterComm("PollCraft", ReceiveMessage);
 
 
-function comm:SendMessage(msg, channel, target)
+function comm:SendMessage(message, sChannel, sTarget)
 
 	local messageObject =
 	{
-		senderBTag = MyBTag();
-		senderName = MyName();
-		senderRealm = MyRealm();
-		senderFullName = Me();
-		message = msg;
+		sSenderBTag = MyBTag(),
+		sSenderName = MyName(),
+		sSenderRealm = MyRealm(),
+		sSenderFullName = Me(),
+		message = message
 	};
 
-	local serializedMessage = serializer:Serialize(messageObject);
+	local sSerializedMessage = serializer:Serialize(messageObject);
 
-	if target == Me() then
-		ReceiveMessage("PollCraft", serializedMessage);
+	if sTarget == Me() then
+		ReceiveMessage(nil, sSerializedMessage);
 	else
-		self:SendCommMessage("PollCraft", serializedMessage, channel, target);
+		self:SendCommMessage("PollCraft", sSerializedMessage, sChannel, sTarget);
 	end
 end
 
-function SendPollMessage(message, messageType, channel, target, targetRealm)
+function SendPollMessage(message, sMessageType, sChannel, sTarget, sTargetRealm)
 
-	message.messageType = messageType;
+	message.sMessageType = sMessageType;
 
-	if channel == "WHISPER" and targetRealm ~= MyRealm() then
-		message.specificTarget = target;	-- Because for some reason, blizzard decided that cross-realm WHISPERS do not work in parties and raid groups
-		channel = "RAID";
+	if sChannel == "WHISPER" and sTargetRealm ~= MyRealm() then
+		message.sSpecificTarget = sTarget;	-- Because for some reason, blizzard decided that cross-realm WHISPERS do not work in parties and raid groups
+		sChannel = "RAID";
 	end
 
-	comm:SendMessage(message, channel, target);
+	comm:SendMessage(message, sChannel, sTarget);
 end
