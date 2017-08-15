@@ -1,4 +1,6 @@
 
+g_cerberus.HookThisFile();
+
 local prefix = "PollCraft_";
 
 
@@ -8,7 +10,7 @@ function GetFrameSizeAsTable(frame)
 	return { x = width, y = height };
 end
 
-function MakeFrameMovable(frame)
+local function MakeFrameMovable(frame)
 
 	frame:SetMovable(true);
 

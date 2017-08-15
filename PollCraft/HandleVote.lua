@@ -13,6 +13,8 @@ voteData =
 			Exemple: "Illydann-Eitrigg1", "Illydann-Eitrigg2", "Atasmanatilt-Draenor1", "Xxdestructozorxx-Eitrigg1", "Xxdestructozorxx-Eitrigg2"
 ]]
 
+g_cerberus.HookThisFile();
+
 
 function SendVoteAway(self, args)
 
@@ -34,8 +36,8 @@ end
 function HandleVoteMessageReception(voteMessage, senderFullName, senderRealm)
 
 	if voteMessage.isBroadcast and
-		((senderFullName ~= nil and senderFullName == PollCraft_Me())
-		or (voteMessage.excludedGuyFromBroadcast == PollCraft_Me())) then
+		((senderFullName ~= nil and senderFullName == Me())
+		or (voteMessage.excludedGuyFromBroadcast == Me())) then
 		return;
 	end
 
@@ -49,7 +51,7 @@ function HandleVoteMessageReception(voteMessage, senderFullName, senderRealm)
 		registeredVote = true;
 	end
 
-	if pollData.pollMasterFullName == PollCraft_Me() then
+	if pollData.pollMasterFullName == Me() then
 		if not registeredVote then
 			RegisterVote(voteData);
 		end

@@ -1,5 +1,7 @@
 
 
+g_cerberus.HookThisFile();
+
 g_currentPollsMotherFrame = {};
 
 

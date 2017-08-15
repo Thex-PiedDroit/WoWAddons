@@ -1,4 +1,6 @@
 
+g_cerberus.HookThisFile();
+
 local innerFramesMargin = GetInnerFramesMargin();
 local marginBetweenUpperBordersAndText = GetTextMarginFromUpperFramesBorders();
 local sizeDifferenceBetweenFrameAndEditBox = GetSizeDifferenceBetweenFrameAndEditBox();

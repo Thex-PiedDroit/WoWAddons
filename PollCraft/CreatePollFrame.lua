@@ -1,4 +1,6 @@
 
+g_cerberus.HookThisFile();
+
 g_createPollFrame = {};
 
 local containingFrameSize =
@@ -99,7 +101,7 @@ function InitCreatePollFrame()
 end
 
 
-CreatePollTypesDropdownList = function(parentFrame)
+--[[local]] CreatePollTypesDropdownList = function(parentFrame)
 
 	local listLabel = CreateLabel(parentFrame, "Poll Type", 16);
 	listLabel:SetPoint("TOPLEFT", innerFramesMargin + 10, marginBetweenUpperBordersAndText);
@@ -132,7 +134,7 @@ local AddOrRemoveAnswerEditBox = nil;
 local RemoveAnswer = nil;
 local answerObjects = {};
 
-CreateAnswerEditBox = function()
+--[[local]] CreateAnswerEditBox = function()
 
 	local answerObject = {};
 
@@ -163,7 +165,7 @@ CreateAnswerEditBox = function()
 	table.insert(answerObjects, answerObject);
 end
 
-AddOrRemoveAnswerEditBox = function(currentlyModifiedAnswerIndex)
+--[[local]] AddOrRemoveAnswerEditBox = function(currentlyModifiedAnswerIndex)
 
 	local object = answerObjects[currentlyModifiedAnswerIndex];
 	local boxText = object.editBoxScrollFrame.EditBox:GetText();
@@ -186,7 +188,7 @@ AddOrRemoveAnswerEditBox = function(currentlyModifiedAnswerIndex)
 	UpdateScrollBar(answersScrollFrame, answersCount * totalHeightOfEachAnswer);
 end
 
-RemoveAnswer = function(index)
+--[[local]] RemoveAnswer = function(index)
 
 	if index == answersCount then
 		local editBox = answerObjects[index].editBoxScrollFrame.EditBox;
@@ -214,26 +216,26 @@ end
 
 
 local function GeneratePollGUID()
-	return PollCraft_MyGUID() .. tostring(math.random(1000000, 9999999));
+	return MyGUID() .. tostring(math.random(1000000, 9999999));
 end
 
 function SendPollData(pollData)
 
 	SendPollMessage({ poll = pollData }, "NewPoll", pollData.pollType);
-	LoadAndOpenVoteFrame(pollData, PollCraft_Me(), PollCraft_MyRealm());
+	LoadAndOpenVoteFrame(pollData, Me(), MyRealm());
 
 	g_currentPollsMotherFrame.panel:ClearAllPoints();
 	g_currentPollsMotherFrame.panel:SetPoint("TOPLEFT", g_createPollFrame.panel, "TOPRIGHT", 0, 0);
 end
 
-SendNewPollAway = function()
+--[[local]] SendNewPollAway = function()
 
 	local data = g_createPollFrame.panel;
 	local newPollData =
 	{
 		pollGUID = GeneratePollGUID(),
-		pollMasterFullName = PollCraft_Me(),
-		pollMasterRealm = PollCraft_MyRealm(),
+		pollMasterFullName = Me(),
+		pollMasterRealm = MyRealm(),
 		pollType = UIDropDownMenu_GetSelectedValue(data.pollTypesDropDownList),
 		multiVotes = data.allowMultipleVotesCheck:GetChecked(),
 		allowNewAnswers = data.allowNewAnswersCheck:GetChecked(),

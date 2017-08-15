@@ -11,6 +11,7 @@ Libraries\CallbackHandler-1.0\CallbackHandler-1.0.xml
 Libraries\AceComm-3.0\AceComm-3.0.xml
 Libraries\AceSerializer-3.0\AceSerializer-3.0.xml
 
+Libraries\Cerberus\Cerberus.lua
 
 Helpers.lua
 PollsData.lua

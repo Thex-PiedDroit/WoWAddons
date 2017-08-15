@@ -1,7 +1,10 @@
 
+g_cerberus.RegisterAddon("PollCraft");
+g_cerberus.HookThisFile();
+
 
 local _, playerBTag = BNGetInfo();
-function PollCraft_MyBTag()
+function MyBTag()
 	if playerBTag == nil then
 		local _, newBTag = BNGetInfo();
 		playerBTag = newBTag;
@@ -9,22 +12,22 @@ function PollCraft_MyBTag()
 	return playerBTag;
 end
 local playerGUID = UnitGUID("player");
-function PollCraft_MyGUID()
+function MyGUID()
 	if playerGUID == nil then
 		playerGUID = UnitGUID("player");
 	end
 	return playerGUID;
 end
 local playerName = UnitName("player");
-function PollCraft_MyName()
+function MyName()
 	return playerName;
 end
 local playerRealm = GetRealmName();
-function PollCraft_MyRealm()
+function MyRealm()
 	return playerRealm;
 end
 local playerFullName = playerName .. "-" .. playerRealm;
-function PollCraft_Me()
+function Me()
 	return playerFullName;
 end
 
@@ -48,9 +51,9 @@ function GetSizeDifferenceBetweenFrameAndEditBox()
 end
 
 
-function PollCraft_GetNameForPrint(targetName, targetRealm)
+function GetNameForPrint(targetName, targetRealm)
 
-	if targetRealm ~= PollCraft_MyRealm() then
+	if targetRealm ~= MyRealm() then
 		targetName = targetName .. "-" .. targetRealm;
 	end
 
