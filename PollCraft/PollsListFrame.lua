@@ -1,8 +1,8 @@
 
 g_cerberus.HookThisFile();
 
-local innerFramesMargin = GetInnerFramesMargin();
-local marginBetweenUpperBordersAndText = GetTextMarginFromUpperFramesBorders();
+local fInnerFramesMargin = GetInnerFramesMargin();
+local fMarginBetweenUpperBordersAndText = GetTextMarginFromUpperFramesBorders();
 
 
 function InitPollsListFrame()
@@ -21,24 +21,24 @@ function InitPollsListFrame()
 
 	local listsFramesSize =
 	{
-		x = innerFrameSize.x - (innerFramesMargin * 2),
-		y = ((innerFrameSize.y - innerFramesMargin) * 0.5) + (marginBetweenUpperBordersAndText * 2)
+		x = innerFrameSize.x - (fInnerFramesMargin * 2),
+		y = ((innerFrameSize.y - fInnerFramesMargin) * 0.5) + (fMarginBetweenUpperBordersAndText * 2)
 	}
 
 		--[[      POLLS CREATED BY ME      ]]--
 	local createdByMeListFrame = CreateScrollFrame("CreatedByMeListFrame", mainFrame, listsFramesSize);
-	createdByMeListFrame:SetPoint("TOP", mainFrame, "TOP", 0, marginBetweenUpperBordersAndText * 2);
+	createdByMeListFrame:SetPoint("TOP", mainFrame, "TOP", 0, fMarginBetweenUpperBordersAndText * 2);
 
 	local createdByMeSectionLabel = CreateLabel(createdByMeListFrame, "Created by me:", 16);
-	createdByMeSectionLabel:SetPoint("TOPLEFT", innerFramesMargin + 10, -marginBetweenUpperBordersAndText);
+	createdByMeSectionLabel:SetPoint("TOPLEFT", fInnerFramesMargin + 10, -fMarginBetweenUpperBordersAndText);
 
 
 		--[[      POLLS CREATED BY OTHERS      ]]--
 	local createdByOthersListFrame = CreateScrollFrame("CreatedByOthersListFrame", mainFrame, listsFramesSize);
-	createdByOthersListFrame:SetPoint("TOP", createdByMeListFrame, "BOTTOM", 0, marginBetweenUpperBordersAndText * 2);
+	createdByOthersListFrame:SetPoint("TOP", createdByMeListFrame, "BOTTOM", 0, fMarginBetweenUpperBordersAndText * 2);
 
 	local createdByOthersSectionLabel = CreateLabel(createdByOthersListFrame, "Created by others:", 16);
-	createdByOthersSectionLabel:SetPoint("TOPLEFT", innerFramesMargin + 10, -marginBetweenUpperBordersAndText);
+	createdByOthersSectionLabel:SetPoint("TOPLEFT", fInnerFramesMargin + 10, -fMarginBetweenUpperBordersAndText);
 
 
 	g_currentPollsMotherFrame.pollsList = mainFrame;

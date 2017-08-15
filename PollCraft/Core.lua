@@ -8,9 +8,9 @@ local events = {};
 DEBUG_VERSION = true;
 
 
-function events:ADDON_LOADED(addonName)
+function events:ADDON_LOADED(sAddonName)
 
-	if addonName ~= "PollCraft" then
+	if sAddonName ~= "PollCraft" then
 		return;
 	end
 

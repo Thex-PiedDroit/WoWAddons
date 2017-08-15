@@ -2,7 +2,7 @@
 --[[
 voteData =
 {
-	pollGUID,
+	sPollGUID,
 	newAnswers {},	-- Answers added by the voter
 	vote {}		-- List of answerIDs
 }
@@ -16,58 +16,56 @@ voteData =
 g_cerberus.HookThisFile();
 
 
-function SendVoteAway(self, args)
+function SendVoteAway(self)
 
 	self:Disable();
 
 	local voteData = GetVoteData();
-	local pollData = GetPollData(voteData.pollGUID);
+	local pollData = GetPollData(voteData.sPollGUID);
 
-	SendPollMessage({ voteData = voteData }, "Vote", "WHISPER", pollData.pollMasterFullName, pollData.pollMasterRealm);
+	SendPollMessage({ voteData = voteData }, "Vote", "WHISPER", pollData.sPollMasterFullName, pollData.sPollMasterRealm);
 end
 
-function BroadcastVote(voteData, excludedGuyFromBroadcast)
+function BroadcastVote(voteData, sExcludedGuyFromBroadcast)
 
-	local pollData = GetPollData(voteData.pollGUID);
-	SendPollMessage({ voteData = voteData, isBroadcast = true, excludedGuyFromBroadcast = excludedGuyFromBroadcast }, "Vote", pollData.pollType);
+	local pollData = GetPollData(voteData.sPollGUID);
+	SendPollMessage({ voteData = voteData, bIsBroadcast = true, sExcludedGuyFromBroadcast = sExcludedGuyFromBroadcast }, "Vote", pollData.sPollType);
 end
 
 
-function HandleVoteMessageReception(voteMessage, senderFullName, senderRealm)
+function HandleVoteMessageReception(voteMessage, sSenderFullName, sSenderRealm)
 
-	if voteMessage.isBroadcast and
-		((senderFullName ~= nil and senderFullName == Me())
-		or (voteMessage.excludedGuyFromBroadcast == Me())) then
+	if voteMessage.bIsBroadcast and
+		((sSenderFullName ~= nil and sSenderFullName == Me())
+		or (voteMessage.sExcludedGuyFromBroadcast == Me())) then
 		return;
 	end
 
 	local voteData = voteMessage.voteData;
-	local pollData = GetPollData(voteData.pollGUID);
+	local pollData = GetPollData(voteData.sPollGUID);
 
-	local bCurrentlyVoting = GetPollCurrentlyVotingFor() == voteData.pollGUID;
+	local bCurrentlyVoting = GetPollCurrentlyVotingFor() == voteData.sPollGUID;
 
-	local registeredVote = false;
+	local bRegisteredVote = false;
 	if not bCurrentlyVoting then
 		RegisterVote(voteData);
 		AddVoteToResultsDisplay(voteData);
-		registeredVote = true;
+		bRegisteredVote = true;
 	end
 
-	if pollData.pollMasterFullName == Me() then
-		if not registeredVote then
+	if pollData.sPollMasterFullName == Me() then
+		if not bRegisteredVote then
 			RegisterVote(voteData);
 		end
 		local resultsMessageData =
 		{
-			pollGUID = voteData.pollGUID,
+			sPollGUID = voteData.sPollGUID,
 			pollAnswers = pollData.answers,
 			results = pollData.results
 		}
-		SendPollMessage({ resultsData = resultsMessageData }, "Results", "WHISPER", senderFullName, senderRealm);
-		BroadcastVote(voteData, senderFullName);
-	end
-
-	if bCurrentlyVoting then
+		SendPollMessage({ resultsData = resultsMessageData }, "Results", "WHISPER", sSenderFullName, sSenderRealm);
+		BroadcastVote(voteData, sSenderFullName);
+	elseif bCurrentlyVoting then
 		LoadAdditionalAnswersForVoting(voteData.newAnswers);
 	end
 end

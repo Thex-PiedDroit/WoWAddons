@@ -2,17 +2,17 @@
 --[[
 pollData =
 {
-	pollGUID,
-	pollMasterFullName,
-	pollMasterRealm,
-	pollType,
-	multiVotes,
-	allowNewAnswers,
+	sPollGUID,
+	sPollMasterFullName,
+	sPollMasterRealm,
+	sPollType,
+	bMultiVotes,
+	bAllowNewAnswers,
 	question,	-- As text
 	answers = {}
 	results =
 	{
-		[answerGUID] = X,	-- Where X is the current amount of votes on that answer. If answer is not in this list, answer has 0 votes
+		[sAnswerGUID] = iX,	-- Where iX is the current amount of votes on that answer. If answer is not in this list, answer has 0 votes
 	}
 }
 
@@ -26,57 +26,57 @@ local currentPollsInMemory = {};
 
 function UpdatePollData(newPollData)
 
-	currentPollsInMemory[newPollData.pollGUID] = newPollData;	-- TEMP
+	currentPollsInMemory[newPollData.sPollGUID] = newPollData;	-- TEMP
 end
 
 function AddPollDataToMemory(pollData)
 
-	local pollGUID = pollData.pollGUID;
+	local sPollGUID = pollData.sPollGUID;
 
-	if currentPollsInMemory[pollGUID] ~= nil then
+	if currentPollsInMemory[sPollGUID] ~= nil then
 		UpdatePollData(pollData);
 	else
-		currentPollsInMemory[pollGUID] = pollData;
+		currentPollsInMemory[sPollGUID] = pollData;
 	end
 end
 
-function RemovePollDataFromMemory(pollGUID)
-	currentPollsInMemory[pollGUID] = nil;
+function RemovePollDataFromMemory(sPollGUID)
+	currentPollsInMemory[sPollGUID] = nil;
 end
 
-function GetPollData(pollGUID)
-	return currentPollsInMemory[pollGUID];
+function GetPollData(sPollGUID)
+	return currentPollsInMemory[sPollGUID];
 end
 
 
 function RegisterVote(voteData)
 
-	local pollData = currentPollsInMemory[voteData.pollGUID];
+	local pollData = currentPollsInMemory[voteData.sPollGUID];
 
 	local pollAnswers = pollData.answers;
 	for i = 1, #voteData.newAnswers do
 		table.insert(pollAnswers, voteData.newAnswers[i]);
 	end
-	currentPollsInMemory[voteData.pollGUID].answers = pollAnswers;
+	currentPollsInMemory[voteData.sPollGUID].answers = pollAnswers;
 
 	local pollResults = pollData.results or {};
 	for i = 1, #voteData.vote do
-		local currentVoteGUID = voteData.vote[i];
-		if pollResults[currentVoteGUID] == nil then
-			pollResults[currentVoteGUID] = 0;
+		local sCurrentVoteGUID = voteData.vote[i];
+		if pollResults[sCurrentVoteGUID] == nil then
+			pollResults[sCurrentVoteGUID] = 0;
 		end
-		pollResults[currentVoteGUID] = pollResults[currentVoteGUID] + 1;
+		pollResults[sCurrentVoteGUID] = pollResults[sCurrentVoteGUID] + 1;
 	end
-	currentPollsInMemory[voteData.pollGUID].results = pollResults;
+	currentPollsInMemory[voteData.sPollGUID].results = pollResults;
 end
 
 function RegisterResults(resultsData)
 
-	local pollGUID = resultsData.pollGUID;
+	local sPollGUID = resultsData.sPollGUID;
 
-	if currentPollsInMemory[pollGUID] == nil then
-		currentPollsInMemory[pollGUID] = {};
+	if currentPollsInMemory[sPollGUID] == nil then
+		currentPollsInMemory[sPollGUID] = {};
 	end
-	currentPollsInMemory[pollGUID].answers = resultsData.pollAnswers;
-	currentPollsInMemory[pollGUID].results = resultsData.results;
+	currentPollsInMemory[sPollGUID].answers = resultsData.pollAnswers;
+	currentPollsInMemory[sPollGUID].results = resultsData.results;
 end
