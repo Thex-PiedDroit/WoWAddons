@@ -6,6 +6,12 @@ local sCurrentPollGUID = nil;
 function GetPollCurrentlyVotingFor()
 	return sCurrentPollGUID;
 end
+function IsCurrentlyVotingForSomething()
+	return g_currentPollsMotherFrame.voteFrame:IsVisible() and g_currentPollsMotherFrame.voteFrame:IsShown() and sCurrentPollGUID ~= nil;
+end
+function IsCurrentlyVotingForPoll(sPollID)
+	return g_currentPollsMotherFrame.voteFrame:IsVisible() and g_currentPollsMotherFrame.voteFrame:IsShown() and sCurrentPollGUID == sPollGUID;
+end
 
 local fInnerFramesMargin = GetInnerFramesMargin();
 local fMarginBetweenUpperBordersAndText = GetTextMarginFromUpperFramesBorders();
@@ -14,6 +20,9 @@ local fSizeDifferenceBetweenFrameAndEditBox = GetSizeDifferenceBetweenFrameAndEd
 local answersParentFrame = nil;
 local answersScrollFrame = nil;
 local iAnswersCount = 0;
+local function GetAnswersCount()
+	return iAnswersCount;
+end
 local iAdditionalAnswersCount = 0;
 
 local RemoveAllAnswers = nil;
@@ -85,8 +94,6 @@ function InitVoteFrame()
 	containingFrame:Hide();
 	mainFrame:Hide();
 	g_currentPollsMotherFrame.voteFrame = mainFrame;
-
-	mainFrame:SetScript("OnHide", function(self) if not self:IsShown() then sCurrentPollGUID = 0; end end);
 end
 
 
@@ -159,10 +166,10 @@ local function LoadAnswer(answerObject)
 		answerLabel:SetPoint("TOPLEFT", fInnerFramesMargin, -11);
 		answerLabel:SetPoint("BOTTOMRIGHT", -fInnerFramesMargin, 11);
 
-		local additionalAnswerEditBox = CreateEditBox("AdditionalAnswer" .. sAnswerIndexStr .. "EditBox", answerContainingFrame, additionalAnswerEditBoxSize, false, AddOrRemoveAdditionalAnswerEditBox, iAnswersCount + 1, 16);
+		local additionalAnswerEditBox = CreateEditBox("AdditionalAnswer" .. sAnswerIndexStr .. "EditBox", answerContainingFrame, additionalAnswerEditBoxSize, false, AddOrRemoveAdditionalAnswerEditBox, GetAnswersCount() + 1, 16);
 		additionalAnswerEditBox:SetPoint("TOPLEFT", fAnswerFramePosX + (fSizeDifferenceBetweenFrameAndEditBox * 0.5), -(fSizeDifferenceBetweenFrameAndEditBox * 0.5));
 
-		local deleteButton = CreateIconButton("DeleteAdditionalAnswer" .. sAnswerIndexStr .. "Button", answerContainingFrame, 20, "Interface/Buttons/Ui-grouploot-pass-up", "Interface/Buttons/Ui-grouploot-pass-down", nil, RemoveAdditionalAnswer, iAnswersCount + 1);
+		local deleteButton = CreateIconButton("DeleteAdditionalAnswer" .. sAnswerIndexStr .. "Button", answerContainingFrame, 20, "Interface/Buttons/Ui-grouploot-pass-up", "Interface/Buttons/Ui-grouploot-pass-down", nil, RemoveAdditionalAnswer, GetAnswersCount() + 1);
 		deleteButton:SetPoint("TOPLEFT", additionalAnswerEditBox, "TOPRIGHT", fInnerFramesMargin + fSizeDifferenceBetweenFrameAndEditBox - 6, 0);
 
 		if bIsAdditionalAnswer then
@@ -255,12 +262,12 @@ AddOrRemoveAdditionalAnswerEditBox = function(iCurrentlyModifiedAnswerIndex)
 		object.voteTick:SetChecked(false);
 
 	elseif iCurrentlyModifiedAnswerIndex == iAnswersCount + 1 then
-
 		iAnswersCount = iAnswersCount + 1;
 		iAdditionalAnswersCount = iAdditionalAnswersCount + 1;
 
 		if iAnswersCount < #answerObjects then
 			local nextObject = answerObjects[iCurrentlyModifiedAnswerIndex + 1];
+			nextObject.containingFrame:Show();
 			nextObject.number:Show();
 			nextObject.editBoxScrollFrame.EditBox:SetText("");
 			nextObject.editBoxScrollFrame:Show();
@@ -365,7 +372,6 @@ local function InsertAdditionalAnswer(newAnswer)
 		LoadAnswer(nil);	-- Create empty answer at the end of the list
 	end
 	local iNewIndex = iAnswersCount - iAdditionalAnswersCount;
-
 	for i = iAnswersCount, iNewIndex + 1, -1 do
 		local currentObject = answerObjects[i];
 		local previousObject = answerObjects[i - 1];
@@ -420,7 +426,7 @@ function LoadAndOpenVoteFrame(pollData)
 	if pollData.sPollType == "RAID" then
 
 		local sSender = pollData.sPollMasterFullName;
-		if GetPollCurrentlyVotingFor() ~= 0 then
+		if IsCurrentlyVotingForSomething() then
 			if sSender ~= nil and sSender ~= Me() then
 				SendPollMessage({}, "Busy", "WHISPER", sSender, pollData.sPollMasterRealm);
 			end

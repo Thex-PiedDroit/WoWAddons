@@ -44,7 +44,7 @@ function HandleVoteMessageReception(voteMessage, sSenderFullName, sSenderRealm)
 	local voteData = voteMessage.voteData;
 	local pollData = GetPollData(voteData.sPollGUID);
 
-	local bCurrentlyVoting = GetPollCurrentlyVotingFor() == voteData.sPollGUID;
+	local bCurrentlyVoting = IsCurrentlyVotingForPoll(voteData.sPollGUID);
 
 	local bRegisteredVote = false;
 	if not bCurrentlyVoting then
