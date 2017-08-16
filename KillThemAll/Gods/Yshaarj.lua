@@ -1,4 +1,6 @@
 
+g_cerberus.HookThisFile();
+
 yshaarj = SoundLibrary:inherit({ displayName = "Y'Shaarj", dataName = "Yshaarj" }, {});
 yshaarj.general =
 {

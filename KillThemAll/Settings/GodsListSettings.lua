@@ -1,4 +1,6 @@
 
+g_cerberus.HookThisFile();
+
 g_godsListSettings = {};
 
 AddGodToList = nil;

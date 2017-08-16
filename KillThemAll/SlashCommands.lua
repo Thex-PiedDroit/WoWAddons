@@ -1,4 +1,5 @@
 
+g_cerberus.HookThisFile();
 local g_NoToolTip = false;
 
 function PrintTooltip(str)

@@ -1,4 +1,6 @@
 
+g_cerberus.HookThisFile();
+
 local g_interfaceSettingsFrame = {};
 g_interfaceEventsListener = {};
 

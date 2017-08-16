@@ -1,4 +1,6 @@
 
+g_cerberus.HookThisFile();
+
 cthun = SoundLibrary:inherit({ displayName = "C'Thun", dataName = "Cthun" }, {});
 cthun.general =
 {

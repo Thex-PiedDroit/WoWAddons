@@ -1,4 +1,6 @@
 
+g_cerberus.HookThisFile();
+
 function CreateLabel(panel, name)
 	local label = panel:CreateFontString(nil, "ARTWORK", "GameFontHighlight");
 	label:SetText(name);

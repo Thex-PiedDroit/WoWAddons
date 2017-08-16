@@ -1,4 +1,7 @@
 
+g_cerberus.RegisterAddon("KillThemAll");
+g_cerberus.HookThisFile();
+
 g_ktaOptions = {};
 
 local PreviousVersionRecovered = nil;

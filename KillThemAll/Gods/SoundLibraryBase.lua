@@ -1,4 +1,6 @@
 
+g_cerberus.HookThisFile();
+
 SoundLibrary =
 {
 	general = {},

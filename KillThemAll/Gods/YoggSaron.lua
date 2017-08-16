@@ -1,4 +1,6 @@
 
+g_cerberus.HookThisFile();
+
 yoggSaron = SoundLibrary:inherit({ displayName = "Yogg-Saron", dataName = "YoggSaron" }, {});
 yoggSaron.general =
 {

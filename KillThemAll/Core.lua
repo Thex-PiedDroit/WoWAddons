@@ -1,4 +1,5 @@
 
+g_cerberus.HookThisFile();
 
 TEXT_COLOR = "FFe899ff";
 local KTA_PREFIX = "|c" .. TEXT_COLOR .. "KTA: |r"

@@ -1,4 +1,6 @@
 
+g_cerberus.HookThisFile();
+
 ilGynoth = SoundLibrary:inherit({ displayName = "Il'Gynoth", dataName = "IlGynoth" }, {});
 ilGynoth.general =
 {

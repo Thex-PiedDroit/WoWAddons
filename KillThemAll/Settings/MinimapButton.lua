@@ -1,4 +1,5 @@
 
+g_cerberus.HookThisFile();
 g_minimapButton = LibStub("LibDBIcon-1.0", true);
 
 

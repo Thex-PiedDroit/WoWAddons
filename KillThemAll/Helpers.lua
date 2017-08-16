@@ -1,4 +1,5 @@
 
+g_cerberus.HookThisFile();
 function TableContains(tableRef, value)
 
 	if type(value) == "string" then
