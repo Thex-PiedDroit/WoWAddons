@@ -92,6 +92,18 @@ local function ResizeLargeSilverButtonTexture(button, fSizeY)	-- Because they do
 	end
 end
 
+local bDontShowDialogAgain = false;
+local function OnClickCallbackRemovePoll(listItem)
+
+	if not bDontShowDialogAgain then
+		local popup = StaticPopup_Show("PollCraft_ConfirmRemovePollFromData");
+		popup.data = listItem;
+
+	else
+		RemovePollFromData(listItem);
+	end
+end
+
 local function CreateNewItem(list, sListType, iActiveItemsCountInList, pollData)
 
 	--[[      QUESTION FRAME      ]]--
@@ -135,7 +147,7 @@ local function CreateNewItem(list, sListType, iActiveItemsCountInList, pollData)
 	};
 
 		--[[      REMOVE POLL BUTTON      ]]--
-	local deleteButton = CreateIconButton("RemovePoll" .. sItemNumberStr .. "Button", newItemFrame, 20, "Interface/Buttons/Ui-grouploot-pass-up", "Interface/Buttons/Ui-grouploot-pass-down", "Interface/Buttons/Ui-grouploot-pass-highlight", RemovePollFromData, item);
+	local deleteButton = CreateIconButton("RemovePoll" .. sItemNumberStr .. "Button", newItemFrame, 20, "Interface/Buttons/Ui-grouploot-pass-up", "Interface/Buttons/Ui-grouploot-pass-down", "Interface/Buttons/Ui-grouploot-pass-highlight", OnClickCallbackRemovePoll, item);
 	deleteButton:SetPoint("TOPLEFT", newItemQuestionButton, "RIGHT", fInnerFramesMargin, questionFrameSize.y * 0.28);
 
 
@@ -219,6 +231,23 @@ local function HideUnusedItems(pollsToAddGUIDs)
 	itemsObjects["mineCount"] = itemsObjects["mineCount"] - HideUnusedItemsFromList(itemsObjects["mine"], pollsToAddGUIDs);
 	itemsObjects["theirsCount"] = itemsObjects["theirsCount"] - HideUnusedItemsFromList(itemsObjects["theirs"], pollsToAddGUIDs);
 end
+
+StaticPopupDialogs["PollCraft_ConfirmRemovePollFromData"] =
+{
+	text = "This will remove the poll from your list until someone shares it back with you.\nAre you sure you want to do this?",
+	button1 = ACCEPT,
+	button2 = CANCEL,
+	button3 = "Don't show again",
+	OnAccept = function(self, data)
+		RemovePollFromData(data);
+	end,
+	OnAlt = function(self, data)
+		RemovePollFromData(data);
+		bDontShowDialogAgain = true;
+	end,
+	whileDead = true,
+	hideOnEscape = true,
+}
 
 --[[local]] RemovePollFromData = function(listItem)
 	local sPollGUID = listItem.sPollGUID;
