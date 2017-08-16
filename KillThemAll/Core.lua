@@ -1,14 +1,4 @@
 
-SLASH_RELOADUI1 = "/rl"
-SlashCmdList.RELOADUI = ReloadUI
-
-SLASH_FARMESTK1 = "/fs"
-SlashCmdList.FRAMESTK = function()
-	LoadAddon("Blizzard_DebugTools")
-	FrameStackTooltip_Toggle()
-end
-
----------------------------------
 
 TEXT_COLOR = "FFe899ff";
 local KTA_PREFIX = "|c" .. TEXT_COLOR .. "KTA: |r"
