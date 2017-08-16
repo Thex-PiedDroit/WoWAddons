@@ -24,4 +24,5 @@ Gods\Cthun.lua
 Gods\YoggSaron.lua
 Gods\IlGynoth.lua
 Core.lua
+CommandsData.lua
 SlashCommands.lua
