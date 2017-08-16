@@ -3,8 +3,10 @@
 voteData =
 {
 	sPollGUID,
-	newAnswers {},	-- Answers added by the voter
-	vote {}		-- List of answerIDs
+	sVoterBTag,
+	sVoterFullName,
+	newAnswers = {},	-- Answers added by the voter
+	vote = {}		-- List of answerIDs
 }
 
 -- Answers each have "unique" IDs =>

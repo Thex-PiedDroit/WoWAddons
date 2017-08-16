@@ -44,7 +44,6 @@ function InitCurrentPollsFrame()
 	table.insert(mainFrame.tabFrames, currentPollFrame);
 	table.insert(mainFrame.tabFrames, pollsListFrame);
 
-	--PanelTemplates_SetTab(mainFrame, 2);
 	pollsListFrame:Hide();
 	mainFrame:Hide();
 end

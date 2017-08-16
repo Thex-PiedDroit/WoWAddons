@@ -45,13 +45,13 @@ function InitCreatePollFrame()
 	local fChecksPosX = fInnerFramesMargin + 195;
 	local allowNewAnswersLabel = CreateLabel(mainFrame, "Allow users to add answers", 16);
 	allowNewAnswersLabel:SetPoint("TOPLEFT", fChecksPosX + 25, fMarginBetweenUpperBordersAndText);
-	local allowNewAnswersCheck = CreateCheckButton(mainFrame, "AllowNewAnswersCheckButton");
+	local allowNewAnswersCheck = CreateCheckButton("AllowNewAnswersCheckButton", mainFrame);
 	allowNewAnswersCheck:SetPoint("TOPLEFT", fChecksPosX, fMarginBetweenUpperBordersAndText + 3);
 	containingFrame.allowNewAnswersCheck = allowNewAnswersCheck;
 
 	local allowMultipleVotesLabel = CreateLabel(mainFrame, "Allow multiple votes", 16);
 	allowMultipleVotesLabel:SetPoint("TOPLEFT", allowNewAnswersLabel, "TOPLEFT", 0, fMarginBetweenUpperBordersAndText * 1.5);
-	local allowMultipleVotesCheck = CreateCheckButton(mainFrame, "AllowMultipleVotesCheckButton");
+	local allowMultipleVotesCheck = CreateCheckButton("AllowMultipleVotesCheckButton", mainFrame);
 	allowMultipleVotesCheck:SetPoint("TOPLEFT", allowNewAnswersCheck, "TOPLEFT", 0, fMarginBetweenUpperBordersAndText * 1.5);
 	containingFrame.allowMultipleVotesCheck = allowMultipleVotesCheck;
 
@@ -152,7 +152,7 @@ local answerObjects = {};
 	local answerNumber = CreateLabel(answersParentFrame, sAnswerNumberStr .. ".", 16);
 	answerNumber:SetPoint("TOPRIGHT", newAnswerEditBox, "TOPLEFT", -fInnerFramesMargin, 0);
 
-	local deleteButton = CreateIconButton("DeleteAnswer" .. sAnswerNumberStr .. "Button", answersParentFrame, 20, "Interface/Buttons/Ui-grouploot-pass-up", "Interface/Buttons/Ui-grouploot-pass-down", nil, RemoveAnswer, iAnswersCount + 1);
+	local deleteButton = CreateIconButton("DeleteAnswer" .. sAnswerNumberStr .. "Button", answersParentFrame, 20, "Interface/Buttons/Ui-grouploot-pass-up", "Interface/Buttons/Ui-grouploot-pass-down", "Interface/Buttons/Ui-grouploot-pass-highlight", RemoveAnswer, iAnswersCount + 1);
 	deleteButton:SetPoint("TOPLEFT", newAnswerEditBox, "TOPRIGHT", fInnerFramesMargin, 0);
 
 	iAnswersCount = iAnswersCount + 1;
@@ -239,7 +239,7 @@ end
 		sPollType = UIDropDownMenu_GetSelectedValue(data.pollTypesDropDownList),
 		bMultiVotes = data.allowMultipleVotesCheck:GetChecked(),
 		bAllowNewAnswers = data.allowNewAnswersCheck:GetChecked(),
-		question = data.questionEditBoxScrollFrame.EditBox:GetText(),
+		sQuestion = data.questionEditBoxScrollFrame.EditBox:GetText(),
 		answers = {}
 	}
 
@@ -252,7 +252,7 @@ end
 		table.insert(newPollData.answers, answerObject);
 	end
 
-	if newPollData.question == nil or newPollData.question == ""
+	if newPollData.sQuestion == nil or newPollData.sQuestion == ""
 		or newPollData.answers == nil or #newPollData.answers < 2
 		or newPollData.answers[2] == nil or newPollData.answers[2].sText == nil or newPollData.answers[2].sText == "" then
 		return;

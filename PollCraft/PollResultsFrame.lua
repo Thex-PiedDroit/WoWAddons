@@ -263,7 +263,7 @@ function LoadAndOpenPollResultsFrame(pollData)
 	InitResultsFrame();
 
 	g_currentPollsMotherFrame.voteFrame:Hide();
-	g_currentPollsMotherFrame.resultsFrame.questionLabel:SetText(pollData.question);
+	g_currentPollsMotherFrame.resultsFrame.questionLabel:SetText(pollData.sQuestion);
 
 	for i = 1, #pollData.answers do
 		LoadAnswer(pollData.answers[i]);

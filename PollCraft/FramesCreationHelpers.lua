@@ -59,9 +59,10 @@ function CreateLabel(parent, sText, fFontSize, sAlignment)
 	return label;
 end
 
-function CreateCheckButton(parent, sName, OnCheckCallback, callbackArguments)
+function CreateCheckButton(sName, parent, OnCheckCallback, callbackArguments, fSize)
 	local checkButton = CreateFrame("CheckButton", sPrefix .. sName, parent, "OptionsCheckButtonTemplate");
-	checkButton:SetSize(22, 22);
+	fSize = fSize or 22;
+	checkButton:SetSize(fSize, fSize);
 
 	if OnCheckCallback ~= nil then
 		button:SetScript("OnClick", function(self) OnCheckCallback(self, callbackArguments) end);
@@ -70,9 +71,10 @@ function CreateCheckButton(parent, sName, OnCheckCallback, callbackArguments)
 	return checkButton;
 end
 
-function CreateRadioCheckButton(parent, sName, OnCheckCallback, callbackArguments)
+function CreateRadioCheckButton(sName, parent, OnCheckCallback, callbackArguments, fSize)
 	local checkButton = CreateFrame("CheckButton", sPrefix .. sName, parent, "UIRadioButtonTemplate");
-	checkButton:SetSize(18, 18);
+	fSize = fSize or 18;
+	checkButton:SetSize(fSize, fSize);
 
 	if OnCheckCallback ~= nil then
 		button:SetScript("OnClick", function(self) OnCheckCallback(self, callbackArguments) end);
@@ -143,9 +145,10 @@ function CreateDropDownList(sName, parent, fWidth, options, OnButtonSelectedCall
 	return dropDownList;
 end
 
-function CreateButton(sName, parent, size, sText, OnClickCallback, callbackArguments)
+function CreateButton(sName, parent, size, sText, OnClickCallback, callbackArguments, sTemplate)
 
-	local button = CreateFrame("Button", sPrefix .. sName, parent, "UIPanelButtonTemplate");
+	sTemplate = sTemplate or "UIPanelButtonTemplate";
+	local button = CreateFrame("Button", sPrefix .. sName, parent, sTemplate);
 	button:SetSize(size.x, size.y);
 	button:SetText(sText);
 
