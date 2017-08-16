@@ -1,16 +1,17 @@
 
 g_cerberus.HookThisFile();
-g_minimapButton = LibStub("LibDBIcon-1.0", true);
+
+local minimapButton = LibStub("LibDBIcon-1.0", true);
 
 
-function SetMinimapButtonHidden(hidden)
+function SetMinimapButtonHidden(bHidden)
 
-	g_ktaOptions.minimapButton.hide = hidden;
+	g_ktaOptions.minimapButton.hide = bHidden;
 
-	if hidden then
-		g_minimapButton:Hide("KillThemAll");
+	if bHidden then
+		minimapButton:Hide("KillThemAll");
 	else
-		g_minimapButton:Show("KillThemAll");
+		minimapButton:Show("KillThemAll");
 	end
 end
 
@@ -26,7 +27,7 @@ function InitMinimapButton(settingsPanel)
 
 			if button == "LeftButton" then
 				ToggleDeactivated();
-				KTA_Print("KillThemAll is now " .. ((g_ktaOptions.deactivated and "deactivated") or "activated"));
+				KTA_Print("KillThemAll is now " .. ((g_ktaOptions.bDeactivated and "deactivated") or "activated"));
 
 			elseif button == "RightButton" then
 				OpenSettingsPanel();
@@ -35,7 +36,7 @@ function InitMinimapButton(settingsPanel)
 	});
 
 	function minimapLDB:OnTooltipShow()
-		self:AddLine("|c" .. TEXT_COLOR .. "KillThemAll|r");
+		self:AddLine("|c" .. g_cAddonColor .. "KillThemAll|r");
 		self:AddLine("|cFFFFFFFFLeft click: activate/deactivate|r");
 		self:AddLine("|cFFFFFFFFRight click: open settings|r");
 	end
@@ -52,6 +53,6 @@ function InitMinimapButton(settingsPanel)
 		GameTooltip:Hide();
 	end
 
-	g_minimapButton:Register("KillThemAll", minimapLDB, g_ktaOptions.minimapButton);
+	minimapButton:Register("KillThemAll", minimapLDB, g_ktaOptions.minimapButton);
 	SetMinimapButtonHidden(g_ktaOptions.minimapButton.hide);
 end

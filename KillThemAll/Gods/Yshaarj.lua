@@ -1,8 +1,8 @@
 
 g_cerberus.HookThisFile();
 
-yshaarj = SoundLibrary:inherit({ displayName = "Y'Shaarj", dataName = "Yshaarj" }, {});
-yshaarj.general =
+g_yshaarj = g_soundLibrary:Inherit({ sDisplayName = "Y'Shaarj", sDataName = "Yshaarj" });
+g_yshaarj.generalSoundFilesList =
 {
 	"sound/CREATURE/Yshaarj/VO_54_ITEM_YSHAARJ_EVENT_01.OGG",	-- "You should kill them all. You must kill them all"
 	"sound/CREATURE/Yshaarj/VO_54_ITEM_YSHAARJ_EVENT_02.OGG",	-- "Eyes are the windows to the soul. Shatter them forever"
@@ -17,7 +17,7 @@ yshaarj.general =
 	"sound/CREATURE/Yshaarj/VO_54_ITEM_YSHAARJ_EVENT_12.OGG",	-- "When you walk among the black forest, you will see"
 	"sound/CREATURE/Yshaarj/VO_54_ITEM_YSHAARJ_EVENT_13.OGG",	-- "I can taste the essence of your soul. It is sweet"
 };
-yshaarj.onDeath =
+g_yshaarj.deathSoundFilesList =
 {
 	"sound/CREATURE/Yshaarj/VO_54_ITEM_YSHAARJ_DEATH_01.OGG",	-- "Wish each thread unravel, a step closer to my realm"
 	"sound/CREATURE/Yshaarj/VO_54_ITEM_YSHAARJ_DEATH_02.OGG",	-- "Another blemish on your soul"

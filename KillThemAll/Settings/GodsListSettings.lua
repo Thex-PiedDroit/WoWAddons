@@ -3,78 +3,77 @@ g_cerberus.HookThisFile();
 
 g_godsListSettings = {};
 
-AddGodToList = nil;
+AddGodToSettingsList = nil;
 
-local panelWidth = 500;
-local godNameheight = 20;
-local godsCountPerRow = 4;
-local marginBetweenGods = 10;
+local panelSize =
+{
+	x = 500,
+	y = 40
+};
 
+function InitGodsListSettings(parent, listLabelAnchor, offset)
 
-function InitGodsListSettings(frame)
+	local godsLabel = CreateLabel(parent, "Gods");
+	godsLabel:SetPoint("TOPLEFT", listLabelAnchor, "BOTTOMLEFT", offset.x, offset.y);
 
-	frame.lab = CreateLabel(frame.panel, "Gods");
-	frame.lab:SetPoint("TOPLEFT", 60, -220);
+	local godsListFrame = CreateBackdroppedFrame("KTA_GodsListSettingsFrame", parent, panelSize);
+	godsListFrame:SetPoint("TOPLEFT", godsLabel, "BOTTOMLEFT", -4, -5);
 
-	g_godsListSettings = CreateFrame("Frame", "KTA_GodsListSettingsFrame", frame.panel);
-	g_godsListSettings.name = "KTA_GodsListSettingsFrame";
-	g_godsListSettings:SetPoint("TOPLEFT", 60, -240);
-	g_godsListSettings:SetWidth(panelWidth);
-	g_godsListSettings:SetHeight(40);
+	g_godsListSettings = godsListFrame;
 
-	g_godsListSettings:SetBackdrop(
-	{
-		bgFile = "Interface/Tooltips/UI-Tooltip-Background",
-		edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
-		tile = true,
-		tileSize = 16,
-		edgeSize = 16,
-		insets = { left = 4, right = 4, top = 4, bottom = 4 },
-	});
-	g_godsListSettings:SetBackdropColor(0,0,0,1);
-
-	frame.godsListPanel = g_godsListSettings;
-
-	for i = 1, #AllSoundLibraries, 1 do
-		AddGodToSettingsList(AllSoundLibraries[i]);
+	for i = 1, #g_allSoundLibraries, 1 do
+		AddGodToSettingsList(g_allSoundLibraries[i]);
 	end
 end
 
 
-local godsLabelOriginX, godsLabelOriginY = 35, -13;
-local godsChkOriginX, godsChkOriginY = 10, -10;
+local godsLabelOrigin =
+{
+	x = 35,
+	y = -13
+};
+local godsCheckButtonsMarginFromBorders = 10;
+local fMarginBetweenButtonsAndLabels = 5;
+local fCheckButtonsSize = 20;
+local iGodsCountPerRow = 3;
 
-AddGodToSettingsList = function(god)
+local iGodsCountInList = 0;
 
-	g_godsListSettings.lab = CreateLabel(g_godsListSettings, god.displayName);
+--[[global]] AddGodToSettingsList = function(god)
 
-	local godsCountInList = (g_godsListSettings.chkGod ~= nil and #g_godsListSettings.chkGod) or 0;
+	local iRowsCountMinusOne = math.floor(iGodsCountInList / iGodsCountPerRow);
+	local offset =
+	{
+		x = (panelSize.x / iGodsCountPerRow) * (iGodsCountInList % iGodsCountPerRow),
+		y = (iRowsCountMinusOne * (godsCheckButtonsMarginFromBorders * 0.5)) + (iRowsCountMinusOne * fCheckButtonsSize)
+	};
 
-	local offsetX = (panelWidth / godsCountPerRow) * (godsCountInList % godsCountPerRow);
-	local rowsCountMinusOne = math.floor(godsCountInList / godsCountPerRow);
-	local offsetY = (rowsCountMinusOne * marginBetweenGods) + (rowsCountMinusOne * 20);
-	g_godsListSettings.lab:SetPoint("TOPLEFT", godsLabelOriginX + offsetX, godsLabelOriginY - offsetY);
+	local godCheckButton = CreateCheckButton(god.sDataName .. "_CheckButton", g_godsListSettings, fCheckButtonsSize);
+	godCheckButton:SetPoint("TOPLEFT", godsCheckButtonsMarginFromBorders + offset.x, -godsCheckButtonsMarginFromBorders - offset.y);
+	godCheckButton:SetChecked(TableContainsUniqueItem(g_currentGods, god));
 
-	local godIndex = godsCountInList + 1;
-	if g_godsListSettings.chkGod == nil then
-		g_godsListSettings.chkGod = {};
-	end
-	g_godsListSettings.chkGod[godIndex] = CreateCheck(g_godsListSettings, "chkGod_" .. god.dataName, 20, 20);
-	g_godsListSettings.chkGod[godIndex]:SetPoint("TOPLEFT", godsChkOriginX + offsetX, godsChkOriginY - offsetY);
-	g_godsListSettings.chkGod[godIndex]:SetChecked(TableContains(g_currentGods, god));
+	local godNameLabel = CreateLabel(g_godsListSettings, god.sDisplayName);
+	godNameLabel:SetPoint("LEFT", godCheckButton, "RIGHT", fMarginBetweenButtonsAndLabels, 1);
 
-	g_godsListSettings.chkGod[godIndex]:SetScript("OnClick", function()
-
-		if TableContains(g_currentGods, god) then
-			RemoveGods({ god.dataName }, true);
+	godCheckButton:SetScript("OnClick", function()
+		if TableContainsUniqueItem(g_currentGods, god, true) then
+			RemoveGods({ god.sDataName }, true);
 		else
-			AddGods({ god.dataName }, true);
+			AddGods({ god.sDataName }, true);
 		end
 	end);
 
+	local iGodIndex = iGodsCountInList + 1;
+	if g_godsListSettings.godsCheckButtonsList == nil then
+		g_godsListSettings.godsCheckButtonsList = {};
+	end
+
 	AddListenerEvent(g_interfaceEventsListener, "OnGodsChanged", function()
-		g_godsListSettings.chkGod[godIndex]:SetChecked(TableContains(g_currentGods, god));
+		godCheckButton:SetChecked(TableContainsUniqueItem(g_currentGods, god));
 	end);
 
-	g_godsListSettings:SetHeight(40 + offsetY);
+	g_godsListSettings.godsCheckButtonsList[iGodIndex] = godCheckButton;
+	g_godsListSettings:SetHeight((godsCheckButtonsMarginFromBorders * 2) + fCheckButtonsSize + offset.y);
+
+	iGodsCountInList = iGodsCountInList + 1;
 end
