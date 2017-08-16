@@ -24,71 +24,67 @@ pollData =
 
 Cerberus_HookThisFile();
 
-
-local currentPollsInMemory = {};
-local currentPollsGUID = {};
-
 function UpdatePollData(newPollData)
 
-	currentPollsInMemory[newPollData.sPollGUID] = newPollData;	-- TEMP
+	g_pollCraftData.savedPollsData[newPollData.sPollGUID] = newPollData;	-- TEMP
 end
 
 function AddPollDataToMemory(pollData)
 
 	local sPollGUID = pollData.sPollGUID;
 
-	if currentPollsInMemory[sPollGUID] ~= nil then
+	if g_pollCraftData.savedPollsData[sPollGUID] ~= nil then
 		UpdatePollData(pollData);
 	else
-		currentPollsInMemory[sPollGUID] = pollData;
-		currentPollsGUID[sPollGUID] = true;
+		g_pollCraftData.savedPollsData[sPollGUID] = pollData;
+		g_pollCraftData.savedPollsGUIDs[sPollGUID] = true;
 	end
 
 	RequestPollsListsUpdate();
 end
 
 function RemovePollDataFromMemory(sPollGUID)
-	if currentPollsInMemory[sPollGUID] == nil then
+	if g_pollCraftData.savedPollsData[sPollGUID] == nil then
 		return;
 	end
 
-	currentPollsInMemory[sPollGUID] = nil;
-	currentPollsGUID[sPollGUID] = nil;
+	g_pollCraftData.savedPollsData[sPollGUID] = nil;
+	g_pollCraftData.savedPollsGUIDs[sPollGUID] = nil;
 
 	RequestPollsListsUpdate();
 end
 
 function GetPollData(sPollGUID)
-	return currentPollsInMemory[sPollGUID];
+	return g_pollCraftData.savedPollsData[sPollGUID];
 end
 
 function GetAllPollsGUID()
-	return currentPollsGUID;
+	return g_pollCraftData.savedPollsGUIDs;
 end
 
 function GetAllPolls()
-	return currentPollsInMemory;
+	return g_pollCraftData.savedPollsData;
 end
 
 
 function RegisterVote(voteData)
 
 	local sPollGUID = voteData.sPollGUID;
-	local pollData = currentPollsInMemory[sPollGUID];
+	local pollData = g_pollCraftData.savedPollsData[sPollGUID];
 
 	local pollAnswers = pollData.answers;
 	for i = 1, #voteData.newAnswers do
 		table.insert(pollAnswers, voteData.newAnswers[i]);
 	end
-	currentPollsInMemory[sPollGUID].answers = pollAnswers;
+	g_pollCraftData.savedPollsData[sPollGUID].answers = pollAnswers;
 
 	local voterBTag = voteData.sVoterBTag;
 	if voterBTag == MyBTag() then
-		currentPollsInMemory[sPollGUID].bIVoted = true;
+		g_pollCraftData.savedPollsData[sPollGUID].bIVoted = true;
 		TickVoteForPoll(sPollGUID, true, pollData.sPollMasterFullName == Me());
 	end
-	currentPollsInMemory[sPollGUID].voters = currentPollsInMemory[sPollGUID].voters or {};
-	table.insert(currentPollsInMemory[sPollGUID].voters, voterBTag);
+	g_pollCraftData.savedPollsData[sPollGUID].voters = g_pollCraftData.savedPollsData[sPollGUID].voters or {};
+	table.insert(g_pollCraftData.savedPollsData[sPollGUID].voters, voterBTag);
 
 	local pollResults = pollData.results or {};
 	for i = 1, #voteData.vote do
@@ -98,16 +94,16 @@ function RegisterVote(voteData)
 		end
 		pollResults[sCurrentVoteGUID] = pollResults[sCurrentVoteGUID] + 1;
 	end
-	currentPollsInMemory[sPollGUID].results = pollResults;
+	g_pollCraftData.savedPollsData[sPollGUID].results = pollResults;
 end
 
 function RegisterResults(resultsData)
 
 	local sPollGUID = resultsData.sPollGUID;
 
-	if currentPollsInMemory[sPollGUID] == nil then
-		currentPollsInMemory[sPollGUID] = {};
+	if g_pollCraftData.savedPollsData[sPollGUID] == nil then
+		g_pollCraftData.savedPollsData[sPollGUID] = {};
 	end
-	currentPollsInMemory[sPollGUID].answers = resultsData.pollAnswers;
-	currentPollsInMemory[sPollGUID].results = resultsData.results;
+	g_pollCraftData.savedPollsData[sPollGUID].answers = resultsData.pollAnswers;
+	g_pollCraftData.savedPollsData[sPollGUID].results = resultsData.results;
 end

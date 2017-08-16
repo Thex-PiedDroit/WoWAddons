@@ -434,7 +434,9 @@ function LoadAndOpenVoteFrame(pollData)
 			return;
 		end
 
-		InitVoteFrame();
+		g_currentPollsMotherFrame.voteFrame.sendVoteButton:Enable();
+		g_currentPollsMotherFrame.resultsFrame:Hide();
+		RemoveAllAnswers();
 
 		g_currentPollsMotherFrame.voteFrame.questionLabel:SetText(pollData.sQuestion);
 
@@ -452,8 +454,6 @@ function LoadAndOpenVoteFrame(pollData)
 		g_currentPollsMotherFrame.voteFrame:Show();
 		g_currentPollsMotherFrame.panel:Show();
 		g_currentPollsMotherFrame.currentPollFrame:Show();
-
-		AddPollDataToMemory(pollData);
 	end
 end
 

@@ -14,6 +14,8 @@ function events:ADDON_LOADED(sAddonName)
 		return;
 	end
 
+	LoadData();
+
 	InitCreatePollFrame();
 	InitCurrentPollsFrame();
 	InitMinimapButton();
@@ -24,6 +26,11 @@ function events:ADDON_LOADED(sAddonName)
 		--TestOneSimpleVote();
 		--TestSomeVotes();
 	end
+end
+
+function events:PLAYER_LOGOUT()
+
+	SaveData();
 end
 
 pollCraftEventListener:SetScript("OnEvent", function(self, event, ...)
