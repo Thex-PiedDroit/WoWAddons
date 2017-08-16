@@ -13,15 +13,15 @@ Libraries\LibDBIcon-1.0\LibDBIcon-1.0.xml
 Libraries\Cerberus\Cerberus.lua
 
 Options.lua
-Settings/SettingsHelpers.lua
-Settings/MinimapButton.lua
-Settings/GodsListSettings.lua
-Settings/SettingsFrame.lua
+Settings\SettingsHelpers.lua
+Settings\MinimapButton.lua
+Settings\GodsListSettings.lua
+Settings\SettingsFrame.lua
 Helpers.lua
-Gods/SoundLibraryBase.lua
-Gods/Yshaarj.lua
-Gods/Cthun.lua
-Gods/YoggSaron.lua
-Gods/IlGynoth.lua
+Gods\SoundLibraryBase.lua
+Gods\Yshaarj.lua
+Gods\Cthun.lua
+Gods\YoggSaron.lua
+Gods\IlGynoth.lua
 Core.lua
 SlashCommands.lua
