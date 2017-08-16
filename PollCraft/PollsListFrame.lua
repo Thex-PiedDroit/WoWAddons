@@ -283,3 +283,10 @@ end
 	UpdateScrollBar(listsFrames["mine"]:GetParent(), (itemsObjects["mineCount"] * fTotalHeightOfEachItem) - fInnerFramesMargin);
 	UpdateScrollBar(listsFrames["theirs"]:GetParent(), (itemsObjects["theirsCount"] * fTotalHeightOfEachItem) - fInnerFramesMargin);
 end
+
+function OpenPollsListFrame()
+
+	PanelTemplates_SetTab(g_currentPollsMotherFrame.panel, 2);
+	g_currentPollsMotherFrame.panel:Show();
+	g_currentPollsMotherFrame.pollsListFrame:Show();
+end

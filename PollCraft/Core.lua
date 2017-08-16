@@ -16,6 +16,7 @@ function events:ADDON_LOADED(sAddonName)
 
 	InitCreatePollFrame();
 	InitCurrentPollsFrame();
+	InitMinimapButton();
 
 	if DEBUG_VERSION then
 		--TestCreateSimplePoll();
