@@ -28,6 +28,7 @@ local function ReceiveMessage(_, sMessage)
 			return;
 		end
 
+		AddPollDataToMemory(pollData);
 		LoadAndOpenVoteFrame(actualMessage.poll, messageObject.sSenderFullName, messageObject.sSenderRealm);
 
 	elseif sMessageType == "Busy" then

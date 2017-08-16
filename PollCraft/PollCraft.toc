@@ -4,6 +4,7 @@
 ## Notes: Adds tools to create polls in game
 ## Author: Thex
 ## DefaultState: enabled
+## SavedVariables: S_sPollCraftSavedAddonVersion, S_pollCraftData
 
 
 Libraries\LibStub\LibStub.lua
@@ -16,6 +17,7 @@ Libraries\AceSerializer-3.0\AceSerializer-3.0.xml
 Libraries\Cerberus\Cerberus.lua
 
 Helpers.lua
+SaveLoad.lua
 PollsData.lua
 Comm.lua
 FramesCreationHelpers.lua

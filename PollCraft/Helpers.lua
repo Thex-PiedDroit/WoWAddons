@@ -1,5 +1,5 @@
 
-g_cerberus.RegisterAddon("PollCraft");
+g_cerberus.RegisterAddon("PollCraft", { "S_sPollCraftSavedAddonVersion", "S_pollCraftData" });
 
 
 local _, sPlayerBTag = BNGetInfo();
