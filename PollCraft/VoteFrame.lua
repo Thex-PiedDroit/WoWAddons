@@ -186,11 +186,11 @@ local function LoadAnswer(answerObject)
 		local newNumber = CreateLabel(answerContainingFrame, sAnswerIndexStr .. '.', 16);
 		newNumber:SetPoint("TOPRIGHT", answerLabelFrame, "TOPLEFT", -2, - 8);
 
-		local newCheck = CreateCheckButton(answerContainingFrame, "Answer" .. sAnswerIndexStr .. "CheckButton");
+		local newCheck = CreateCheckButton("Answer" .. sAnswerIndexStr .. "CheckButton", answerContainingFrame);
 		newCheck:SetPoint("RIGHT", answerLabelFrame, "RIGHT", fInnerFramesMargin + 20, 0);
 		newCheck:Hide();
 
-		local newTick = CreateRadioCheckButton(answerContainingFrame, "Answer" .. sAnswerIndexStr .. "CheckButton");
+		local newTick = CreateRadioCheckButton("Answer" .. sAnswerIndexStr .. "CheckButton", answerContainingFrame);
 		newTick:SetPoint("RIGHT", answerLabelFrame, "RIGHT", fInnerFramesMargin + 18, 0);
 		newTick:Hide();
 
@@ -436,7 +436,7 @@ function LoadAndOpenVoteFrame(pollData)
 
 		InitVoteFrame();
 
-		g_currentPollsMotherFrame.voteFrame.questionLabel:SetText(pollData.question);
+		g_currentPollsMotherFrame.voteFrame.questionLabel:SetText(pollData.sQuestion);
 
 		bAllowMultipleVotes = pollData.bMultiVotes;
 		bAllowAdditionalAnswers = pollData.bAllowNewAnswers;
@@ -474,6 +474,8 @@ function GetVoteData()
 	local voteObject =
 	{
 		sPollGUID = sCurrentPollGUID,
+		sVoterBTag = MyBTag(),
+		sVoterFullName = Me(),
 		newAnswers = {},
 		vote = {}
 	}

@@ -5,9 +5,10 @@ if not DEBUG_VERSION then
 	return;
 end
 
-
+local iTestPollsCount = 0;
 local function GenerateTestPollGUID()
-	return "TEST_POLL_" .. MyGUID() .. tostring(math.random(1000000, 9999999));
+	iTestPollsCount = iTestPollsCount + 1;
+	return "TEST_POLL_" .. tostring(iTestPollsCount);
 end
 
 local globalTestPollData =
@@ -18,7 +19,7 @@ local globalTestPollData =
 	sPollType = "RAID",
 	bMultiVotes = false,
 	bAllowNewAnswers = false,
-	question = "qEDGTEgzergrzegzrgh zregyzer sihgoz zrziog zrghzo rzgv zpzrosd zreoigvzrô gvze r^gzreneô zeg ôzg ozeg ozgoh ozeg zeg zergo ze",
+	sQuestion = "qEDGTEgzergrzegzrgh zregyzer sihgoz zrziog zrghzo rzgv zpzrosd zreoigvzrô gvze r^gzreneô zeg ôzg ozeg ozgoh ozeg zeg zergo ze",
 	answers =
 	{
 		{
@@ -66,7 +67,7 @@ local function GenerateRandomPollMaster()
 	return sName, sRealm;
 end
 
-local function CreateTestPollData(bMine, question, iAnswersCount, bMultiVotes, bAllowNewAnswers)
+local function CreateTestPollData(bMine, sQuestion, iAnswersCount, bMultiVotes, bAllowNewAnswers)
 
 	local sPollMasterFullName = nil;
 	local sPollMasterRealm = nil;
@@ -85,7 +86,7 @@ local function CreateTestPollData(bMine, question, iAnswersCount, bMultiVotes, b
 		sPollType = "RAID",
 		bMultiVotes = bMultiVotes,
 		bAllowNewAnswers = bAllowNewAnswers,
-		question = question,
+		sQuestion = sQuestion,
 		answers = {}
 	};
 
@@ -111,11 +112,11 @@ function TestAddSomePollsToData()
 	local pollDataTest1 = CreateTestPollData(true, "First question", 3, false, true);
 	local pollDataTest2 = CreateTestPollData(false, "Third question", 6, true, true);
 	local pollDataTest3 = CreateTestPollData(false, "Fourth question", 2, true, false);
-	local pollDataTest4 = CreateTestPollData(false, "Fourth question", 2, true, false);
-	local pollDataTest5 = CreateTestPollData(false, "Fourth question", 2, true, false);
-	local pollDataTest6 = CreateTestPollData(false, "Fourth question", 2, true, false);
-	local pollDataTest7 = CreateTestPollData(false, "Fourth question", 2, true, false);
-	local pollDataTest8 = CreateTestPollData(false, "Fourth question", 2, true, false);
+	local pollDataTest4 = CreateTestPollData(false, "Fifth question", 2, true, false);
+	local pollDataTest5 = CreateTestPollData(false, "Sixth question", 2, true, false);
+	local pollDataTest6 = CreateTestPollData(false, "Seventh question", 2, true, false);
+	local pollDataTest7 = CreateTestPollData(false, "Eighth question", 2, true, false);
+	local pollDataTest8 = CreateTestPollData(false, "Ninth question", 2, true, false);
 
 	AddPollDataToMemory(pollDataTest1);
 	AddPollDataToMemory(globalTestPollData);
