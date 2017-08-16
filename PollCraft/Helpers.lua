@@ -31,8 +31,8 @@ function Me()
 end
 
 
-local cAddonTextColour = "ff25de32";
-local sPollCraftPrefix = "|c" .. cAddonTextColour .. "PollCraft: |r"
+g_cAddonTextColour = "ff25de32";
+local sPollCraftPrefix = "|c" .. g_cAddonTextColour .. "PollCraft: |r"
 function PollCraft_Print(sMessage)
 	print(sPollCraftPrefix .. sMessage);
 end

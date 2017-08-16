@@ -1,0 +1,55 @@
+
+Cerberus_HookThisFile();
+
+local minimapButton = LibStub("LibDBIcon-1.0", true);
+
+function SetMinimapButtonHidden(bHidden)
+
+	g_pollCraftData.minimapButton.hide = bHidden;
+
+	if bHidden then
+		minimapButton:Hide("PollCraft");
+	else
+		minimapButton:Show("PollCraft");
+	end
+end
+
+
+function InitMinimapButton(settingsPanel)
+
+	local ldb = LibStub:GetLibrary("LibDataBroker-1.1");
+	local minimapLDB = ldb:NewDataObject("PollCraft",
+	{
+		type = "launcher",
+		icon = "Interface/Icons/Achievement_Reputation_01",
+		OnClick = function(clickedframe, button)
+
+			if button == "LeftButton" then
+				OpenPollsListFrame();
+			elseif button == "RightButton" then
+				OpenCreatePollFrame();
+			end
+		end,
+	});
+
+	function minimapLDB:OnTooltipShow()
+		self:AddLine("|c" .. g_cAddonTextColour .. "PollCraft|r");
+		self:AddLine("|cFFFFFFFFLeft click: open current polls list|r");
+		self:AddLine("|cFFFFFFFFRight click: create poll|r");
+	end
+	function minimapLDB:OnEnter()
+		GameTooltip:SetOwner(self, "ANCHOR_NONE");
+		GameTooltip:SetPoint("TOPLEFT", self, "BOTTOMLEFT");
+		GameTooltip:ClearLines();
+		dataobj.OnTooltipShow(GameTooltip);
+		GameTooltip:Show();
+		dataobj.hide = true;
+		dataobj:Hide();
+	end
+	function minimapLDB:OnLeave()
+		GameTooltip:Hide();
+	end
+
+	minimapButton:Register("PollCraft", minimapLDB, g_pollCraftData.minimapButton);
+	SetMinimapButtonHidden(g_pollCraftData.minimapButton.hide);
+end

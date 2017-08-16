@@ -28,6 +28,7 @@ function InitCreatePollFrame()
 
 	local containingFrame = CreateBackdroppedFrame("CreatePollFrame", UIParent, containingFrameSize, true);
 	containingFrame:SetPoint("CENTER", 0, 0);
+	MakeFrameClosable(containingFrame, "CreatePollFrameCloseButton");
 
 	local mainFrame = CreateBackdropTitledInnerFrame("CreatePollFrame", containingFrame, "PollCraft - Create Poll");
 	local innerFrameSize = GetFrameSizeAsTable(mainFrame);
@@ -259,4 +260,8 @@ end
 	end
 
 	SendPollData(newPollData);
+end
+
+function OpenCreatePollFrame()
+	g_createPollFrame.panel:Show();
 end
