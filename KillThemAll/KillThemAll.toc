@@ -6,9 +6,12 @@
 ## DefaultState: enabled
 ## SavedVariables: S_AddonVersion, S_ktaOptions
 
-Libraries/LibStub.lua
-Libraries/CallbackHandler-1.0.lua
-Libraries/LibDataBroker-1.1.lua
+Libraries\LibStub\LibStub.lua
+Libraries\CallbackHandler-1.0\CallbackHandler-1.0.xml
+Libraries\Libdatabroker-1-1\LibDataBroker-1.1.lua
+Libraries\LibDBIcon-1.0\LibDBIcon-1.0.xml
+Libraries\Cerberus\Cerberus.lua
+
 Options.lua
 Settings/SettingsHelpers.lua
 Settings/MinimapButton.lua
