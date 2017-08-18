@@ -1,0 +1,8 @@
+## Interface: 70200
+## Title: Cerberus
+## Version: 1.0
+## Notes: Tool to automatically nest your global variables and functions in a table
+## Author: Thex
+## DefaultState: disabled
+
+Cerberus.lua
