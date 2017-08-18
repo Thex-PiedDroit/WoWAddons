@@ -424,7 +424,7 @@ function events:ADDON_LOADED(sAddonName)
 		return;
 	end
 
-	g_cerberus.RegisterSavedVariables({ "S_ktaOptions", "S_sAddonVersion" }, { {}, GetAddOnMetadata("KillThemAll", "Version") });
+	g_cerberus.RegisterSavedVariables({ "S_ktaOptions", "S_sAddonVersion" });
 
 	LoadOptions();
 	InitSettingsFrames();
