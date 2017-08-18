@@ -1,6 +1,8 @@
 
-ilGynoth = SoundLibrary:inherit({ displayName = "Il'Gynoth", dataName = "IlGynoth" }, {});
-ilGynoth.general =
+g_cerberus.HookThisFile();
+
+g_ilGynoth = g_soundLibrary:Inherit({ sDisplayName = "Il'Gynoth", sDataName = "IlGynoth" });
+g_ilGynoth.generalSoundFilesList =
 {
 	"sound/Creature/Ilgynoth/VO_701_Ilgynoth_06.ogg",	-- "Oblivion offers solace. Take the gift! Take it!"
 	"sound/Creature/Ilgynoth/VO_701_Ilgynoth_10.ogg",	-- "Release your grip on hope"
@@ -15,10 +17,10 @@ ilGynoth.general =
 	"sound/Creature/Ilgynoth/VO_701_Ilgynoth_24.ogg",	-- "Five keys to open our way. Five torches to light our path"
 	"sound/Creature/Ilgynoth/VO_701_Ilgynoth_25.ogg",	-- "Flesh is his gift. He is your true creator"
 	"sound/Creature/Ilgynoth/VO_701_Ilgynoth_26.ogg",	-- "The lord of ravens will turn the key"
-}
-ilGynoth.onDeath =
+};
+g_ilGynoth.deathSoundFilesList =
 {
 	"sound/Creature/Ilgynoth/VO_701_Ilgynoth_07.ogg",	-- "You have failed those who needed you"
 	"sound/Creature/Ilgynoth/VO_701_Ilgynoth_08.ogg",	-- "Your light sputters out"
 	"sound/Creature/Ilgynoth/VO_701_Ilgynoth_09.ogg",	-- "Welcome death. Do not fight it"
-}
+};

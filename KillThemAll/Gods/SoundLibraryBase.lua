@@ -1,36 +1,39 @@
 
-SoundLibrary =
+g_cerberus.HookThisFile();
+
+g_soundLibrary =
 {
-	general = {},
-	onDeath = {},
+	generalSoundFilesList = {},
+	deathSoundFilesList = {},
 
-	PlayRandomSound = function(self, soundType, channel)
+	PlayRandomSound = function(self, sSoundType, sChannel)
 
-		if soundType == "General" then
-			rand = math.random(1, #self.general);
-			PlaySoundFile(self.general[rand], channel);
+		if sSoundType == "General" then
+			local iRand = math.random(1, #self.generalSoundFilesList);
+			PlaySoundFile(self.generalSoundFilesList[iRand], sChannel);
 
-		elseif soundType == "OnDeath" then
-			rand = math.random(1, #self.onDeath);
-			PlaySoundFile(self.onDeath[rand], channel);
+		elseif sSoundType == "Death" then
+			local iRand = math.random(1, #self.deathSoundFilesList);
+			PlaySoundFile(self.deathSoundFilesList[iRand], sChannel);
 		end
 	end,
-}
+};
 
-AllSoundLibraries = {};
+g_allSoundLibraries = {};
 
-mtSoundLibrary = {};
+local mtSoundLibrary = {};
 mtSoundLibrary.__index =
 {
-	new = function(self, t)
-		return setmetatable(t or {}, {__index = self });
+	New = function(self, members)
+		return setmetatable(members or {}, { __index = self });
 	end,
 
-	inherit = function(self, t, methods)
-		local newMetaTable = {__index = setmetatable(methods, {__index = self})};
-		table.insert(AllSoundLibraries, setmetatable(t or {}, newMetaTable));
-		return AllSoundLibraries[#AllSoundLibraries];
-	end,
-}
+	Inherit = function(self, members, methods)
+		local newMetaTable = { __index = setmetatable(methods or {}, { __index = self }) };
+		table.insert(g_allSoundLibraries, setmetatable(members or {}, newMetaTable));
 
-setmetatable(SoundLibrary, mtSoundLibrary);
+		return g_allSoundLibraries[#g_allSoundLibraries];
+	end,
+};
+
+setmetatable(g_soundLibrary, mtSoundLibrary);

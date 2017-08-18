@@ -1,8 +1,16 @@
 
-function TableContains(tableRef, value)
+g_cerberus.HookThisFile();
 
-	if type(value) == "string" then
-		value = string.upper(value);
+function TableContains(tableRef, values)
+
+	if type(values) ~= "table" then
+		values = { values };
+	end
+
+	for i = 1, #values do
+		if type(values[i]) == "string" then
+			values[i] = string.upper(values[i]);
+		end
 	end
 
 	for i = 1, #tableRef, 1 do
@@ -13,7 +21,31 @@ function TableContains(tableRef, value)
 			currValue = string.upper(currValue);
 		end
 
-		if currValue == value then
+		for j = 1, #values do
+			if currValue == values[j] then
+				return true, i;
+			end
+		end
+	end
+
+	return false;
+end
+
+function TableContainsUniqueItem(tableRef, item)
+
+	if type(item) == "string" then
+			item = string.upper(item);
+		end
+
+	for i = 1, #tableRef, 1 do
+
+		currValue = tableRef[i];
+
+		if type(currValue) == "string" then
+			currValue = string.upper(currValue);
+		end
+
+		if currValue == item then
 			return true, i;
 		end
 	end
@@ -23,12 +55,12 @@ end
 
 function TableToString(tableRef)
 
-	assert(type(tableRef) == "table", "Wrong argument type in TableToString. Expected a table");
+	assert(type(tableRef) == "table", "Wrong argument type in TableToString. Expected a table.");
 
-	str = tableRef[1];
+	local str = tableRef[1];
 
 	for i = 2, #tableRef, 1 do
-		assert(type(tableRef[i]), "Wrong table element's type in TableToString. Expected a table of strings only");
+		assert(type(tableRef[i]), "Wrong table element's type in TableToString. Expected a table of strings only.");
 		str = str .. " " .. tableRef[i];
 	end
 
@@ -41,8 +73,8 @@ end
 
 local function GetWordsNoTable(str)
 	if str ~= nil and str ~= "" then
-		local first, strCut = GetFirstWordAndRest(str);
-		return first, GetWordsNoTable(strCut);
+		local sFirst, sStrCut = GetFirstWordAndRest(str);
+		return sFirst, GetWordsNoTable(sStrCut);
 	end
 end
 
@@ -50,16 +82,16 @@ function GetWords(str)
 	return { GetWordsNoTable(str) };
 end
 
-function SubTable(superTable, from, to)
+function SubTable(T, iFrom, iTo)
 
-	if to == nil or to > #superTable then
-		to = #superTable;
+	if iTo == nil or iTo > #T then
+		iTo = #T;
 	end
 
 	local subTable = {};
 
-	for i = from, to, 1 do
-		table.insert(subTable, superTable[i]);
+	for i = iFrom, iTo, 1 do
+		table.insert(subTable, T[i]);
 	end
 
 	return subTable;
@@ -75,44 +107,44 @@ function TableCat(table1, table2)
 	return newTable;
 end
 
-function GetPunctuatedString(stringTable)
+function GetPunctuatedString(sStringTable)
 
 	local str = "";
 
-	for i = 1, #stringTable, 1 do
+	for i = 1, #sStringTable, 1 do
 
 		if i == 1 then
-			str = str .. stringTable[i];
-		elseif i == #stringTable then
-			str = str .. " and "  .. stringTable[i];
+			str = str .. sStringTable[i];
+		elseif i == #sStringTable then
+			str = str .. " and "  .. sStringTable[i];
 		else
-			str = str .. ", "  .. stringTable[i];
+			str = str .. ", "  .. sStringTable[i];
 		end
 	end
 
 	return str;
 end
 
-function AddListenerEvent(eventListener, eventTypeStr, callback)
+function AddListenerEvent(eventListener, sEventType, Callback)
 
-	eventListener[eventTypeStr] = eventListener[eventTypeStr] or {};
-	table.insert(eventListener[eventTypeStr], callback);
+	eventListener[sEventType] = eventListener[sEventType] or {};
+	table.insert(eventListener[sEventType], Callback);
 end
 
-function CallEventListener(eventListener, eventTypeStr)
+function CallEventListener(eventListener, sEventType)
 
-	listeners = eventListener[eventTypeStr] or {};
+	local listeners = eventListener[sEventType] or {};
 	for i = 1, #listeners, 1 do
 		listeners[i]();
 	end
 end
 
-function GodExists(godName)
+function GodExists(sGodName)
 
-	godName = string.upper(godName);
+	sGodName = string.upper(sGodName);
 
-	for i = 1, #AllSoundLibraries, 1 do
-		if string.upper(AllSoundLibraries[i].dataName) == godName then
+	for i = 1, #g_allSoundLibraries, 1 do
+		if string.upper(g_allSoundLibraries[i].sDataName) == sGodName then
 			return true, i;
 		end
 	end
@@ -120,38 +152,53 @@ function GodExists(godName)
 	return false;
 end
 
-function TrySetSoundChannel(soundChannel, defaultChannel)
+local soundChannels =
+{
+	["MASTER"] = "Master",
+	["SOUND"] = "Sound",
+	["MUSIC"] = "Music",
+	["AMBIENCE"] = "Ambience",
+	["DIALOG"] = "Dialog"
+};
+function GetAvailableSoundChannels()
+	return soundChannels;
+end
 
-	outSoundChannel = defaultChannel;
+function TrySetSoundChannel(sSoundChannel, sDefaultChannel)
 
-	if soundChannel == nil or soundChannel == "" then
+	local sOutSoundChannel = sDefaultChannel;
+
+	if sSoundChannel == nil or sSoundChannel == "" then
 		PrintInvalidParameters("Please provide a channel name. Available sound channels are: Master, Sound, Music, Ambience, Dialog and Default.");
-		return defaultChannel;
+		return sDefaultChannel;
 	end
 
-	soundChannel = string.upper(soundChannel);
+	sSoundChannel = string.upper(sSoundChannel);
 
-	if soundChannel == "MASTER" then
-		outSoundChannel = "Master";
-	elseif soundChannel == "SOUND" then
-		outSoundChannel = "Sound";
-	elseif soundChannel == "MUSIC" then
-		outSoundChannel = "Music";
-	elseif soundChannel == "AMBIENCE" then
-		outSoundChannel = "Ambience";
-	elseif soundChannel == "DIALOG" then
-		outSoundChannel = "Dialog";
-	elseif soundChannel == "DEFAULT" then
-		outSoundChannel = DefaultSoundChannel;
-	else
-		outSoundChannel = defaultChannel;
-		PrintInvalidParameters("Available sound channels are: Master, Sound, Music, Ambience, Dialog and Default.");
+	if soundChannel == "DEFAULT" and soundChannels["DEFAULT"] == nil then
+		soundChannels["DEFAULT"] = g_ktaOptions.default.sSoundChannel;
 	end
 
-	return outSoundChannel;
+	sOutSoundChannel = soundChannels[sSoundChannel];
+	if sOutSoundChannel == nil then
+		sOutSoundChannel = sDefaultChannel;
+		PrintInvalidParameters("Sound channel not found. Available sound channels are: Master, Sound, Music, Ambience, Dialog and Default.");
+	end
+
+	return sOutSoundChannel;
 end
 
 function PrintInvalidParameters(str)
 
 	KTA_Print("Invalid parameters: " .. str);
+end
+
+
+function table.Clone(T)
+
+	local copy = {};
+	for sKey, value in pairs(T) do
+		copy[sKey] = value;
+	end
+	return copy;
 end

@@ -1,311 +1,222 @@
 
-local g_NoToolTip = false;
+g_cerberus.HookThisFile();
 
-function PrintTooltip(str)
 
-	if not g_NoToolTip then
-		KTA_Print(str);
+function PrintCommandTooltip(tooltipItem, bNoToolTip)
+
+	if tooltipItem ~= nil then
+		print(tooltipItem.sCommandSignature);
+
+		if not bNoToolTip then
+			KTA_Print(tooltipItem.sTooltip);
+		end
 	end
 end
 
-function PrintHelp(cmd, args, parameters)
+function PrintHelp(sCmd, args, sParameters)
 
-	g_NoToolTip = parameters == "noToolTip";
+	local bNoToolTip = sParameters == "noToolTip";
+	local tooltipToPrint = nil;
 
-	if cmd == "SETDELAY" then
-		print("/kta SetDelay [<min:seconds> <max:seconds>] | [default|0]");
+	if sCmd == nil then
+		return;
+	end
 
-		PrintTooltip("Will change the timespan between two whispers. Giving \"default\" or 0 as only parameter will reset to default values.\nExample: \"/kta SetDelay 300 600\".");
+	tooltipToPrint = g_allCommands[sCmd];
 
-	elseif cmd == "SETGODS" or cmd == "SETGOD" then
 
-		local godNames = "";
+	if sCmd == "SETDEFAULT" then
 
-		for i = 1, #AllSoundLibraries, 1 do
-			godNames = godNames .. AllSoundLibraries[i].dataName .. "|";
-		end
+		local arg1 = (args ~= nil and #args > 0 and args[1]);
 
-		print("/kta SetGods <GodName:" .. godNames .. "All|None|Default>");
+		if arg1 ~= nil and arg1 ~= "" then
 
-		PrintTooltip("Will change the god(s) who whispers to you. Multiple gods can be set at the same time by naming them one by one. Giving \"default\" will reset to default value. This won't affect whispers frequency.\nExample: \"/kta SetGods Cthun YoggSaron\".");
-
-	elseif cmd == "ADDGODS" or cmd == "ADDGOD" or cmd == "ADD" then
-
-		local godNames = "";
-
-		for i = 1, #AllSoundLibraries, 1 do
-			godNames = godNames .. AllSoundLibraries[i].dataName .. "|";
-		end
-		print("/kta AddGods <GodName: " .. godNames .. "All>");
-
-		PrintTooltip("Will add god(s) to the currently whispering gods. This won't affect whispers frequency.\nExample: \"/kta AddGods Cthun YoggSaron\".");
-
-	elseif cmd == "REMOVEGODS" or cmd == "REMOVEGOD" or cmd == "REMOVE" then
-
-		local godNames = "";
-
-		for i = 1, #AllSoundLibraries, 1 do
-			godNames = godNames .. AllSoundLibraries[i].dataName .. "|";
-		end
-
-		print("/kta RemoveGods <GodName:" .. godNames .. "All>");
-
-		PrintTooltip("Will remove god(s) from the currently whispering gods. If all removed, no god will whisper until new ones are added. This won't affect whispers frequency.\nExample: \"/kta RemoveGods CTHUN YOGGSARON\".");
-
-	elseif cmd == "SETSOUNDCHANNEL" or cmd == "SETCHANNEL" then
-
-		print("/kta SetSoundChannel <SoundChannel: Master|Sound|Music|Ambience|Dialog|Default>");
-
-		PrintTooltip("Will change the sound channel the soundfiles will be played on.\nExample: \"/kta SetSoundChannel Dialog\".");
-
-	elseif cmd == "SETDEFAULT" then
-
-		if args ~= nil and args[1] ~= "" then
-
-			if args[1] == "GOD" or args[1] == "GODS" then
-
-				local godNames = "";
-
-				for i = 1, #AllSoundLibraries, 1 do
-					godNames = godNames .. AllSoundLibraries[i].dataName .. "|";
-				end
-
-				print("/kta SetDefault GODS <GodName: " .. godNames .. "All|None>");
-
-				PrintTooltip("Will change the default gods to set when using the \"/kta reset\" or \"/kta setGod default\" command. Using \"/kta debug clearMemory\" will revert to initial values as on clear addon install.\nExample: \"/kta SetDefault Gods CTHUN YOGGSARON\".");
-				return;
-
-			elseif args[1] == "DELAY" then
-
-				print("/kta SetDefault Delay [<min:seconds> <max:seconds>]");
-
-				PrintTooltip("Will change the default delay to set when using the \"/kta reset\" or \"/kta setDelay default\" command. Using \"/kta debug clearMemory\" will revert to initial values as on clear addon install.\nExample: \"/kta SetDefault Delay 300 600\".");
-				return;
-				
-			elseif args[1] == "SOUNDCHANNEL"  or args[1] == "CHANNEL" then
-			
-				print("/kta SetDefault SoundChannel <SoundChannel: Master|Sound|Music|Ambience|Dialog|Default>");
-				
-				PrintTooltip("Will change the default sound channel to set when using the \"/kta reset\" or \"/kta SetSoundChannel default\" command. Using \"/kta debug clearMemory\" will revert to initial values as on clear addon install.\nExample: \"/kta SetDefault SoundChannel Dialog\".");
-				return;
+			if tooltipToPrint[arg1] ~= nil then
+				tooltipToPrint = tooltipToPrint[arg1];
 			end
 		end
 
-		print("/kta SetDefault [Delay|Gods|SoundChannel]");
+	elseif sCmd == "DISPLAY" then
 
-		PrintTooltip("Will change the default values to set when using the \"/kta reset\" or \"/kta [setGods|setDelay|setSoundChannel] default\" command. Using \"/kta debug clearMemory\" will revert to initial values as on clear addon install.");
-
-	elseif cmd == "RESET" then
-
-		print("/kta Reset");
-
-		PrintTooltip("Will reset all gods and values to default ones. You can change the default values and gods by using the \"/kta SetDefault\" command.");
-
-	elseif cmd == "DISPLAY" then
-
-		if args ~= nil then
+		if args ~= nil and #args > 0 then
 
 			if TableContains(args, "DEFAULT") then
+				tooltipToPrint = tooltipToPrint["DEFAULT"];
+			end
 
-				if TableContains(args, "GODS") or TableContains(args, "GOD") then
-					print("/kta Display default gods");
-					PrintTooltip("Will display the current default god(s) to set when using the \"/kta setDefault gods\" command.");
-					return;
-				elseif TableContains(args, "DELAY") then
-					print("/kta Display default delay");
-					PrintTooltip("Will display the current default delay to set when using the \"/kta setDefault delay\" command.");
-					return;
-				elseif TableContains(args, "SOUNDCHANNEL") or TableContains(args, "CHANNEL") then
-					print("/kta Display Default soundChannel");
-					PrintTooltip("Will display the default sound channel to set when using the \"/kta setDefault delay\" command.");
-					return;
-				end
+			local tooltipItemBackup = tooltipToPrint;
 
-				print("/kta Display default [God|Delay|SoundChannel]");
-				PrintTooltip("Will display the current default values to set when using the \"/kta setDefault\" command.");
-				return;
-			else
-				if TableContains(args, "DELAY") then
-					print("/kta Display delay");
-					PrintTooltip("Will display the timespan between which whispers might happen.");
-				end
-				if TableContains(args, "GODS") or TableContains(args, "GOD") then
-					print("/kta Display gods");
-					PrintTooltip("Will display which gods are currently able to whisper to you.");
-				end
-				if TableContains(args, "SOUNDCHANNEL") or TableContains(args, "CHANNEL") then
-					print("/kta Display soundChannel");
-					PrintTooltip("Will display the current sound channel the soundfiles will be played on.");
-				end
-				return;
+			if TableContains(args, { "GOD", "GODS" }) then
+				tooltipToPrint = tooltipItemBackup["GODS"];
+				PrintCommandTooltip(tooltipToPrint, bNoToolTip);
+				tooltipToPrint = nil;
+			end
+
+			if TableContains(args, "DELAY") then
+				tooltipToPrint = tooltipItemBackup["DELAY"];
+				PrintCommandTooltip(tooltipToPrint, bNoToolTip);
+				tooltipToPrint = nil;
+			end
+
+			if TableContains(args, { "SOUNDCHANNEL", "CHANNEL" }) then
+				tooltipToPrint = tooltipItemBackup["SOUNDCHANNEL"];
+				PrintCommandTooltip(tooltipToPrint, bNoToolTip);
+				tooltipToPrint = nil;
 			end
 		end
 
-		print("/kta Display [Delay|Gods|SoundChannel|Default]");
-		PrintTooltip("Will display current parameters. If no parameter provided, all parameters will be listed.");
+	elseif sCmd == "DEBUG" or sCmd == "DBG" then
 
-	elseif cmd == "SETTINGS" or cmd == "OPTIONS" then
+		local sArg1 = (args ~= nil and #args > 0 and args[1]);
 
-		print("/kta Settings");
-		PrintTooltip("Opens up the settings panel");
+		if sArg1 ~= nil and sArg1 ~= "" then
 
-	elseif cmd == "DEBUG" or cmd == "DBG" then
-
-		if args ~= nil and args[1] ~= "" then
-			if args[1] == "CLEARMEMORY" then
-				print("/kta Debug ClearMemory");
-				PrintTooltip("Will erase all saved variables as on first addon use (this includes default variables values, which will be reset on next launch).");
-				return;
-			elseif args[1] == "NOSAVE" then
-				print("/kta Debug NoSave");
-				PrintTooltip("Will prevent the addon from saving variables at the end of this session (affected are delay and gods list.");
-				return;
-			elseif args[1] == "SAVE" then
-				print("/kta Debug Save");
-				PrintTooltip("Will make the game save variables at the end of this session. This is the default behaviour on session start.");
-				return;
+			if tooltipToPrint[sArg1] ~= nil then
+				tooltipToPrint = tooltipToPrint[sArg1];
 			end
 		end
-
-		print("/kta Debug [clearMemory] | [noSave|dontSave] | [save]");
-		PrintTooltip("Several functions used for debugging purpose. You should normally not need to use any.");
 	end
+
+	PrintCommandTooltip(tooltipToPrint, bNoToolTip);
 end
+
+local allCommandsAlphabeticalyOrdered = {};
 
 function PrintAllCommands()
 
 	KTA_Print("All commands:");
-	PrintHelp("SETDELAY", nil, "noToolTip");
-	PrintHelp("SETGODS", nil, "noToolTip");
-	PrintHelp("SETSOUNDCHANNEL", nil, "noToolTip");
-	PrintHelp("SETDEFAULT", nil, "noToolTip");
-	PrintHelp("RESET", nil, "noToolTip");
-	PrintHelp("DISPLAY", nil, "noToolTip");
-	PrintHelp("SETTINGS", nil, "noToolTip");
-	PrintHelp("DEBUG", nil, "noToolTip");
+	if #allCommandsAlphabeticalyOrdered == 0 then
+		for _, value in pairs(g_allCommands) do
+			table.insert(allCommandsAlphabeticalyOrdered, value);
+		end
+
+		sort(allCommandsAlphabeticalyOrdered, function(lhs, rhs) return lhs.sCommandSignature < rhs.sCommandSignature end);
+	end
+
+	for i = 1, #allCommandsAlphabeticalyOrdered do
+		PrintCommandTooltip(allCommandsAlphabeticalyOrdered[i], true);
+	end
 end
 
-SLASH_KTA1 = "/kta";
+_G["SLASH_KillThemAll1"] = "/kta";
 
-function SlashCmdList.KTA(msg)
-	
-	if msg == nil or msg == "" then
-		return;
+local function RemoveHelpFromArgs(sCmd, args, iHelpIndex)
+
+	if sCmd == "HELP" then
+		sCmd = args[1];
+		table.remove(args, 1);
+	else
+		table.remove(args, iHelpIndex);
 	end
 
-	print(msg);
+	return sCmd, args;
+end
 
-	local cmd, strArgs = GetFirstWordAndRest(string.upper(msg));
-	local args = GetWords(strArgs);
+local function HandleHelpCommand(sCmd, args)
 
-	local helpCall, helpIndex = TableContains(args, "HELP");
-	if helpCall == false then
-		helpCall = cmd == "HELP";
+	local bHelpCall, iHelpIndex = TableContains(args, "HELP");
+	if not bHelpCall then
+		bHelpCall = sCmd == "HELP";
 	end
-	
-	if helpCall then
-		if helpIndex == nil or helpIndex == 0 then
+
+	if bHelpCall then
+		if iHelpIndex == nil and #args == 0 then
 			PrintAllCommands();
 		else
-			PrintHelp(cmd, SubTable(args, 1, helpIndex - 1));
+			PrintHelp(RemoveHelpFromArgs(sCmd, args, iHelpIndex));
 		end
+
+		return true;
+	end
+
+	return false;
+end
+
+function SlashCmdList.KillThemAll(sMessage)
+
+	if sMessage == nil or sMessage == "" then
 		return;
 	end
 
+	print(sMessage);	-- For input feedback
 
-	if cmd == "SETGODS" or cmd == "SETGOD" then
-		SetGods(args);
 
-	elseif cmd == "ADDGODS" or cmd == "ADDGOD" or cmd == "ADD" then
-		AddGods(args);
+	local sCmd, sArgs = GetFirstWordAndRest(string.upper(sMessage));
+	local args = GetWords(sArgs);
 
-	elseif cmd == "REMOVEGODS" or cmd == "REMOVEGOD" or cmd == "REMOVE" then
-		RemoveGods(args);
+	local bHelpCommandHandled = HandleHelpCommand(sCmd, args);
+	if bHelpCommandHandled then
+		return;
+	end
 
-	elseif cmd == "SETDELAY" then
-		SetDelay(args[1], args[2]);
+	local command = g_allCommands[sCmd];
+	local argumentsToPass = nil;
 
-	elseif cmd == "SETCHANNEL" or cmd == "SETSOUNDCHANNEL" then
-		SetSoundChannel(args[1]);
+	if sCmd == "SETSOUNDCHANNEL" then
+		argumentsToPass = args[1];
 
-	elseif cmd == "SETDEFAULT" then
+	elseif sCmd == "SETDEFAULT" then
 
-		if args[1] == "GODS" or args[1] == "GOD" then
-			SetDefaultGods(SubTable(args, 2));
-		elseif args[1] == "DELAY" then
-			SetDefaultDelay(args[2], args[3]);
-		elseif args[1] == "SOUNDCHANNEL" or args[1] == "CHANNEL" then
-			SetDefaultSoundChannel(args[2]);
-		else
-			KTA_Print("Invalid use of SetDefault command:");
-			PrintHelp("SETDEFAULT", nil, "noToolTip");
+		local arg1 = (args ~= nil and #args > 0 and args[1]);
+		if arg1 ~= nil and command[arg1] ~= nil then
+			command = command[arg1];
 		end
 
-	elseif cmd == "RESET" then
-		ResetValues();
+		if arg1 == "GODS" or arg1 == "GOD" or arg1 == "DELAY" then
+			argumentsToPass = SubTable(args, 2);
+		elseif arg1 == "SOUNDCHANNEL" or arg1 == "CHANNEL" then
+			argumentsToPass = args[2];
+		end
 
-	elseif cmd == "DISPLAY" then
+	elseif sCmd == "DISPLAY" then
 
-		local displayedSomething = false;
+		local bDefaultAsked, iWordDefaultIndex = TableContains(args, "DEFAULT");
+		if bDefaultAsked then
+			table.remove(args, iWordDefaultIndex);
+			command["DEFAULT"].Func(args);
+			command = nil;
 
-		if TableContains(args, "DEFAULT") then
-			tempTable = SubTable(args, 2);
-			DisplayDefaultValues(tempTable);
-			displayedSomething = true;
 		else
+			local commandBackup = command;
+
 			if TableContains(args, "DELAY") then
-				PrintDelay();
-				displayedSomething = true;
+				commandBackup["DELAY"].Func();
+				command = nil;
 			end
-			if TableContains(args, "GODS") or TableContains(args, "GOD") then
-				DisplayCurrentGods();
-				displayedSomething = true;
+			if TableContains(args, { "GOD", "GODS" }) then
+				commandBackup["GODS"].Func();
+				command = nil;
 			end
-			if TableContains(args, "SOUNDCHANNEL") or TableContains(args, "CHANNEL") then
-				DisplaySoundChannel();
-				displayedSomething = true;
-			end
-		end
-
-		if not displayedSomething then
-			PrintDelay();
-			DisplayCurrentGods();
-			DisplaySoundChannel();
-			return;
-		end
-
-	elseif cmd == "SETTINGS" or cmd == "OPTIONS" then
-
-		OpenSettingsPanel();
-
-	elseif cmd == "DEBUG" or cmd == "DBG" then
-
-		if args[1] == "CLEARMEMORY" or args[1] == "CLEARMRY" then
-			ClearMemory();
-
-		elseif args[1] == "NOSAVE" or args[1] == "DONTSAVE" then
-
-			g_shouldVariablesBeSaved = false;
-			KTA_Print("Variables won't be saved on logout (once). This can be reverted with the \"/kta debug save\" command");
-
-		elseif args[1] == "SAVE" then
-
-			g_shouldVariablesBeSaved = true;
-			KTA_Print("Variables will be saved on logout");
-
-		elseif args[1] == "RUN" or args[1] == "RUNCOMMAND" or args[1] == "RUNCMD" or args[1] == "CMD" or args[1] == "R" then
-
-			_, unCapitalizedCmd = GetFirstWordAndRest(msg);
-			_, script = GetFirstWordAndRest(unCapitalizedCmd);		-- Get rid of first word in strArgs (since first word here will be "run")
-			codeToRun = loadstring(script);
-			if codeToRun ~= nil then
-				codeToRun();
-			else
-				KTA_Print("Invalid command");
+			if TableContains(args, { "SOUNDCHANNEL", "CHANNEL" }) then
+				commandBackup["SOUNDCHANNEL"].Func();
+				command = nil;
 			end
 		end
+
+		if command ~= nil then
+			command["DELAY"].Func();
+			command["GODS"].Func();
+			command["SOUNDCHANNEL"].Func();
+		end
+
+		return;		-- To avoid "Unknown command"
+
+	elseif sCmd == "DEBUG" or sCmd == "DBG" then
+
+		local arg1 = (args ~= nil and #args > 0 and args[1]);
+		if arg1 ~= nil and command[arg1] ~= nil then
+			command = command[arg1];
+		end
+	end
+
+
+	if command ~= nil then
+		if argumentsToPass == nil then
+			argumentsToPass = args;
+		end
+		command.Func(argumentsToPass);
 	else
-		KTA_Print("Unknown command: " .. cmd);
+		KTA_Print("Unknown command: " .. sCmd);
 		PrintAllCommands();
 	end
 end

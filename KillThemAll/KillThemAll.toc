@@ -1,24 +1,28 @@
 ## Interface: 70200
 ## Title: |cff00ccffKillThemAll|r
-## Version: 1.3.2
+## Version: 1.3.5
 ## Notes: Randomly plays Old Gods whispers audio files
 ## Author: Thex
 ## DefaultState: enabled
-## SavedVariables: S_AddonVersion, S_ktaOptions
+## SavedVariables: S_sAddonVersion, S_ktaOptions
 
-Libraries/LibStub.lua
-Libraries/CallbackHandler-1.0.lua
-Libraries/LibDataBroker-1.1.lua
+Libraries\LibStub\LibStub.lua
+Libraries\CallbackHandler-1.0\CallbackHandler-1.0.xml
+Libraries\Libdatabroker-1-1\LibDataBroker-1.1.lua
+Libraries\LibDBIcon-1.0\LibDBIcon-1.0.xml
+Libraries\Cerberus\Cerberus.lua
+
 Options.lua
-Settings/SettingsHelpers.lua
-Settings/MinimapButton.lua
-Settings/GodsListSettings.lua
-Settings/SettingsFrame.lua
+Settings\FramesCreationHelpers.lua
+Settings\MinimapButton.lua
+Settings\GodsListSettings.lua
+Settings\SettingsFrame.lua
 Helpers.lua
-Gods/SoundLibraryBase.lua
-Gods/Yshaarj.lua
-Gods/Cthun.lua
-Gods/YoggSaron.lua
-Gods/IlGynoth.lua
+Gods\SoundLibraryBase.lua
+Gods\Yshaarj.lua
+Gods\Cthun.lua
+Gods\YoggSaron.lua
+Gods\IlGynoth.lua
 Core.lua
+CommandsData.lua
 SlashCommands.lua

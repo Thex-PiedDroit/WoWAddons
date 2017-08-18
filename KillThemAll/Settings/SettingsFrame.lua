@@ -1,194 +1,188 @@
 
+g_cerberus.HookThisFile();
+
 local g_interfaceSettingsFrame = {};
 g_interfaceEventsListener = {};
 
 
-local InitDelayEditBoxes = nil;	-- Forward declaration
-local InitSoundChannelDropDownList = nil;
+local InitDelayEditBoxes = nil;
+local function SoundChannelDropDownListCheckButtonsVerifier(sValue)
+	return g_ktaOptions.sSoundChannel == sValue;
+end
 
 
 function OpenSettingsPanel()
 
-	InterfaceOptionsFrame_OpenToCategory("KillThemAll Settings");
-	InterfaceOptionsFrame_OpenToCategory("KillThemAll Settings");	-- Twice because once only opens the menu, not the right category, for some reason
+	InterfaceOptionsFrame_OpenToCategory("KillThemAll");
+	InterfaceOptionsFrame_OpenToCategory("KillThemAll");	-- Twice because once only opens the menu, not the right category, for some reason
 end
 
 
 function InitSettingsFrames()
-	g_interfaceSettingsFrame.panel = CreateFrame("Frame", "KTA_InterfaceSettingsFrame", UIParent);
-	g_interfaceSettingsFrame.panel.name = "KillThemAll Settings";
 
+	local mainFrame = CreateFrame("Frame", "KTA_InterfaceSettingsFrame", UIParent);
+	mainFrame.name = "KillThemAll";
+
+
+	local fCheckButtonsSize = 20;
+	local fMarginBetweenButtonsAndLabels = 3;
 
 	-- DEACTIVATED
-	g_interfaceSettingsFrame.lab = CreateLabel(g_interfaceSettingsFrame.panel, "Deactivated");
-	g_interfaceSettingsFrame.lab:SetPoint("TOPLEFT", 80, -48);
-	g_interfaceSettingsFrame.chkDeact = CreateCheck(g_interfaceSettingsFrame.panel, "chkDeactivate", 20, 20);
-	g_interfaceSettingsFrame.chkDeact:SetPoint("TOPLEFT", 60, -45);
-	g_interfaceSettingsFrame.chkDeact:SetChecked(g_ktaOptions.deactivated);
+	local deactivatedCheckButtonPos = { x = 60, y = -45 };
+	local deactivatedCheckButton = CreateCheckButton("DeactivateCheckButton", mainFrame, fCheckButtonsSize);
+	deactivatedCheckButton:SetPoint("TOPLEFT", deactivatedCheckButtonPos.x, deactivatedCheckButtonPos.y);
+	deactivatedCheckButton:SetChecked(g_ktaOptions.bDeactivated);
 
-	g_interfaceSettingsFrame.chkDeact:SetScript("OnClick", function()
+	local deactivatedLabel = CreateLabel(deactivatedCheckButton, "Deactivated");
+	deactivatedLabel:SetPoint("LEFT", deactivatedCheckButton, "RIGHT", fMarginBetweenButtonsAndLabels, 0);
+
+	deactivatedCheckButton:SetScript("OnClick", function()
 		ToggleDeactivated();
 	end);
 
 	AddListenerEvent(g_interfaceEventsListener, "OnToggleDeactivated", function()
-		g_interfaceSettingsFrame.chkDeact:SetChecked(g_ktaOptions.deactivated);
+		deactivatedCheckButton:SetChecked(g_ktaOptions.bDeactivated);
 	end);
 
 
 	-- MUTE DURING COMBAT
-	g_interfaceSettingsFrame.lab = CreateLabel(g_interfaceSettingsFrame.panel, "Mute during Combat");
-	g_interfaceSettingsFrame.lab:SetPoint("TOPLEFT", 80, -68);
-	g_interfaceSettingsFrame.chkCombat = CreateCheck(g_interfaceSettingsFrame.panel, "chkMuteInCombat", 20, 20);
-	g_interfaceSettingsFrame.chkCombat:SetPoint("TOPLEFT", 60, -65);
-	g_interfaceSettingsFrame.chkCombat:SetChecked(g_ktaOptions.muteDuringCombat);
+	local muteDuringCombatCheckButton = CreateCheckButton("MuteInCombatCheckButton", mainFrame, fCheckButtonsSize);
+	muteDuringCombatCheckButton:SetPoint("TOP", deactivatedCheckButton, "BOTTOM", 0, 0);
+	muteDuringCombatCheckButton:SetChecked(g_ktaOptions.bMuteDuringCombat);
 
-	g_interfaceSettingsFrame.chkCombat:SetScript("OnClick", function()
-		g_ktaOptions.muteDuringCombat = not g_ktaOptions.muteDuringCombat;
+	local muteDuringCombatLabel = CreateLabel(muteDuringCombatCheckButton, "Mute during Combat");
+	muteDuringCombatLabel:SetPoint("LEFT", muteDuringCombatCheckButton, "RIGHT", fMarginBetweenButtonsAndLabels, 0.5);
+
+	muteDuringCombatCheckButton:SetScript("OnClick", function()
+		g_ktaOptions.bMuteDuringCombat = not g_ktaOptions.bMuteDuringCombat;
 	end);
 
 
 	-- HIDE MINIMAP BUTTON
-	g_interfaceSettingsFrame.lab = CreateLabel(g_interfaceSettingsFrame.panel, "Hide minimap button");
-	g_interfaceSettingsFrame.lab:SetPoint("TOPLEFT", 80, -88);
-	g_interfaceSettingsFrame.chkMiniMapButton = CreateCheck(g_interfaceSettingsFrame.panel, "chkHideMinimapButton", 20, 20);
-	g_interfaceSettingsFrame.chkMiniMapButton:SetPoint("TOPLEFT", 60, -85);
-	g_interfaceSettingsFrame.chkMiniMapButton:SetChecked(g_ktaOptions.minimapButton.hide);
+	local hideMinimapCheckButton = CreateCheckButton("HideMinimapButtonCheckButton", mainFrame, fCheckButtonsSize);
+	hideMinimapCheckButton:SetPoint("TOP", muteDuringCombatCheckButton, "BOTTOM", 0, 0);
+	hideMinimapCheckButton:SetChecked(g_ktaOptions.minimapButton.hide);
 
-	g_interfaceSettingsFrame.chkMiniMapButton:SetScript("OnClick", function()
+	local hideMinimapLabel = CreateLabel(hideMinimapCheckButton, "Hide minimap button");
+	hideMinimapLabel:SetPoint("LEFT", hideMinimapCheckButton, "RIGHT", fMarginBetweenButtonsAndLabels, 0);
+
+	hideMinimapCheckButton:SetScript("OnClick", function()
 		SetMinimapButtonHidden(not g_ktaOptions.minimapButton.hide);
 	end);
 
 
 	-- MIN MAX DELAY
-	g_interfaceSettingsFrame.lab = CreateLabel(g_interfaceSettingsFrame.panel, "Min delay");
-	g_interfaceSettingsFrame.lab:SetPoint("TOPLEFT", 60, -118);
-	g_interfaceSettingsFrame.lab = CreateLabel(g_interfaceSettingsFrame.panel, "Max delay");
-	g_interfaceSettingsFrame.lab:SetPoint("TOPLEFT", 140, -118);
-	InitDelayEditBoxes();
+	local soundChannelLabelAnchor = InitDelayEditBoxes(mainFrame, hideMinimapCheckButton);
 
 
 	-- SOUND CHANNEL
-	g_interfaceSettingsFrame.lab = CreateLabel(g_interfaceSettingsFrame.panel, "Sound channel", buttons);
-	g_interfaceSettingsFrame.lab:SetPoint("TOPLEFT", 60, -165);
-	g_interfaceSettingsFrame.listSoundChan = CreateDropDownList(g_interfaceSettingsFrame.panel, "listSoundChannel", 100);
-	g_interfaceSettingsFrame.listSoundChan:SetPoint("TOPLEFT", 40, -180);
-	InitSoundChannelDropDownList(g_interfaceSettingsFrame.listSoundChan);
+	local soundChannelLabel = CreateLabel(mainFrame, "Sound channel", buttons);
+	soundChannelLabel:SetPoint("TOPLEFT", soundChannelLabelAnchor, "BOTTOMLEFT", -5, -10);
+
+	local availableSoundChannels = table.Clone(GetAvailableSoundChannels());
+	availableSoundChannels["DEFAULT"] = nil;
+	local optionsForList = {};
+	for sKey, sValue in pairs(availableSoundChannels) do
+		table.insert(optionsForList, { sText = sValue, value = sKey });
+	end
+	local soundChannelsDropdownList = CreateDropDownList("SoundChannelsList", mainFrame, 100, optionsForList, g_ktaOptions.sSoundChannel, SetSoundChannel, { true, true }, SoundChannelDropDownListCheckButtonsVerifier);
+	soundChannelsDropdownList:SetPoint("TOPLEFT", soundChannelLabel, "BOTTOMLEFT", -20, -5);
+	AddListenerEvent(g_interfaceEventsListener, "OnSoundChannelChanged", function()
+		UIDropDownMenu_SetText(soundChannelsDropdownList, g_ktaOptions.sSoundChannel);
+	end);
 
 
 	-- GODS LIST
-	InitGodsListSettings(g_interfaceSettingsFrame);
+	InitGodsListSettings(mainFrame, soundChannelsDropdownList, { x = 20, y = -8 });
 
 
 	-- BIND PANEL TO INTERFACE SETTINGS
-	InterfaceOptions_AddCategory(g_interfaceSettingsFrame.panel);
+	InterfaceOptions_AddCategory(mainFrame);
 
-	InitMinimapButton(g_interfaceSettingsFrame.panel);
+
+	InitMinimapButton(mainFrame);
+	g_interfaceSettingsFrame.panel = mainFrame;
 end
 
 
+local SetDelayButtonCallback = nil;
+
 -- MIN MAX DELAY FUNCTION
-InitDelayEditBoxes = 	function()
+--[[local]] InitDelayEditBoxes = function(mainFrame, minDelayLabelAnchor)
+
+	local editBoxesSize = { x = 60, y = 20 };
+	local marginBetweenEditBoxesAndLabels = { x = 5, y = -5 };
 
 	-- MIN DELAY
-	g_interfaceSettingsFrame.boxMin = CreateEditBox(g_interfaceSettingsFrame.panel, "boxMinDelay", 60, 20, true);
-	g_interfaceSettingsFrame.boxMin:SetPoint("TOPLEFT", 65, -135);
+	local minDelayLabel = CreateLabel(mainFrame, "Min delay");
+	minDelayLabel:SetPoint("TOPLEFT", minDelayLabelAnchor, "BOTTOMLEFT", 0, -10);
 
-	g_interfaceSettingsFrame.boxMin:SetScript("OnSizeChanged", function()	-- OnShow is called before setting the size, so setting a text then is useless; OnSizeChanged guarentees that the box has been initialized
-		g_interfaceSettingsFrame.boxMin:SetText(g_ktaOptions.minDelay);
+	local minDelayEditBox = CreateEditBox("BoxMinDelay", mainFrame, editBoxesSize, true);
+	minDelayEditBox:SetPoint("TOPLEFT", minDelayLabel, "BOTTOMLEFT", marginBetweenEditBoxesAndLabels.x, marginBetweenEditBoxesAndLabels.y);
+
+	minDelayEditBox:SetScript("OnSizeChanged", function()	-- OnShow is called before setting the size, so setting a text then is useless; OnSizeChanged guarentees that the box has been initialized
+		minDelayEditBox:SetText(g_ktaOptions.iMinDelay);
 	end);
 
-	g_interfaceSettingsFrame.boxMin:SetScript("OnShow", function()
-		g_interfaceSettingsFrame.boxMin:SetText(g_ktaOptions.minDelay);
+	minDelayEditBox:SetScript("OnShow", function()
+		minDelayEditBox:SetText(g_ktaOptions.iMinDelay);
 	end);
+
 
 	-- MAX DELAY
-	g_interfaceSettingsFrame.boxMax = CreateEditBox(g_interfaceSettingsFrame.panel, "boxMaxDelay", 60, 20, true, onMaxDelayEnterPressedCallback);
-	g_interfaceSettingsFrame.boxMax:SetPoint("TOPLEFT", 145, -135);
+	local maxDelayLabel = CreateLabel(mainFrame, "Max delay");
+	maxDelayLabel:SetPoint("LEFT", minDelayLabel, "RIGHT", 15, 0);
 
-	g_interfaceSettingsFrame.boxMax:SetScript("OnSizeChanged", function()	-- OnShow is called before setting the size, so setting a text then is useless; OnSizeChanged guarentees that the box has been initialized
-		g_interfaceSettingsFrame.boxMax:SetText(g_ktaOptions.maxDelay);
+	local maxDelayEditBox = CreateEditBox("BoxMaxDelay", mainFrame, editBoxesSize, true);
+	maxDelayEditBox:SetPoint("TOPLEFT", maxDelayLabel, "BOTTOMLEFT", marginBetweenEditBoxesAndLabels.x, marginBetweenEditBoxesAndLabels.y);
+
+	maxDelayEditBox:SetScript("OnSizeChanged", function()	-- OnShow is called before setting the size, so setting a text then is useless; OnSizeChanged guarentees that the box has been initialized
+		maxDelayEditBox:SetText(g_ktaOptions.iMaxDelay);
 	end);
 
-		g_interfaceSettingsFrame.boxMax:SetScript("OnShow", function()
-		g_interfaceSettingsFrame.boxMax:SetText(g_ktaOptions.maxDelay);
+		maxDelayEditBox:SetScript("OnShow", function()
+		maxDelayEditBox:SetText(g_ktaOptions.iMaxDelay);
 	end);
 
 
 	-- TAB BEHAVIOUR
-	g_interfaceSettingsFrame.boxMin:SetScript("OnTabPressed", function()
-		g_interfaceSettingsFrame.boxMin:ClearFocus();
-		g_interfaceSettingsFrame.boxMin:HighlightText(100, 100);	-- Force highlight removal
+	minDelayEditBox:SetScript("OnTabPressed", function()
+		minDelayEditBox:ClearFocus();
+		minDelayEditBox:HighlightText(0, 0);
 
-		g_interfaceSettingsFrame.boxMax:SetFocus();
-		g_interfaceSettingsFrame.boxMax:HighlightText();
+		maxDelayEditBox:SetFocus();
+		maxDelayEditBox:HighlightText();
 	end);
-	g_interfaceSettingsFrame.boxMax:SetScript("OnTabPressed", function()
-		g_interfaceSettingsFrame.boxMax:ClearFocus();
-		g_interfaceSettingsFrame.boxMax:HighlightText(100, 100);	-- Force highlight removal
+	maxDelayEditBox:SetScript("OnTabPressed", function()
+		maxDelayEditBox:ClearFocus();
+		maxDelayEditBox:HighlightText(0, 0);
 
-		g_interfaceSettingsFrame.boxMin:SetFocus();
-		g_interfaceSettingsFrame.boxMin:HighlightText();
+		minDelayEditBox:SetFocus();
+		minDelayEditBox:HighlightText();
 	end);
 
 
 	AddListenerEvent(g_interfaceEventsListener, "OnDelayChanged", function()
-		g_interfaceSettingsFrame.boxMin:SetText(g_ktaOptions.minDelay);
-		g_interfaceSettingsFrame.boxMax:SetText(g_ktaOptions.maxDelay);
+		minDelayEditBox:SetText(g_ktaOptions.iMinDelay);
+		maxDelayEditBox:SetText(g_ktaOptions.iMaxDelay);
 	end);
 
 
 	-- OK BUTTON
-	g_interfaceSettingsFrame.buttonDelay = CreateButton(g_interfaceSettingsFrame.panel, "delayOKButton", 80, "Set delay");
-	g_interfaceSettingsFrame.buttonDelay:SetPoint("TOPLEFT", 215, -134);
+	local setDelayButton = CreateButton("DelayOKButton", mainFrame, { x = 80, y = 30 }, "Set delay", SetDelayButtonCallback, { minDelayEditBox, maxDelayEditBox });
+	setDelayButton:SetPoint("BOTTOMLEFT", maxDelayEditBox, "BOTTOMRIGHT", 15, 0);
 
-	g_interfaceSettingsFrame.buttonDelay:SetScript("OnClick", function()
-
-		local newMin = g_interfaceSettingsFrame.boxMin:GetNumber();
-		local newMax = g_interfaceSettingsFrame.boxMax:GetNumber();
-
-		if newMin == g_ktaOptions.minDelay and newMax == g_ktaOptions.maxDelay then
-			return;
-		end
-
-		SetDelay(newMin, newMax);
-	end);
+	return minDelayEditBox;
 end
 
--- INIT SOUNDCHANNEL DROPDOWN LIST FUNCTION
-InitSoundChannelDropDownList = function(list)
+--[[local]] SetDelayButtonCallback = function(self, minEditBox, maxEditBox)
 
-	UIDropDownMenu_Initialize(list, function(self)
+	local iNewMin = minEditBox:GetNumber();
+	local iNewMax = maxEditBox:GetNumber();
 
-		local buttons = UIDropDownMenu_CreateInfo();
-		buttons.func = function(self)
-			UIDropDownMenu_SetText(list, self.value);
-			SetSoundChannel(self.value, true, true);
-			CloseDropDownMenus();
-		end;
-		buttons.text = "Master";
-		buttons.value = "Master";
-		buttons.checked = g_ktaOptions.soundChannel == buttons.text;
-		UIDropDownMenu_AddButton(buttons);
-		buttons.text = "Sound";
-		buttons.value = "Sound";
-		buttons.checked = g_ktaOptions.soundChannel == buttons.text;
-		UIDropDownMenu_AddButton(buttons);
-		buttons.text = "Music";
-		buttons.value = "Music";
-		buttons.checked = g_ktaOptions.soundChannel == buttons.text;
-		UIDropDownMenu_AddButton(buttons);
-		buttons.text = "Ambience";
-		buttons.value = "Ambience";
-		buttons.checked = g_ktaOptions.soundChannel == buttons.text;
-		UIDropDownMenu_AddButton(buttons);
-		buttons.text = "Dialog";
-		buttons.value = "Dialog";
-		buttons.checked = g_ktaOptions.soundChannel == buttons.text;
-		UIDropDownMenu_AddButton(buttons);
-	end);
+	if iNewMin == g_ktaOptions.iMinDelay and iNewMax == g_ktaOptions.iMaxDelay then
+		return;
+	end
 
-	UIDropDownMenu_SetText(g_interfaceSettingsFrame.listSoundChan, g_ktaOptions.soundChannel);
-	AddListenerEvent(g_interfaceEventsListener, "OnSoundChannelChanged", function()
-		UIDropDownMenu_SetText(g_interfaceSettingsFrame.listSoundChan, g_ktaOptions.soundChannel);
-	end);
+	SetDelay(iNewMin, iNewMax);
 end

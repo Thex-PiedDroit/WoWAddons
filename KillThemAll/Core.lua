@@ -1,42 +1,33 @@
 
-SLASH_RELOADUI1 = "/rl"
-SlashCmdList.RELOADUI = ReloadUI
+g_cerberus.HookThisFile();
 
-SLASH_FARMESTK1 = "/fs"
-SlashCmdList.FRAMESTK = function()
-	LoadAddon("Blizzard_DebugTools")
-	FrameStackTooltip_Toggle()
-end
-
----------------------------------
-
-TEXT_COLOR = "FFe899ff";
-local KTA_PREFIX = "|c" .. TEXT_COLOR .. "KTA: |r"
+g_cAddonColor = "FFe899ff";
+local KTA_PREFIX = "|c" .. g_cAddonColor .. "KTA: |r"
 function KTA_Print(str)
 	print(KTA_PREFIX .. str);
 end
 
-g_currentGods = { AllSoundLibraries[1] };
+g_currentGods = { g_allSoundLibraries[1] };
 
-local g_timeSinceLastSound = 0.0;
-local g_randomTimeToWait = 0.0;
-local g_dead = UnitIsDeadOrGhost("Player");
-local g_loading = true;
-g_shouldVariablesBeSaved = true;
+local fTimeSinceLastSound = 0.0;
+local fRandomTimeToWait = 0.0;
+local bDead = UnitIsDeadOrGhost("Player");
+local bLoading = true;
+g_bShouldVariablesBeSaved = true;
 
-function PrintDelay()
-	KTA_Print("Whispers are set to occur between " .. g_ktaOptions.minDelay .. " to " .. g_ktaOptions.maxDelay .. " seconds of intervales");
+function DisplayDelay()
+	KTA_Print("Whispers are set to occur between " .. g_ktaOptions.iMinDelay .. " to " .. g_ktaOptions.iMaxDelay .. " seconds.");
 end
 
-function GodsToStringTable(godsList, forDisplay)
+function GodsToStringTable(godsList, bForDisplay)
 
 	local godsNamesList = {};
 
 	for i = 1, #godsList, 1 do
-		if forDisplay then
-			table.insert(godsNamesList, godsList[i].displayName);
+		if bForDisplay then
+			table.insert(godsNamesList, godsList[i].sDisplayName);
 		else
-			table.insert(godsNamesList, godsList[i].dataName);
+			table.insert(godsNamesList, godsList[i].sDataName);
 		end
 	end
 
@@ -46,38 +37,38 @@ end
 function DisplayCurrentGods()
 
 	if #g_currentGods == 0 then
-		print("You feel no presence around you");
+		print("You feel no presence around you.");
 		return;
 	end
 
 	local str = "You feel the presence of ";
 	str = str .. GetPunctuatedString(GodsToStringTable(g_currentGods, true));
-	KTA_Print(str);
+	KTA_Print(str .. ".");
 end
 
 function DisplaySoundChannel()
 
-	KTA_Print("Current sound channel is " .. g_ktaOptions.soundChannel);
+	KTA_Print("Current sound channel is " .. g_ktaOptions.sSoundChannel .. ".");
 end
 
 function DisplayDefaultValues(valuesToDisplay)
 
-	local displayAll = valuesToDisplay == nil or #valuesToDisplay == 0;
+	local bDisplayAll = valuesToDisplay == nil or #valuesToDisplay == 0;
 
-	if displayAll or TableContains(valuesToDisplay, "DELAY") then
-		KTA_Print("Default delay is set between " .. g_ktaOptions.default.minDelay .. " and " .. g_ktaOptions.default.maxDelay .. " seconds");
+	if bDisplayAll or TableContains(valuesToDisplay, "DELAY") then
+		KTA_Print("Default delay is set between " .. g_ktaOptions.default.iMinDelay .. " and " .. g_ktaOptions.default.iMaxDelay .. " seconds.");
 	end
 
-	if displayAll or TableContains(valuesToDisplay, "GOD") or TableContains(valuesToDisplay, "GODS") then
+	if bDisplayAll or TableContains(valuesToDisplay, { "GOD", "GODS" }) then
 
-		if g_ktaOptions.default.gods == "ALL" then
-			KTA_Print("Default gods are " .. GetPunctuatedString(GodsToStringTable(AllSoundLibraries, true)));
-		elseif g_ktaOptions.default.gods == "NONE" or g_ktaOptions.default.gods == "" then
-			KTA_Print("No default god");
+		if g_ktaOptions.default.sGods == "ALL" then
+			KTA_Print("Default gods are " .. GetPunctuatedString(GodsToStringTable(g_allSoundLibraries, true)) .. ".");
+		elseif g_ktaOptions.default.sGods == "NONE" or g_ktaOptions.default.sGods == "" then
+			KTA_Print("No default god.");
 		else
-			local godsNamesTable = GetWords(g_ktaOptions.default.gods);
+			local godsNamesTable = GetWords(g_ktaOptions.default.sGods);
 			for i = 1, #godsNamesTable, 1 do
-				godsNamesTable[i] = GetGodByName(godsNamesTable[i]).displayName;
+				godsNamesTable[i] = GetGodByName(godsNamesTable[i]).sDisplayName;
 			end
 
 			local str = "Default god is ";
@@ -85,54 +76,53 @@ function DisplayDefaultValues(valuesToDisplay)
 				str = "Default gods are ";
 			end
 
-			KTA_Print(str .. GetPunctuatedString(godsNamesTable));
+			KTA_Print(str .. GetPunctuatedString(godsNamesTable) .. ".");
 		end
 	end
-	
-	if displayAll or TableContains(valuesToDisplay, "SOUNDCHANNEL") then
-	
-		KTA_Print("Default sound channel is " .. g_ktaOptions.default.soundChannel);
+
+	if bDisplayAll or TableContains(valuesToDisplay, "SOUNDCHANNEL") then
+		KTA_Print("Default sound channel is " .. g_ktaOptions.default.sSoundChannel .. ".");
 	end
 end
 
 function PrintAvailableGods()
 
 	KTA_Print("Available gods:");
-	for i = 1, #AllSoundLibraries, 1 do
-		print("     " .. AllSoundLibraries[i].dataName);
+	for i = 1, #g_allSoundLibraries, 1 do
+		print("     " .. g_allSoundLibraries[i].sDataName);
 	end
 	print("     All");
 end
 
 function ToggleDeactivated()
 
-	g_ktaOptions.deactivated = not g_ktaOptions.deactivated;
+	g_ktaOptions.bDeactivated = not g_ktaOptions.bDeactivated;
 	CallEventListener(g_interfaceEventsListener, "OnToggleDeactivated");
 end
 
-function GetGodByName(godName)
+function GetGodByName(sGodName)
 
-	godName = string.upper(godName);
+	sGodName = string.upper(sGodName);
 
-	for i = 1, #AllSoundLibraries, 1 do
-		if string.upper(AllSoundLibraries[i].dataName) == godName then
-			return AllSoundLibraries[i];
+	for i = 1, #g_allSoundLibraries, 1 do
+		if string.upper(g_allSoundLibraries[i].sDataName) == sGodName then
+			return g_allSoundLibraries[i];
 		end
 	end
 
 	return nil;
 end
 
-function SetGods(godsNames, silent)
+function SetGods(godsNames, bSilent)
 
-	silent = silent or false;
+	bSilent = bSilent or false;
 
 
 	if TableContains(godsNames, "ALL") then
-		g_currentGods = AllSoundLibraries;
+		g_currentGods = g_allSoundLibraries;
 
-		if not silent then
-			KTA_Print("You feel the presence of all gods around you");
+		if not bSilent then
+			KTA_Print("You feel the presence of all gods around you.");
 		end
 
 		CallEventListener(g_interfaceEventsListener, "OnGodsChanged");
@@ -141,7 +131,7 @@ function SetGods(godsNames, silent)
 	elseif godsNames == nil or #godsNames == 0 or TableContains(godsNames, "NONE") then
 		g_currentGods = {};
 
-		if not silent then
+		if not bSilent then
 			DisplayCurrentGods();
 		end
 
@@ -153,12 +143,12 @@ function SetGods(godsNames, silent)
 
 	local newGods = {};
 
-	local defaultCall, defaultIndex = TableContains(godsNames, "DEFAULT");
-	if defaultCall then
-		table.remove(godsNames, defaultIndex);
-		local defaultGods = GetWords(string.upper(g_ktaOptions.default.gods));
+	local bDefaultCall, iDefaultIndex = TableContains(godsNames, "DEFAULT");
+	if bDefaultCall then
+		table.remove(godsNames, iDefaultIndex);
+		local defaultGods = GetWords(string.upper(g_ktaOptions.default.sGods));
 		local containsAll = TableContains(defaultGods, "ALL");
-		SetGods(defaultGods, silent);
+		SetGods(defaultGods, bSilent);
 
 		return;
 	end
@@ -166,16 +156,16 @@ function SetGods(godsNames, silent)
 	for i = 1, #godsNames, 1 do
 		local currentGod = GetGodByName(godsNames[i]);
 
-		if currentGod ~= nil and not TableContains(newGods, currentGod.dataName) then
+		if currentGod ~= nil and not TableContains(newGods, currentGod.sDataName) then
 			table.insert(newGods, currentGod);
 
-		elseif currentGod == nil and not silent then
-			KTA_Print("Invalid god name: " .. godsNames[i]);
+		elseif currentGod == nil and not bSilent then
+			KTA_Print("Invalid god name: " .. godsNames[i] .. ".");
 		end
 	end
 
-	if #newGods == 0 and not defaultCall then
-		if not silent then
+	if #newGods == 0 and not bDefaultCall then
+		if not bSilent then
 			KTA_Print("No valid god name found.");
 			PrintAvailableGods();
 		end
@@ -184,68 +174,67 @@ function SetGods(godsNames, silent)
 
 	g_currentGods = newGods;
 
-	if not silent then
+	if not bSilent then
 		DisplayCurrentGods();
 	end
 
 	CallEventListener(g_interfaceEventsListener, "OnGodsChanged");
-
 	StartWaiting();
 end
 
-function AddGods(godsNames, silent)
+function AddGods(godsNames, bSilent)
 
-	SetGods(TableCat(GodsToStringTable(g_currentGods, false), godsNames), silent);
+	SetGods(TableCat(GodsToStringTable(g_currentGods, false), godsNames), bSilent);
 end
 
-function SetDefaultGods(godsNames, silent)
+function SetDefaultGods(godsNames, bSilent)
 
-	silent = silent or false;
+	bSilent = bSilent or false;
 
 	local godsNamesNoDuplicate = {};
 
 	if godsNames == nil then
 		godsNames = TableToString(GodsToStringTable(g_currentGods, false));
-		g_ktaOptions.default.gods = godsNames;
+		g_ktaOptions.default.sGods = godsNames;
 
 	else
 		if TableContains(godsNames, "ALL") then
-			g_ktaOptions.default.gods = "ALL";
+			g_ktaOptions.default.sGods = "ALL";
 		elseif TableContains(godsNames, "NONE") then
-			g_ktaOptions.default.gods = "NONE";
+			g_ktaOptions.default.sGods = "NONE";
 		else
 			for i = 1, #godsNames, 1 do
 				if not TableContains(godsNamesNoDuplicate, godsNames[i]) then
 
-					local godExists, godIndex = GodExists(godsNames[i]);
-					if godExists then
-						table.insert(godsNamesNoDuplicate, AllSoundLibraries[godIndex].dataName);
+					local bGodExists, iGodIndex = GodExists(godsNames[i]);
+					if bGodExists then
+						table.insert(godsNamesNoDuplicate, g_allSoundLibraries[iGodIndex].sDataName);
 					end
 				end
 			end
 
-			local sanitizedGodsNames = TableToString(godsNamesNoDuplicate);
+			local sSanitizedGodsNames = TableToString(godsNamesNoDuplicate);
 
-			if sanitizedGodsNames == nil or sanitizedGodsNames == "" then
+			if sSanitizedGodsNames == nil or sSanitizedGodsNames == "" then
 				KTA_Print("No valid god name found.");
 				PrintAvailableGods();
 				return;
 			end
 
-			g_ktaOptions.default.gods = sanitizedGodsNames;
+			g_ktaOptions.default.sGods = sSanitizedGodsNames;
 		end
 	end
 
-	if not silent then
+	if not bSilent then
 
-		if g_ktaOptions.default.gods == "" or g_ktaOptions.default.gods == "NONE" then
-			KTA_Print("Now there will be no god watching by default. Use \"/kta debug clearMemory\" then \"/reload\" to reset the default values");
-		elseif g_ktaOptions.default.gods == "ALL" then
-			KTA_Print("Now all gods will be watching you by default. Use \"/kta debug clearMemory\" then \"/reload\" to reset the default values");
+		if g_ktaOptions.default.sGods == "" or g_ktaOptions.default.sGods == "NONE" then
+			KTA_Print("Now there will be no god watching by default. Use \"/kta debug clearMemory\" then \"/reload\" to reset the default values.");
+		elseif g_ktaOptions.default.sGods == "ALL" then
+			KTA_Print("Now all gods will be watching you by default. Use \"/kta debug clearMemory\" then \"/reload\" to reset the default values.");
 		else
-			local godsNamesTable = GetWords(g_ktaOptions.default.gods);
+			local godsNamesTable = GetWords(g_ktaOptions.default.sGods);
 			for i = 1, #godsNamesTable, 1 do
-				godsNamesTable[i] = GetGodByName(godsNamesTable[i]).displayName;
+				godsNamesTable[i] = GetGodByName(godsNamesTable[i]).sDisplayName;
 			end
 
 			local str = "Default god is now ";
@@ -254,82 +243,81 @@ function SetDefaultGods(godsNames, silent)
 			end
 
 			str = str .. GetPunctuatedString(godsNamesTable);
-			KTA_Print(str .. ". Use \"/kta debug clearMemory\" then \"/reload\" to reset the default values");
+			KTA_Print(str .. ". Use \"/kta debug clearMemory\" then \"/reload\" to reset the default values.");
 		end
 	end
 end
 
-function RemoveGods(godsNames, silent)
+function RemoveGods(godsNames, bSilent)
 
 	if TableContains(godsNames, "ALL") then
 		g_currentGods = {};
 	else
 		for i = 1, #godsNames, 1 do
 
-			local godsIsWatching, godIndex = TableContains(g_currentGods, GetGodByName(godsNames[i]));
-			if godsIsWatching then
-				table.remove(g_currentGods, godIndex);
+			local bGodsAreWatching, iGodIndex = TableContainsUniqueItem(g_currentGods, GetGodByName(godsNames[i]));
+			if bGodsAreWatching then
+				table.remove(g_currentGods, iGodIndex);
 			end
 		end
 	end
 
-	if not silent then
+	if not bSilent then
 		DisplayCurrentGods();
 	end
 
 	CallEventListener(g_interfaceEventsListener, "OnGodsChanged");
-
 	StartWaiting();
 end
 
-function SetSoundChannel(parSoundChannel, silent, fromInterface)
+function SetSoundChannel(sSoundChannel, bSilent, bFromInterface)
 
-	g_ktaOptions.soundChannel = TrySetSoundChannel(parSoundChannel, g_ktaOptions.soundChannel);
+	g_ktaOptions.sSoundChannel = TrySetSoundChannel(sSoundChannel, g_ktaOptions.sSoundChannel);
 
-	if not silent then
-		KTA_Print("The soundfiles will now be played on the channel " .. g_ktaOptions.soundChannel);
+	if not bSilent then
+		KTA_Print("The soundfiles will now be played on the channel " .. g_ktaOptions.sSoundChannel .. ".");
 	end
 
-	if not fromInterface then
+	if not bFromInterface then
 		CallEventListener(g_interfaceEventsListener, "OnSoundChannelChanged");
 	end
 end
 
-function SetDefaultSoundChannel(parSoundChannel)
+function SetDefaultSoundChannel(sSoundChannel)
 
-	g_ktaOptions.default.soundChannel = TrySetSoundChannel(parSoundChannel, g_ktaOptions.default.soundChannel);
-	KTA_Print("Default sound channel is now " .. g_ktaOptions.default.soundChannel);
+	g_ktaOptions.default.sSoundChannel = TrySetSoundChannel(sSoundChannel, g_ktaOptions.default.sSoundChannel);
+	KTA_Print("Default sound channel is now " .. g_ktaOptions.default.sSoundChannel .. ".");
 end
 
-function SetDelay(minDelayStr, maxDelayStr, silent)
+function SetDelay(sMinDelayStr, sMaxDelayStr, bSilent)
 
-	silent = silent or false;
+	bSilent = bSilent or false;
 
-	local minValue = tonumber(minDelayStr);
-	local maxValue = tonumber(maxDelayStr);
+	local iMinValue = tonumber(sMinDelayStr);
+	local iMaxValue = tonumber(sMaxDelayStr);
 
-	if minDelayStr == "DEFAULT" or (minDelayStr == "0" and (maxDelayStr == "" or maxDelayStr == nil)) then
-		minValue = g_ktaOptions.default.minDelay;
-		maxValue = g_ktaOptions.default.maxDelay;
+	if sMinDelayStr == "DEFAULT" or (sMinDelayStr == "0" and (sMaxDelayStr == "" or sMaxDelayStr == nil)) then
+		iMinValue = g_ktaOptions.default.iMinDelay;
+		iMaxValue = g_ktaOptions.default.iMaxDelay;
 	end
 
-	if minValue == nil or maxValue == nil then
+	if iMinValue == nil or iMaxValue == nil then
 		KTA_Print("Invalid use of SetDelay command:");
 		PrintHelp("SETDELAY", nil, "noToolTip");
 		return false;
-	elseif minValue < 0 then
-		PrintInvalidParameters("Delay values cannot be negative");
+	elseif iMinValue < 0 then
+		PrintInvalidParameters("Delay values cannot be negative.");
 		return false;
-	elseif minValue >= maxValue then
-		PrintInvalidParameters("Max delay must be bigger than min delay");
+	elseif iMinValue >= iMaxValue then
+		PrintInvalidParameters("Max delay must be bigger than min delay.");
 		return false;
 	end
 
-	g_ktaOptions.minDelay = minValue;
-	g_ktaOptions.maxDelay = maxValue;
+	g_ktaOptions.iMinDelay = iMinValue;
+	g_ktaOptions.iMaxDelay = iMaxValue;
 
-	if not silent then
-		KTA_Print("Delay set between " .. minValue .. " and " .. maxValue .. " seconds");
+	if not bSilent then
+		KTA_Print("Delay set between " .. iMinValue .. " and " .. iMaxValue .. " seconds.");
 	end
 
 	StartWaiting();
@@ -338,40 +326,41 @@ function SetDelay(minDelayStr, maxDelayStr, silent)
 	return true;
 end
 
-function SetDefaultDelay(minDelayStr, maxDelayStr)
+function SetDefaultDelay(sMinDelayStr, sMaxDelayStr)
 
-	local minValue = tonumber(minDelayStr);
-	local maxValue = tonumber(maxDelayStr);
+	local iMinValue = tonumber(sMinDelayStr);
+	local iMaxValue = tonumber(sMaxDelayStr);
 
-	if minValue == nil or maxValue == nil then
+	if iMinValue == nil or iMaxValue == nil then
 		KTA_Print("Wrong use of setDefault delay command:");
 		PrintHelp("SETDEFAULT", { "DELAY" }, "noToolTip");
 		return;
-	elseif minValue < 0 then
-		PrintInvalidParameters("Delay values cannot be negative");
+	elseif iMinValue < 0 then
+		PrintInvalidParameters("Delay values cannot be negative.");
 		return;
-	elseif minValue >= maxValue then
-		PrintInvalidParameters("Max delay must be bigger than min delay");
+	elseif iMinValue >= iMaxValue then
+		PrintInvalidParameters("Max delay must be bigger than min delay.");
 		return;
 	end
 
-	g_ktaOptions.default.minDelay = minValue;
-	g_ktaOptions.default.maxDelay = maxValue;
+	g_ktaOptions.default.iMinDelay = iMinValue;
+	g_ktaOptions.default.iMaxDelay = iMaxValue;
 
-	KTA_Print("Default delay set between " .. minDelayStr .. " and " .. maxDelayStr .. " seconds. Use \"/kta debug clearMemory\" then \"/reload\" to reset the default values");
+	KTA_Print("Default delay set between " .. sMinDelayStr .. " and " .. sMaxDelayStr .. " seconds. Use \"/kta debug clearMemory\" then \"/reload\" to reset the default values.");
 end
 
 function ResetValues()
 
-	SetDelay(g_ktaOptions.default.minDelay, g_ktaOptions.default.maxDelay);
-	SetGods(GetWords(g_ktaOptions.default.gods));
-	g_ktaOptions.soundChannel = g_ktaOptions.default.soundChannel;
+	KTA_Print("Resetting all settings to default ones.");
+	SetDelay(g_ktaOptions.default.iMinDelay, g_ktaOptions.default.iMaxDelay);
+	SetGods(GetWords(g_ktaOptions.default.sGods));
+	SetSoundChannel(g_ktaOptions.default.sSoundChannel)
 end
 
 function ClearMemory()
 
 	S_ktaOptions = nil;
-	KTA_Print("All saved variables have been erased");
+	KTA_Print("All saved settings have been erased.");
 end
 
 
@@ -380,108 +369,100 @@ local events = {};
 
 function StartWaiting()
 
-	if g_loading then
+	if bLoading then
 		return;
 	end
 
-	g_randomTimeToWait = math.random(g_ktaOptions.minDelay, g_ktaOptions.maxDelay);
-	g_timeSinceLastSound = 0.0;
+	fRandomTimeToWait = math.random(g_ktaOptions.iMinDelay, g_ktaOptions.iMaxDelay);
+	fTimeSinceLastSound = 0.0;
 end
 
-function PlayRandomSound(soundType)
+function PlayRandomSound(sSoundType)
 
-	if g_loading or g_ktaOptions.deactivated then
+	if bLoading or g_ktaOptions.bDeactivated then
 		return;
 	end
 
-	rand = math.random(1, #g_currentGods);
-	g_currentGods[rand]:PlayRandomSound(soundType, g_ktaOptions.soundChannel);
+	local iRand = math.random(1, #g_currentGods);
+	g_currentGods[iRand]:PlayRandomSound(sSoundType, g_ktaOptions.sSoundChannel);
 end
 
 
-function AliveFunc()
+function TryStartWaiting()
 
-	g_dead = UnitIsDeadOrGhost("Player");
-
-	if g_randomTimeToWait == 0.0 then
+	if not bDead and fRandomTimeToWait == 0.0 then
 		StartWaiting();
 	end
-
 end
 
 function events:PLAYER_ALIVE(...)
 
-	AliveFunc();
-
-end
-
-function events:PLAYER_ENTERING_WORLD(...)
-
-	AliveFunc();
-
+	bDead = UnitIsDeadOrGhost("Player");
+	TryStartWaiting();
 end
 
 function events:PLAYER_UNGHOST(...)
 
-	AliveFunc();
-
+	bDead = false;
+	TryStartWaiting();
 end
 
 function events:PLAYER_DEAD(...)
 
-	g_dead = true;
+	bDead = true;
 
-	if g_loading or #g_currentGods == 0 then
+	if bLoading or #g_currentGods == 0 then
 		return;
 	end
 
-	PlayRandomSound("OnDeath");
-
+	PlayRandomSound("Death");
 end
 
-function events:ADDON_LOADED(arg)
+function events:ADDON_LOADED(sAddonName)
 
-	if arg ~= "KillThemAll" then
+	if sAddonName ~= "KillThemAll" then
 		return;
 	end
+
+	g_cerberus.RegisterSavedVariables({ "S_ktaOptions", "S_sAddonVersion" }, { {}, GetAddOnMetadata("KillThemAll", "Version") });
 
 	LoadOptions();
 	InitSettingsFrames();
-	g_loading = false;
+	bLoading = false;
 end
 
-function events:PLAYER_LOGOUT(...)
+function events:PLAYER_LOGOUT()
 
-	if not g_shouldVariablesBeSaved then
+	if not g_bShouldVariablesBeSaved then
 		return;
 	end
 
 	S_ktaOptions = g_ktaOptions;
-	S_ktaOptions.gods = TableToString(GodsToStringTable(g_currentGods, false)) or "NONE";
+	S_ktaOptions.sGods = TableToString(GodsToStringTable(g_currentGods, false)) or "NONE";
 end
 
-eventsListener:SetScript("OnEvent", function(self, event, ...)
-										events[event](self, ...);
-									end);
+eventsListener:SetScript("OnEvent", function(self, sEvent, ...)
+	events[sEvent](self, ...);
+end);
 
-for k, v in pairs(events) do
-	eventsListener:RegisterEvent(k);
+for sEvent, _ in pairs(events) do
+	eventsListener:RegisterEvent(sEvent);
 end
 
 
-local function MyUpdate(self, elapsed)
+local function KTAUpdate(self, fElapsed)
 
-	if g_dead or #g_currentGods == 0 or g_ktaOptions.deactivated or (g_ktaOptions.muteDuringCombat and InCombatLockdown()) then
+	if bDead or #g_currentGods == 0 or g_ktaOptions.bDeactivated
+		or (g_ktaOptions.bMuteDuringCombat and InCombatLockdown()) then
 		return;
 	end
 
-	g_timeSinceLastSound = g_timeSinceLastSound + elapsed;
+	fTimeSinceLastSound = fTimeSinceLastSound + fElapsed;
 
-	if g_timeSinceLastSound >= g_randomTimeToWait then
+	if fTimeSinceLastSound >= fRandomTimeToWait then
 		PlayRandomSound("General");
 		StartWaiting();
 	end
 end
 
-local updater = CreateFrame("Frame");
-updater:SetScript("OnUpdate", MyUpdate);
+eventsListener:SetScript("OnUpdate", KTAUpdate);
