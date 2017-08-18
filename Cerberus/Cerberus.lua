@@ -9,11 +9,8 @@ end
 g_cerberus = g_cerberus or {};
 
 local sCurrentAddonName = nil;
-local function GetCurrentAddonName()
-	return sCurrentAddonName;
-end
-g_cerberus.Get_G = function()
-	return g_cerberus[GetCurrentAddonName()];	-- Using getter function to avoid conflicts between mods
+g_cerberus._G = function()		-- Using getter function to avoid conflicts between mods
+	return g_cerberus[sCurrentAddonName];
 end
 
 local function GetCallingLine()
@@ -31,22 +28,17 @@ local function GetCallingLine()
 end
 
 local proxyTable = {};
-local function GetProxyTable()
-	return proxyTable;
-end
 
 g_cerberus.HookThisFile = g_cerberus.HookThisFile or function()
 
-	local localProxyTable = GetProxyTable();
-
-	if getfenv(2) == localProxyTable then
+	if getfenv(2) == proxyTable then
 		Cerberus_Error("Cerberus: Trying to hook file a second time.");
 
 	elseif string.find(GetCallingLine(), "in main chunk") == nil then
 		Cerberus_Error("Cerberus: Trying to call HookThisFile() somewhere else than global scope. Please place the function call at the beginning of your file, and not in a function.");
 
 	else
-		setfenv(2, localProxyTable);
+		setfenv(2, proxyTable);
 	end
 end
 
@@ -56,7 +48,7 @@ local function InitProxyTable()
 	setmetatable(proxyTable,
 	{
 		__newindex = function(_, sKey, value)
-			local cerberus_G = g_cerberus.Get_G();
+			local cerberus_G = g_cerberus._G();
 			if cerberus_G.savedVariables[sKey] == nil then
 				cerberus_G[sKey] = value;
 			else
@@ -65,7 +57,7 @@ local function InitProxyTable()
 		end,
 
 		__index = function(_, sKey)
-			return g_cerberus.Get_G()[sKey] or _G[sKey];
+			return g_cerberus._G()[sKey] or _G[sKey];
 		end
 	});
 end
@@ -97,10 +89,10 @@ g_cerberus.RegisterAddonModule = function(sParentAddonName)
 	InitProxyTable();
 end
 
-g_cerberus.RegisterSavedVariables = function(savedVariablesNames, defaultValues)
+g_cerberus.RegisterSavedVariables = function(savedVariablesNames)
 
 	for i = 1, #savedVariablesNames do
 		local currentSavedVariableName = savedVariablesNames[i];
-		g_cerberus[GetCurrentAddonName()].savedVariables[currentSavedVariableName] = _G[currentSavedVariableName] or defaultValues[i];
+		g_cerberus[sCurrentAddonName].savedVariables[currentSavedVariableName] = true;
 	end
 end
