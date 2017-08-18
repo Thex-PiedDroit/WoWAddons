@@ -97,10 +97,10 @@ g_cerberus.RegisterAddonModule = function(sParentAddonName)
 	InitProxyTable();
 end
 
-g_cerberus.RegisterSavedVariables = function(savedVariablesNames, defaultValues)
+g_cerberus.RegisterSavedVariables = function(savedVariablesNames)
 
 	for i = 1, #savedVariablesNames do
 		local currentSavedVariableName = savedVariablesNames[i];
-		g_cerberus[GetCurrentAddonName()].savedVariables[currentSavedVariableName] = _G[currentSavedVariableName] or defaultValues[i];
+		g_cerberus[GetCurrentAddonName()].savedVariables[currentSavedVariableName] = true;
 	end
 end
