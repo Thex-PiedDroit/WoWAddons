@@ -33,6 +33,7 @@ function LoadOptions()
 		minimapButton =
 		{
 			hide = (bMinimapOptionIsNotNil and S_ktaOptions.minimapButton.hide) or (bMinimapOptionIsNotNil and false),
+			minimapPos = (bMinimapOptionIsNotNil and S_ktaOptions.minimapButton.minimapPos),
 		}
 	};
 
