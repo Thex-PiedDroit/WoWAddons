@@ -1,10 +1,11 @@
 ## Interface: 70200
 ## Title: |cff00ccffKillThemAll_LichKing|r
-## Version: 1.1.2
-## Notes: Adds The Lich King to KTA
+## Version: 1.2
+## Notes: Adds The Lich King to KillThemAll
 ## Author: Thex
 ## DefaultState: enabled
 ##Dependencies: KillThemAll
 
-LichKing.lua
+Libraries\Cerberus\Cerberus.lua
 Core.lua
+LichKing.lua

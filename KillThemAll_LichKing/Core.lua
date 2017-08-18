@@ -1,4 +1,7 @@
 
+g_cerberus.RegisterAddonModule("KillThemAll");
+g_cerberus.HookThisFile();
+
 local eventsListener = CreateFrame("Frame");
 local events = {};
 
@@ -8,14 +11,19 @@ function events:ADDON_LOADED(arg)
 		return;
 	end
 
-	if S_ktaOptions ~= nil and S_ktaOptions.gods ~= nil then
-		SetGods(GetWords(S_ktaOptions.gods), true);
-	end
-
 	if g_godsListSettings ~= nil then
-		AddGodToSettingsList(lichking);
+		if S_ktaOptions ~= nil and S_ktaOptions.sGods ~= nil then
+
+			local currentGods = GetWords(string.upper(S_ktaOptions.sGods));
+			if TableContains(currentGods, g_lichking.sDataName) then
+				SetGods(currentGods, true);
+			end
+		end
+
+		AddGodToSettingsList(g_lichking);
 	else
-		KTA_Print("An update is available for KillThemAll");
+		KTA_Print("An update is available for KillThemAll. KillThemAll_LichKing will not work until both are updated.");
+		return;
 	end
 end
 
