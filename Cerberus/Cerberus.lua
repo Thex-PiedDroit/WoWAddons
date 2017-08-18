@@ -51,19 +51,7 @@ g_cerberus.HookThisFile = g_cerberus.HookThisFile or function()
 end
 
 
-g_cerberus.RegisterAddon = function(sAddonName)
-
-	if sCurrentAddonName ~= nil then
-		Cerberus_Error("Trying to initialize addon " .. sAddonName .. " but Cerberus has already been initialized this session with addon name " .. sCurrentAddonName .. ".");
-		return;
-	elseif g_cerberus[sAddonName] ~= nil then
-		Cerberus_Error("Attempting to register addon which has already been registered (" .. sAddonName .. "). Try with a different addon name, or a more specific one.");
-		return;
-	end
-
-	sCurrentAddonName = sAddonName;
-	g_cerberus[sAddonName] = {};
-	g_cerberus[sAddonName].savedVariables = {};
+local function InitProxyTable()
 
 	setmetatable(proxyTable,
 	{
@@ -80,6 +68,33 @@ g_cerberus.RegisterAddon = function(sAddonName)
 			return g_cerberus.Get_G()[sKey] or _G[sKey];
 		end
 	});
+end
+
+g_cerberus.RegisterAddon = function(sAddonName)
+
+	if sCurrentAddonName ~= nil then
+		Cerberus_Error("Trying to initialize addon " .. sAddonName .. " but Cerberus has already been initialized this session with addon name " .. sCurrentAddonName .. ".");
+		return;
+	elseif g_cerberus[sAddonName] ~= nil then
+		Cerberus_Error("Attempting to register addon which has already been registered (" .. sAddonName .. "). Try with a different addon name, or a more specific one.");
+		return;
+	end
+
+	sCurrentAddonName = sAddonName;
+	g_cerberus[sAddonName] = {};
+	g_cerberus[sAddonName].savedVariables = {};
+	InitProxyTable();
+end
+
+g_cerberus.RegisterAddonModule = function(sParentAddonName)
+
+	if g_cerberus[sParentAddonName] == nil then
+		Cerberus_Error("Parent addon does not seem to exist in Cerberus. Make sure the parent addon is listed as a dependency in your module's toc file and that it is using Cerberus.");
+		return;
+	end
+
+	sCurrentAddonName = sParentAddonName;
+	InitProxyTable();
 end
 
 g_cerberus.RegisterSavedVariables = function(savedVariablesNames, defaultValues)
