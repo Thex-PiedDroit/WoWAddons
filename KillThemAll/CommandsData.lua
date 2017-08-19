@@ -1,5 +1,5 @@
 
-g_cerberus.HookThisFile();
+Cerberus_HookThisFile();
 
 local sGodsSeparatedStringList = nil;
 local function GetGodsSeparatedStringList()

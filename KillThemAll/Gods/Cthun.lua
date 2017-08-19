@@ -1,5 +1,5 @@
 
-g_cerberus.HookThisFile();
+Cerberus_HookThisFile();
 
 g_cthun = g_soundLibrary:Inherit({ sDisplayName = "C'Thun", sDataName = "Cthun" });
 g_cthun.generalSoundFilesList =
