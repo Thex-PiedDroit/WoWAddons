@@ -10,8 +10,8 @@ g_cerberus = g_cerberus or {};
 
 local sCurrentlyLoadingAddonName = nil;
 
-local function GetCallingLine()
-	local sCallingLine = debugstack(3);
+local function GetCallingLine(bFromRegistration)
+	local sCallingLine = debugstack((bFromRegistration and 4) or 3);
 	local iAddonFolderPos = 1
 	local iAddonFolderPos = string.find(sCallingLine, "AddOns\\");
 	if iAddonFolderPos == nil then
@@ -26,16 +26,18 @@ end
 
 local proxyTable = {};
 
-_G["Cerberus_HookThisFile"] = function()
+_G["Cerberus_HookThisFile"] = function(bFromRegistration)
 
-	if getfenv(2) == proxyTable then
+	local iLevel = (bFromRegistration and 3) or 2;
+
+	if getfenv(iLevel) == proxyTable then
 		Cerberus_Error("Cerberus: Trying to hook file a second time.");
 
-	elseif string.find(GetCallingLine(), "in main chunk") == nil then
+	elseif string.find(GetCallingLine(bFromRegistration), "in main chunk") == nil then
 		Cerberus_Error("Cerberus: Trying to call HookThisFile() somewhere else than global scope. Please place the function call at the beginning of your file, and not in a function.");
 
 	else
-		setfenv(2, proxyTable);
+		setfenv(iLevel, proxyTable);
 	end
 end
 
@@ -80,6 +82,7 @@ g_cerberus.RegisterAddon = function(sAddonName, savedVariablesNames)
 	end
 
 	InitProxyTable();
+	Cerberus_HookThisFile(true);
 end
 
 g_cerberus.RegisterAddonModule = function(sParentAddonName)
@@ -91,4 +94,5 @@ g_cerberus.RegisterAddonModule = function(sParentAddonName)
 
 	sCurrentlyLoadingAddonName = sParentAddonName;
 	InitProxyTable();
+	Cerberus_HookThisFile(true);
 end
