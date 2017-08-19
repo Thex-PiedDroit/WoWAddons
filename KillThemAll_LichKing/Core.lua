@@ -1,6 +1,5 @@
 
 g_cerberus.RegisterAddonModule("KillThemAll");
-g_cerberus.HookThisFile();
 
 local eventsListener = CreateFrame("Frame");
 local events = {};
