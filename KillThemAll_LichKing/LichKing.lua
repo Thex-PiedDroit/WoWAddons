@@ -1,5 +1,5 @@
 
-g_cerberus.HookThisFile();
+Cerberus_HookThisFile();
 
 g_lichking = g_soundLibrary:Inherit({ sDisplayName = "The Lich King", sDataName = "LichKing" });
 g_lichking.generalSoundFilesList =
