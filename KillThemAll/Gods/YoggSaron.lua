@@ -1,5 +1,5 @@
 
-g_cerberus.HookThisFile();
+Cerberus_HookThisFile();
 
 g_yoggSaron = g_soundLibrary:Inherit({ sDisplayName = "Yogg-Saron", sDataName = "YoggSaron" });
 g_yoggSaron.generalSoundFilesList =

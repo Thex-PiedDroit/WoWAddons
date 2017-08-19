@@ -1,5 +1,5 @@
 
-g_cerberus.HookThisFile();
+Cerberus_HookThisFile();
 
 local minimapButton = LibStub("LibDBIcon-1.0", true);
 

@@ -1,5 +1,5 @@
 
-g_cerberus.HookThisFile();
+Cerberus_HookThisFile();
 
 function TableContains(tableRef, values)
 

@@ -1,5 +1,5 @@
 
-g_cerberus.HookThisFile();
+Cerberus_HookThisFile();
 
 g_cAddonColor = "FFe899ff";
 local KTA_PREFIX = "|c" .. g_cAddonColor .. "KTA: |r"
@@ -7,7 +7,7 @@ function KTA_Print(str)
 	print(KTA_PREFIX .. str);
 end
 
-g_currentGods = { g_allSoundLibraries[1] };
+g_currentGods = {};
 
 local fTimeSinceLastSound = 0.0;
 local fRandomTimeToWait = 0.0;
@@ -388,7 +388,7 @@ function PlayRandomSound(sSoundType)
 end
 
 
-function TryStartWaiting()
+local function TryStartWaiting()
 
 	if not bDead and fRandomTimeToWait == 0.0 then
 		StartWaiting();
@@ -424,8 +424,6 @@ function events:ADDON_LOADED(sAddonName)
 		return;
 	end
 
-	g_cerberus.RegisterSavedVariables({ "S_ktaOptions", "S_sAddonVersion" });
-
 	LoadOptions();
 	InitSettingsFrames();
 	bLoading = false;
@@ -451,6 +449,10 @@ end
 
 
 local function KTAUpdate(self, fElapsed)
+
+	if g_currentGods == nil then
+		return;
+	end
 
 	if bDead or #g_currentGods == 0 or g_ktaOptions.bDeactivated
 		or (g_ktaOptions.bMuteDuringCombat and InCombatLockdown()) then

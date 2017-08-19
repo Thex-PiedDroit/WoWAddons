@@ -1,5 +1,5 @@
 
-g_cerberus.HookThisFile();
+Cerberus_HookThisFile();
 
 g_yshaarj = g_soundLibrary:Inherit({ sDisplayName = "Y'Shaarj", sDataName = "Yshaarj" });
 g_yshaarj.generalSoundFilesList =
