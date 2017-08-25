@@ -104,6 +104,8 @@ local function OnClickCallbackRemovePoll(listItem)
 	end
 end
 
+local OpenPollFromItem = nil;
+
 local function CreateNewItem(list, sListType, iActiveItemsCountInList, pollData)
 
 	--[[      QUESTION FRAME      ]]--
@@ -129,7 +131,7 @@ local function CreateNewItem(list, sListType, iActiveItemsCountInList, pollData)
 		x = itemsSize.x - (fInnerFramesMargin * 2) - 54,
 		y = itemsSize.y
 	};
-	local newItemQuestionButton = CreateButton("Poll" .. sItemNumberStr .. "QuestionTextFrame", newItemFrame, questionFrameSize, "Question here", nil, nil, "UIPanelLargeSilverButton");
+	local newItemQuestionButton = CreateButton("Poll" .. sItemNumberStr .. "QuestionTextFrame", newItemFrame, questionFrameSize, "Question here", OpenPollFromItem, { sItemListType = sListType, iPollItemIndex = #(itemsObjects[sListType]) + 1 }, "UIPanelLargeSilverButton");
 	newItemQuestionButton:SetPoint("TOPLEFT", 30, 0);
 	ResizeLargeSilverButtonTexture(newItemQuestionButton, questionFrameSize.y);
 
@@ -282,6 +284,12 @@ end
 
 	UpdateScrollBar(listsFrames["mine"]:GetParent(), (itemsObjects["mineCount"] * fTotalHeightOfEachItem) - fInnerFramesMargin);
 	UpdateScrollBar(listsFrames["theirs"]:GetParent(), (itemsObjects["theirsCount"] * fTotalHeightOfEachItem) - fInnerFramesMargin);
+end
+
+OpenPollFromItem = function(self, args)
+
+	local item = itemsObjects[args.sItemListType][args.iPollItemIndex];
+	OpenPoll(GetPollData(item.sPollGUID));
 end
 
 function OpenPollsListFrame()

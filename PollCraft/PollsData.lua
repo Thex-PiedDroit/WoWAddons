@@ -66,6 +66,10 @@ function GetAllPolls()
 	return g_pollCraftData.savedPollsData;
 end
 
+function IAlreadyVotedForThisPoll(sPollGUID)
+	return g_pollCraftData.savedPollsData[sPollGUID] ~= nil and g_pollCraftData.savedPollsData[sPollGUID].bIVoted;
+end
+
 
 function RegisterVote(voteData)
 

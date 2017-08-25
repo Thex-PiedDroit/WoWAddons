@@ -49,3 +49,19 @@ function InitCurrentPollsFrame()
 	--mainFrame:Hide();
 	PanelTemplates_SetTab(mainFrame, 2);
 end
+
+function OpenPoll(pollData)
+
+	if g_currentPollsMotherFrame.currentPollFrame:IsVisible() then
+		return "Busy";
+	end
+
+	PanelTemplates_SetTab(g_currentPollsMotherFrame.panel, 1);
+	g_currentPollsMotherFrame.pollsListFrame:Hide();
+
+	if IAlreadyVotedForThisPoll(pollData.sPollGUID) then
+		LoadAndOpenPollResultsFrame(pollData);
+	else
+		LoadAndOpenVoteFrame(pollData);
+	end
+end
