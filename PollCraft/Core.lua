@@ -22,10 +22,13 @@ function events:ADDON_LOADED(sAddonName)
 
 	if DEBUG_VERSION then
 		--TestCreateSimplePoll();
-		--TestAddSomePollsToData();
+		TestAddSomePollsToData();
 		--TestOneSimpleVote();
 		--TestSomeVotes();
 	end
+
+	PanelTemplates_SetTab(g_currentPollsMotherFrame.panel, 2);
+	g_currentPollsMotherFrame.pollsListFrame:Show();
 end
 
 function events:PLAYER_LOGOUT()
