@@ -1,4 +1,17 @@
 
+--[[
+		CERBERUS
+
+	This tool helps with addons making by allowing the users to put functions and variables into the global scope without
+	having to worry about taint and naming conflicts with other addons.
+
+	Cerberus will "pick up" everything that is put in the global scope and store it in the g_cerberus[sAddonName] table,
+	which will then be used as a fake _G table.
+	The goal is to avoid having to manually put everything in a global object, and having to put "self" before every
+	function or variable call.
+]]--
+
+
 local cCerberusTextColour = "ffc42727";
 local sCerberusPrefix = "|c" .. cCerberusTextColour .. "Cerberus: |r"
 function Cerberus_Error(sMessage)
@@ -55,9 +68,30 @@ local function InitProxyTable()
 		end,
 
 		__index = function(_, sKey)
-			return g_cerberus[sCurrentlyLoadingAddonName][sKey] or _G[sKey];
+			local value = g_cerberus[sCurrentlyLoadingAddonName][sKey];
+			if value == nil then
+				value = _G[sKey];
+				if g_cerberus[sCurrentlyLoadingAddonName].savedVariables[sKey] == nil then
+					rawset(proxyTable, sKey, value);
+				end
+			end
+			return value;
 		end
 	});
+end
+
+local function InitHookFunctions()
+
+	g_cerberus[sCurrentlyLoadingAddonName].cerberus_G = g_cerberus[sCurrentlyLoadingAddonName];
+	g_cerberus[sCurrentlyLoadingAddonName].OverloadGlobalFunction = function(sFunctionName, NewFunction)
+		proxyTable[sFunctionName] = NewFunction;
+		g_cerberus[sCurrentlyLoadingAddonName][sFunctionName] = NewFunction;
+	end;
+	g_cerberus[sCurrentlyLoadingAddonName].RemoveGlobalFunctionOverload = function(sFunctionName)
+		local OriginalFunction = _G[sFunctionName];
+		proxyTable[sFunctionName] = OriginalFunction;
+		g_cerberus[sCurrentlyLoadingAddonName][sFunctionName] = OriginalFunction;
+	end;
 end
 
 g_cerberus.RegisterAddon = function(sAddonName, savedVariablesNames)
@@ -82,6 +116,7 @@ g_cerberus.RegisterAddon = function(sAddonName, savedVariablesNames)
 	end
 
 	InitProxyTable();
+	InitHookFunctions();
 	Cerberus_HookThisFile(true);
 end
 
