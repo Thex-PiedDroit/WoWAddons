@@ -37,43 +37,38 @@ local function GetCallingLine(bFromRegistration)
 	return sCallingLine;
 end
 
-local proxyTable = {};
-
 _G["Cerberus_HookThisFile"] = function(bFromRegistration)
 
 	local iLevel = (bFromRegistration and 3) or 2;
 
-	if getfenv(iLevel) == proxyTable then
+	if getfenv(iLevel) == g_cerberus[sCurrentlyLoadingAddonName] then
 		Cerberus_Error("Cerberus: Trying to hook file a second time.");
 
 	elseif string.find(GetCallingLine(bFromRegistration), "in main chunk") == nil then
 		Cerberus_Error("Cerberus: Trying to call HookThisFile() somewhere else than global scope. Please place the function call at the beginning of your file, and not in a function.");
 
 	else
-		setfenv(iLevel, proxyTable);
+		setfenv(iLevel, g_cerberus[sCurrentlyLoadingAddonName]);
 	end
 end
 
 
 local function InitProxyTable()
 
-	setmetatable(proxyTable,
+	setmetatable(g_cerberus[sCurrentlyLoadingAddonName],
 	{
 		__newindex = function(_, sKey, value)
 			if g_cerberus[sCurrentlyLoadingAddonName].savedVariables[sKey] == nil then
-				g_cerberus[sCurrentlyLoadingAddonName][sKey] = value;
+				rawset(g_cerberus[sCurrentlyLoadingAddonName], sKey, value);
 			else
 				_G[sKey] = value;
 			end
 		end,
 
 		__index = function(_, sKey)
-			local value = g_cerberus[sCurrentlyLoadingAddonName][sKey];
-			if value == nil then
-				value = _G[sKey];
-				if g_cerberus[sCurrentlyLoadingAddonName].savedVariables[sKey] == nil then
-					rawset(proxyTable, sKey, value);
-				end
+			local value = _G[sKey];
+			if g_cerberus[sCurrentlyLoadingAddonName].savedVariables[sKey] == nil then
+				rawset(g_cerberus[sCurrentlyLoadingAddonName], sKey, value);
 			end
 			return value;
 		end
@@ -84,12 +79,10 @@ local function InitHookFunctions()
 
 	g_cerberus[sCurrentlyLoadingAddonName].cerberus_G = g_cerberus[sCurrentlyLoadingAddonName];
 	g_cerberus[sCurrentlyLoadingAddonName].OverloadGlobalFunction = function(sFunctionName, NewFunction)
-		proxyTable[sFunctionName] = NewFunction;
 		g_cerberus[sCurrentlyLoadingAddonName][sFunctionName] = NewFunction;
 	end;
 	g_cerberus[sCurrentlyLoadingAddonName].RemoveGlobalFunctionOverload = function(sFunctionName)
 		local OriginalFunction = _G[sFunctionName];
-		proxyTable[sFunctionName] = OriginalFunction;
 		g_cerberus[sCurrentlyLoadingAddonName][sFunctionName] = OriginalFunction;
 	end;
 end
