@@ -1,4 +1,17 @@
 
+--[[
+		CERBERUS
+
+	This tool helps with addons making by allowing the users to put functions and variables into the global scope without
+	having to worry about taint and naming conflicts with other addons.
+
+	Cerberus will "pick up" everything that is put in the global scope and store it in the g_cerberus[sAddonName] table,
+	which will then be used as a fake _G table.
+	The goal is to avoid having to manually put everything in a global object, and having to put "self" before every
+	function or variable call.
+]]--
+
+
 local cCerberusTextColour = "ffc42727";
 local sCerberusPrefix = "|c" .. cCerberusTextColour .. "Cerberus: |r"
 function Cerberus_Error(sMessage)
@@ -24,40 +37,54 @@ local function GetCallingLine(bFromRegistration)
 	return sCallingLine;
 end
 
-local proxyTable = {};
-
 _G["Cerberus_HookThisFile"] = function(bFromRegistration)
 
 	local iLevel = (bFromRegistration and 3) or 2;
 
-	if getfenv(iLevel) == proxyTable then
+	if getfenv(iLevel) == g_cerberus[sCurrentlyLoadingAddonName] then
 		Cerberus_Error("Cerberus: Trying to hook file a second time.");
 
 	elseif string.find(GetCallingLine(bFromRegistration), "in main chunk") == nil then
 		Cerberus_Error("Cerberus: Trying to call HookThisFile() somewhere else than global scope. Please place the function call at the beginning of your file, and not in a function.");
 
 	else
-		setfenv(iLevel, proxyTable);
+		setfenv(iLevel, g_cerberus[sCurrentlyLoadingAddonName]);
 	end
 end
 
 
 local function InitProxyTable()
 
-	setmetatable(proxyTable,
+	setmetatable(g_cerberus[sCurrentlyLoadingAddonName],
 	{
 		__newindex = function(_, sKey, value)
 			if g_cerberus[sCurrentlyLoadingAddonName].savedVariables[sKey] == nil then
-				g_cerberus[sCurrentlyLoadingAddonName][sKey] = value;
+				rawset(g_cerberus[sCurrentlyLoadingAddonName], sKey, value);
 			else
 				_G[sKey] = value;
 			end
 		end,
 
 		__index = function(_, sKey)
-			return g_cerberus[sCurrentlyLoadingAddonName][sKey] or _G[sKey];
+			local value = _G[sKey];
+			if g_cerberus[sCurrentlyLoadingAddonName].savedVariables[sKey] == nil then
+				rawset(g_cerberus[sCurrentlyLoadingAddonName], sKey, value);
+			end
+			return value;
 		end
 	});
+end
+
+local function InitHookFunctions()
+
+	g_cerberus[sCurrentlyLoadingAddonName].cerberus_G = g_cerberus[sCurrentlyLoadingAddonName];
+	g_cerberus[sCurrentlyLoadingAddonName].OverloadGlobalFunction = function(sFunctionName, NewFunction)
+		g_cerberus[sCurrentlyLoadingAddonName][sFunctionName] = NewFunction;
+	end;
+	g_cerberus[sCurrentlyLoadingAddonName].RemoveGlobalFunctionOverload = function(sFunctionName)
+		local OriginalFunction = _G[sFunctionName];
+		g_cerberus[sCurrentlyLoadingAddonName][sFunctionName] = OriginalFunction;
+	end;
 end
 
 g_cerberus.RegisterAddon = function(sAddonName, savedVariablesNames)
@@ -82,6 +109,7 @@ g_cerberus.RegisterAddon = function(sAddonName, savedVariablesNames)
 	end
 
 	InitProxyTable();
+	InitHookFunctions();
 	Cerberus_HookThisFile(true);
 end
 
