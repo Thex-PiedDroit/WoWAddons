@@ -1,4 +1,4 @@
-## Interface: 70200
+## Interface: 70300
 ## Title: PersonalResourceClickThrough
 ## Version: 1.0
 ## Notes: Makes the personal resource click-through

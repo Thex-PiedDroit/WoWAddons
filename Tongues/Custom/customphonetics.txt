@@ -1,2 +1,0 @@
-Tongues.Custom.Phonetic = {
-};
