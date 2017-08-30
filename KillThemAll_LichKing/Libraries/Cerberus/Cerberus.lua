@@ -75,18 +75,6 @@ local function InitProxyTable()
 	});
 end
 
-local function InitHookFunctions()
-
-	g_cerberus[sCurrentlyLoadingAddonName].cerberus_G = g_cerberus[sCurrentlyLoadingAddonName];
-	g_cerberus[sCurrentlyLoadingAddonName].OverloadGlobalFunction = function(sFunctionName, NewFunction)
-		g_cerberus[sCurrentlyLoadingAddonName][sFunctionName] = NewFunction;
-	end;
-	g_cerberus[sCurrentlyLoadingAddonName].RemoveGlobalFunctionOverload = function(sFunctionName)
-		local OriginalFunction = _G[sFunctionName];
-		g_cerberus[sCurrentlyLoadingAddonName][sFunctionName] = OriginalFunction;
-	end;
-end
-
 g_cerberus.RegisterAddon = function(sAddonName, savedVariablesNames)
 
 	if sCurrentlyLoadingAddonName ~= nil then
@@ -109,7 +97,7 @@ g_cerberus.RegisterAddon = function(sAddonName, savedVariablesNames)
 	end
 
 	InitProxyTable();
-	InitHookFunctions();
+	g_cerberus[sCurrentlyLoadingAddonName].cerberus_G = g_cerberus[sCurrentlyLoadingAddonName];
 	Cerberus_HookThisFile(true);
 end
 
