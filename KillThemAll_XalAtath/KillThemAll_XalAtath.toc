@@ -1,0 +1,11 @@
+## Interface: 70300
+## Title: |cff00ccffKillThemAll_XalAtath|r
+## Version: 1.0
+## Notes: Adds Xal'Atath, Blade of the Black Empire to KillThemAll
+## Author: Thex
+## DefaultState: enabled
+##Dependencies: KillThemAll
+
+Libraries\Cerberus\Cerberus.lua
+Core.lua
+XalAtath.lua
