@@ -65,3 +65,13 @@ function OpenPoll(pollData)
 		LoadAndOpenVoteFrame(pollData);
 	end
 end
+
+function OpenCurrentPollsFrameTab(tabContent)
+
+	local iTabToSet = OpenTab(g_currentPollsMotherFrame.panel, tabContent);
+
+	if iTabToSet ~= -1 then
+		PanelTemplates_SetTab(g_currentPollsMotherFrame.panel, iTabToSet);
+		g_currentPollsMotherFrame.panel:Show();
+	end
+end

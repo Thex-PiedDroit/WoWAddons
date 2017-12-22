@@ -223,7 +223,6 @@ end
 function SendPollData(pollData)
 
 	SendPollMessage({ poll = pollData }, "NewPoll", pollData.sPollType);
-	LoadAndOpenVoteFrame(pollData, Me(), MyRealm());
 
 	g_currentPollsMotherFrame.panel:ClearAllPoints();
 	g_currentPollsMotherFrame.panel:SetPoint("TOPLEFT", g_createPollFrame.panel, "TOPRIGHT", 0, 0);

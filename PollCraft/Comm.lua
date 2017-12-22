@@ -24,11 +24,7 @@ local function ReceiveMessage(_, sMessage)
 	local sMessageType = actualMessage.sMessageType;
 
 	if sMessageType == "NewPoll" then
-		if messageObject.sSenderFullName ~= nil and messageObject.sSenderFullName == Me() then
-			return;
-		end
-
-		AddPollDataToMemory(pollData);
+		AddPollDataToMemory(actualMessage.poll);
 		LoadAndOpenVoteFrame(actualMessage.poll, messageObject.sSenderFullName, messageObject.sSenderRealm);
 
 	elseif sMessageType == "Busy" then

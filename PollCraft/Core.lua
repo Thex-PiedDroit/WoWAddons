@@ -26,6 +26,8 @@ function events:ADDON_LOADED(sAddonName)
 		--TestOneSimpleVote();
 		--TestSomeVotes();
 	end
+
+	OpenCurrentPollsFrameTab(g_currentPollsMotherFrame.pollsListFrame);
 end
 
 function events:PLAYER_LOGOUT()

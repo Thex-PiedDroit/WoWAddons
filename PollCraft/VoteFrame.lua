@@ -451,9 +451,8 @@ function LoadAndOpenVoteFrame(pollData)
 		end
 
 		sCurrentPollGUID = pollData.sPollGUID;
+		OpenCurrentPollsFrameTab(g_currentPollsMotherFrame.currentPollFrame);
 		g_currentPollsMotherFrame.voteFrame:Show();
-		g_currentPollsMotherFrame.panel:Show();
-		g_currentPollsMotherFrame.currentPollFrame:Show();
 	end
 end
 

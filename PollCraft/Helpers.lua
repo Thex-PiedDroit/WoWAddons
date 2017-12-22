@@ -94,3 +94,21 @@ function table.clone(T)
 	end
 	return copy;
 end
+
+function OpenTab(panel, tabContent)
+
+	local iTabToSet = -1;
+
+	for i = 1, #panel.tabFrames do
+
+		if panel.tabFrames[i] == tabContent then
+			panel.tabFrames[i]:Show();
+			iTabToSet = i;
+		else
+			panel.tabFrames[i]:Hide();
+		end
+	end
+
+	PanelTemplates_SetTab(panel, iTabToSet);
+	return iTabToSet;
+end
