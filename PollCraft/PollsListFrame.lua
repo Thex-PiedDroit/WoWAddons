@@ -320,7 +320,7 @@ OpenPollFromItem = function(self, args)
 		OpenPoll(GetPollData(item.sPollGUID));
 	else
 		item.bAborted = false;
-		RequestPollsListsUpdate();
+		UpdateLists();
 	end
 end
 

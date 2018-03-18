@@ -422,10 +422,6 @@ function LoadAndOpenVoteFrame(pollData)
 
 		local sSender = pollData.sPollMasterFullName;
 		if IsCurrentlyVotingForSomething() then
-			if sSender ~= nil and sSender ~= Me() then
-				SendPollMessage({}, "Busy", "WHISPER", sSender, pollData.sPollMasterRealm);
-			end
-
 			return;
 		end
 

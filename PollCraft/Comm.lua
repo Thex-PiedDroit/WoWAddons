@@ -27,9 +27,6 @@ local function ReceiveMessage(_, sMessage)
 		AddPollDataToMemory(actualMessage.poll);
 		LoadAndOpenVoteFrame(actualMessage.poll, messageObject.sSenderFullName, messageObject.sSenderRealm);
 
-	elseif sMessageType == "Busy" then
-		PollCraft_Print(GetNameForPrint(messageObject.sSenderName, messageObject.sSenderRealm) .. " could not receive your poll because they were busy.");
-
 	elseif sMessageType == "Vote" then
 		HandleVoteMessageReception(actualMessage, messageObject.sSenderFullName, messageObject.sSenderRealm);
 
