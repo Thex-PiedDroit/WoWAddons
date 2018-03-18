@@ -9,13 +9,13 @@ local answersParentFrame = nil;
 local answersScrollFrame = nil;
 local iAnswersCount = 0;
 
-local RemoveAllAnswers = nil;
+ClearPollResultsFrame = nil;
 
 
 function InitResultsFrame()
 
 	if g_currentPollsMotherFrame.resultsFrame ~= nil then
-		RemoveAllAnswers();
+		ClearPollResultsFrame();
 		return;
 	end
 
@@ -68,7 +68,14 @@ function InitResultsFrame()
 	changeVoteButton:SetFrameLevel(answersParentFrame:GetFrameLevel() + 10);
 
 
+		--[[      NO POLL FRAME      ]]--
+	local noPollFrame = CreateBackdropTitledInnerFrame("PollResultsFrame", containingFrame, "PollCraft - Current poll");
+	local noPollLabel = CreateLabel(noPollFrame, "Nothing to display", 20);
+	noPollLabel:SetPoint("CENTER");
+
+
 	g_currentPollsMotherFrame.resultsFrame = mainFrame;
+	g_currentPollsMotherFrame.noPollFrame = noPollFrame;
 	mainFrame:Hide();
 end
 
@@ -191,7 +198,7 @@ local function ReSortAnswers()
 	end
 end
 
-RemoveAllAnswers = function()
+ClearPollResultsFrame = function()
 
 	ReSortAnswers();
 
@@ -201,6 +208,7 @@ RemoveAllAnswers = function()
 		answerObject.sGUID = nil;
 	end
 
+	g_currentPollsMotherFrame.sCurrentPollGUID = nil;
 	iAnswersCount = 0;
 end
 
@@ -262,8 +270,11 @@ function LoadAndOpenPollResultsFrame(pollData)
 
 	InitResultsFrame();
 
+	g_currentPollsMotherFrame.noPollFrame:Hide();
 	g_currentPollsMotherFrame.voteFrame:Hide();
 	g_currentPollsMotherFrame.resultsFrame.questionLabel:SetText(pollData.sQuestion);
+
+	g_currentPollsMotherFrame.sCurrentPollGUID = pollData.sPollGUID;
 
 	for i = 1, #pollData.answers do
 		LoadAnswer(pollData.answers[i]);

@@ -1,16 +1,11 @@
 
 Cerberus_HookThisFile();
 
-local sCurrentPollGUID = nil;
-
-function GetPollCurrentlyVotingFor()
-	return sCurrentPollGUID;
-end
 function IsCurrentlyVotingForSomething()
-	return g_currentPollsMotherFrame.voteFrame:IsVisible() and g_currentPollsMotherFrame.voteFrame:IsShown() and sCurrentPollGUID ~= nil;
+	return g_currentPollsMotherFrame.voteFrame:IsVisible() and g_currentPollsMotherFrame.voteFrame:IsShown() and g_currentPollsMotherFrame.sCurrentPollGUID ~= nil;
 end
 function IsCurrentlyVotingForPoll(sPollGUID)
-	return g_currentPollsMotherFrame.voteFrame:IsVisible() and g_currentPollsMotherFrame.voteFrame:IsShown() and sCurrentPollGUID == sPollGUID;
+	return g_currentPollsMotherFrame.voteFrame:IsVisible() and g_currentPollsMotherFrame.voteFrame:IsShown() and g_currentPollsMotherFrame.sCurrentPollGUID == sPollGUID;
 end
 
 local fInnerFramesMargin = GetInnerFramesMargin();
@@ -435,6 +430,7 @@ function LoadAndOpenVoteFrame(pollData)
 		end
 
 		g_currentPollsMotherFrame.voteFrame.sendVoteButton:Enable();
+		g_currentPollsMotherFrame.noPollFrame:Hide();
 		g_currentPollsMotherFrame.resultsFrame:Hide();
 		RemoveAllAnswers();
 
@@ -450,7 +446,7 @@ function LoadAndOpenVoteFrame(pollData)
 			LoadAnswer(nil);
 		end
 
-		sCurrentPollGUID = pollData.sPollGUID;
+		g_currentPollsMotherFrame.sCurrentPollGUID = pollData.sPollGUID;
 		OpenCurrentPollsFrameTab(g_currentPollsMotherFrame.currentPollFrame);
 		g_currentPollsMotherFrame.voteFrame:Show();
 	end
@@ -472,7 +468,7 @@ function GetVoteData()
 
 	local voteObject =
 	{
-		sPollGUID = sCurrentPollGUID,
+		sPollGUID = g_currentPollsMotherFrame.sCurrentPollGUID,
 		sVoterBTag = MyBTag(),
 		sVoterFullName = Me(),
 		newAnswers = {},

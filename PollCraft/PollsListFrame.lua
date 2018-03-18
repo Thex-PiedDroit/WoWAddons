@@ -254,6 +254,13 @@ StaticPopupDialogs["PollCraft_ConfirmRemovePollFromData"] =
 --[[local]] RemovePollFromData = function(listItem)
 	local sPollGUID = listItem.sPollGUID;
 	RemovePollDataFromMemory(sPollGUID);
+
+	if g_currentPollsMotherFrame.sCurrentPollGUID == sPollGUID then
+		ClearPollResultsFrame();
+		g_currentPollsMotherFrame.resultsFrame:Hide();
+		g_currentPollsMotherFrame.voteFrame:Hide();
+		g_currentPollsMotherFrame.noPollFrame:Show();
+	end
 end
 
 
