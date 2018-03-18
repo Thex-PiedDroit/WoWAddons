@@ -9,7 +9,7 @@ end
 function IsCurrentlyVotingForSomething()
 	return g_currentPollsMotherFrame.voteFrame:IsVisible() and g_currentPollsMotherFrame.voteFrame:IsShown() and sCurrentPollGUID ~= nil;
 end
-function IsCurrentlyVotingForPoll(sPollID)
+function IsCurrentlyVotingForPoll(sPollGUID)
 	return g_currentPollsMotherFrame.voteFrame:IsVisible() and g_currentPollsMotherFrame.voteFrame:IsShown() and sCurrentPollGUID == sPollGUID;
 end
 

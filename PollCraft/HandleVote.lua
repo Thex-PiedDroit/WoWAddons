@@ -48,15 +48,15 @@ function HandleVoteMessageReception(voteMessage, sSenderFullName, sSenderRealm)
 
 	local bCurrentlyVoting = IsCurrentlyVotingForPoll(voteData.sPollGUID);
 
-	local bRegisteredVote = false;
+	local bVoteRegistered = false;
 	if not bCurrentlyVoting then
 		RegisterVote(voteData);
 		AddVoteToResultsDisplay(voteData);
-		bRegisteredVote = true;
+		bVoteRegistered = true;
 	end
 
 	if pollData.sPollMasterFullName == Me() then
-		if not bRegisteredVote then
+		if not bVoteRegistered then
 			RegisterVote(voteData);
 		end
 		local resultsMessageData =
@@ -67,7 +67,9 @@ function HandleVoteMessageReception(voteMessage, sSenderFullName, sSenderRealm)
 		}
 		SendPollMessage({ resultsData = resultsMessageData }, "Results", "WHISPER", sSenderFullName, sSenderRealm);
 		BroadcastVote(voteData, sSenderFullName);
-	elseif bCurrentlyVoting then
+	end
+
+	if bCurrentlyVoting then
 		LoadAdditionalAnswersForVoting(voteData.newAnswers);
 	end
 end
