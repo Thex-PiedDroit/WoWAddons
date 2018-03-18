@@ -74,7 +74,7 @@ end
 function RegisterVote(voteData)
 
 	local sPollGUID = voteData.sPollGUID;
-	local pollData = g_pollCraftData.savedPollsData[sPollGUID];
+	local pollData = GetPollData(sPollGUID);
 
 	local pollAnswers = pollData.answers;
 	for i = 1, #voteData.newAnswers do

@@ -41,6 +41,9 @@ function HandleVoteMessageReception(voteMessage, sSenderFullName, sSenderRealm)
 
 	local voteData = voteMessage.voteData;
 	local pollData = GetPollData(voteData.sPollGUID);
+	if pollData == nil then
+		return;
+	end
 
 	RegisterVote(voteData);
 	local bShouldAddVoteToDisplay = true;
