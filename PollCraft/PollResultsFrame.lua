@@ -68,6 +68,13 @@ function InitResultsFrame()
 	changeVoteButton:SetFrameLevel(answersParentFrame:GetFrameLevel() + 10);
 
 
+		--[[      POLL ABORTED      ]]--
+	local pollAbortedLabel = CreateLabel(answersFrame, ColoriseText("(This poll has been aborted by its master)", g_cRedWarningColor), 16);
+	pollAbortedLabel:SetPoint("LEFT", answersFrameLabel, "RIGHT", 10, 0);
+	pollAbortedLabel:Hide();
+	mainFrame.pollAbortedLabel = pollAbortedLabel;
+
+
 		--[[      NO POLL FRAME      ]]--
 	local noPollFrame = CreateBackdropTitledInnerFrame("PollResultsFrame", containingFrame, "PollCraft - Current poll");
 	local noPollLabel = CreateLabel(noPollFrame, "Nothing to display", 20);
@@ -266,10 +273,11 @@ function LoadResults(results)
 	end
 end
 
-function LoadAndOpenPollResultsFrame(pollData)
+function LoadPollResultsFrame(pollData)
 
 	InitResultsFrame();
 
+	g_currentPollsMotherFrame.resultsFrame.pollAbortedLabel:Hide();
 	g_currentPollsMotherFrame.noPollFrame:Hide();
 	g_currentPollsMotherFrame.voteFrame:Hide();
 	g_currentPollsMotherFrame.resultsFrame.questionLabel:SetText(pollData.sQuestion);
@@ -280,7 +288,14 @@ function LoadAndOpenPollResultsFrame(pollData)
 		LoadAnswer(pollData.answers[i]);
 	end
 
-	LoadResults(pollData.results);
+	if pollData.results ~= nil then
+		LoadResults(pollData.results);
+	end
+end
+
+function LoadAndOpenPollResultsFrame(pollData)
+
+	LoadPollResultsFrame(pollData);
 
 	g_currentPollsMotherFrame.panel:Show();
 	g_currentPollsMotherFrame.resultsFrame:Show();

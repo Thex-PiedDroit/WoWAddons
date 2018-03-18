@@ -33,10 +33,27 @@ local function ReceiveMessage(_, sMessage)
 	elseif sMessageType == "Vote" then
 		HandleVoteMessageReception(actualMessage, messageObject.sSenderFullName, messageObject.sSenderRealm);
 
-	elseif sMessageType == "Results" then
+	elseif sMessageType == "Results" or sMessageType == "PollAbort" then
 		local resultsData = actualMessage.resultsData;
+		local pollData = GetPollData(resultsData.sPollGUID);
+		if pollData == nil then
+			return;
+		end
+
 		RegisterResults(resultsData);
-		LoadAndOpenPollResultsFrame(GetPollData(resultsData.sPollGUID));
+
+		if sMessageType == "PollAbort" then
+			if g_currentPollsMotherFrame.sCurrentPollGUID == resultsData.sPollGUID then
+				LoadPollResultsFrame(pollData);
+				g_currentPollsMotherFrame.voteFrame:Hide();
+				g_currentPollsMotherFrame.resultsFrame:Show();
+				g_currentPollsMotherFrame.resultsFrame.pollAbortedLabel:Show();
+			end
+
+			RemovePollDataFromMemory(resultsData.sPollGUID, messageObject.sSenderFullName ~= Me());
+		else
+			LoadAndOpenPollResultsFrame(pollData);
+		end
 	end
 end
 

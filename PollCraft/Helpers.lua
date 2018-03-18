@@ -31,10 +31,16 @@ function Me()
 end
 
 
-g_cAddonTextColour = "ff25de32";
-local sPollCraftPrefix = "|c" .. g_cAddonTextColour .. "PollCraft: |r"
+function ColoriseText(sMessage, sColorCode)
+	return "|cff" .. sColorCode .. sMessage .. "|r";
+end
+
+g_cRedWarningColor = "f00606";
+
+g_cAddonTextColor = "25de32";
+g_sPollCraftPrefix = ColoriseText("PollCraft: ", g_cAddonTextColor);
 function PollCraft_Print(sMessage)
-	print(sPollCraftPrefix .. sMessage);
+	print(g_sPollCraftPrefix .. sMessage);
 end
 
 function GetInnerFramesMargin()

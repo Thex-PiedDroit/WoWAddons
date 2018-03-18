@@ -12,8 +12,8 @@
 ]]--
 
 
-local cCerberusTextColour = "ffc42727";
-local sCerberusPrefix = "|c" .. cCerberusTextColour .. "Cerberus: |r"
+local cCerberusTextColor = "ffc42727";
+local sCerberusPrefix = "|c" .. cCerberusTextColor .. "Cerberus: |r"
 function Cerberus_Error(sMessage)
 	error(sCerberusPrefix .. sMessage, 3);
 end

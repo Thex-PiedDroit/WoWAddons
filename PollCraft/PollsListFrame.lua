@@ -146,6 +146,7 @@ local function CreateNewItem(list, sListType, iActiveItemsCountInList, pollData)
 		sPollGUID = sPollGUID,
 		questionButtonLabel = buttonFontString,
 		alreadyVotedCheck = newItemVotedCheck,
+		bAborted = false,
 	};
 
 		--[[      REMOVE POLL BUTTON      ]]--
@@ -253,13 +254,32 @@ StaticPopupDialogs["PollCraft_ConfirmRemovePollFromData"] =
 
 --[[local]] RemovePollFromData = function(listItem)
 	local sPollGUID = listItem.sPollGUID;
-	RemovePollDataFromMemory(sPollGUID);
 
-	if g_currentPollsMotherFrame.sCurrentPollGUID == sPollGUID then
-		ClearPollResultsFrame();
-		g_currentPollsMotherFrame.resultsFrame:Hide();
-		g_currentPollsMotherFrame.voteFrame:Hide();
-		g_currentPollsMotherFrame.noPollFrame:Show();
+	local pollData = GetPollData(sPollGUID);
+
+	if pollData.sPollMasterFullName == Me() then
+		local resultsMessageData =
+		{
+			sPollGUID = sPollGUID,
+			pollAnswers = pollData.answers,
+			results = pollData.results
+		}
+		SendPollMessage({ resultsData = resultsMessageData }, "PollAbort", pollData.sPollType);
+
+	else
+		RemovePollDataFromMemory(sPollGUID);
+	end
+end
+
+function AddAbortedMessageToQuestionInPollsList(sPollGUID)
+
+	for i = 1, itemsObjects["theirsCount"] do
+		if itemsObjects["theirs"][i].sPollGUID == sPollGUID then
+			local item = itemsObjects["theirs"][i];
+			item.questionButtonLabel:SetText(ColoriseText("(This poll has been aborted by its master) ", g_cRedWarningColor) .. item.questionButtonLabel:GetText());
+			item.bAborted = true;
+			return;
+		end
 	end
 end
 
@@ -296,7 +316,12 @@ end
 OpenPollFromItem = function(self, args)
 
 	local item = itemsObjects[args.sItemListType][args.iPollItemIndex];
-	OpenPoll(GetPollData(item.sPollGUID));
+	if not item.bAborted then
+		OpenPoll(GetPollData(item.sPollGUID));
+	else
+		item.bAborted = false;
+		RequestPollsListsUpdate();
+	end
 end
 
 function OpenPollsListFrame()

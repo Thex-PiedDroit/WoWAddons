@@ -43,7 +43,7 @@ function AddPollDataToMemory(pollData)
 	RequestPollsListsUpdate();
 end
 
-function RemovePollDataFromMemory(sPollGUID)
+function RemovePollDataFromMemory(sPollGUID, bKeepInList)
 	if g_pollCraftData.savedPollsData[sPollGUID] == nil then
 		return;
 	end
@@ -51,7 +51,11 @@ function RemovePollDataFromMemory(sPollGUID)
 	g_pollCraftData.savedPollsData[sPollGUID] = nil;
 	g_pollCraftData.savedPollsGUIDs[sPollGUID] = nil;
 
-	RequestPollsListsUpdate();
+	if bKeepInList then
+		AddAbortedMessageToQuestionInPollsList(sPollGUID);
+	else
+		RequestPollsListsUpdate();
+	end
 end
 
 function GetPollData(sPollGUID)

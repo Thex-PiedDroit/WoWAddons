@@ -33,9 +33,9 @@ function InitMinimapButton(settingsPanel)
 	});
 
 	function minimapLDB:OnTooltipShow()
-		self:AddLine("|c" .. g_cAddonTextColour .. "PollCraft|r");
-		self:AddLine("|cFFFFFFFFLeft click: open current polls list|r");
-		self:AddLine("|cFFFFFFFFRight click: create poll|r");
+		self:AddLine(g_sPollCraftPrefix);
+		self:AddLine(ColoriseText("Left click: open current polls list", "ffffff"));
+		self:AddLine(ColoriseText("Right click: create poll", "ffffff"));
 	end
 	function minimapLDB:OnEnter()
 		GameTooltip:SetOwner(self, "ANCHOR_NONE");
