@@ -82,13 +82,8 @@ function RegisterVote(voteData)
 	end
 	g_pollCraftData.savedPollsData[sPollGUID].answers = pollAnswers;
 
-	local voterBTag = voteData.sVoterBTag;
-	if voterBTag == MyBTag() then
-		g_pollCraftData.savedPollsData[sPollGUID].bIVoted = true;
-		TickVoteForPoll(sPollGUID, true, pollData.sPollMasterFullName == Me());
-	end
 	g_pollCraftData.savedPollsData[sPollGUID].voters = g_pollCraftData.savedPollsData[sPollGUID].voters or {};
-	table.insert(g_pollCraftData.savedPollsData[sPollGUID].voters, voterBTag);
+	table.insert(g_pollCraftData.savedPollsData[sPollGUID].voters, voteData.sVoterBTag);
 
 	local pollResults = pollData.results or {};
 	for i = 1, #voteData.vote do

@@ -26,12 +26,8 @@ function SendVoteAway(self)
 	local pollData = GetPollData(voteData.sPollGUID);
 
 	SendPollMessage({ voteData = voteData }, "Vote", "WHISPER", pollData.sPollMasterFullName, pollData.sPollMasterRealm);
-end
-
-function BroadcastVote(voteData, sExcludedGuyFromBroadcast)
-
-	local pollData = GetPollData(voteData.sPollGUID);
-	SendPollMessage({ voteData = voteData, bIsBroadcast = true, sExcludedGuyFromBroadcast = sExcludedGuyFromBroadcast }, "Vote", pollData.sPollType);
+	g_pollCraftData.savedPollsData[pollData.sPollGUID].bIVoted = true;
+	TickVoteForPoll(pollData.sPollGUID, true, pollData.sPollMasterFullName == Me());
 end
 
 
@@ -46,30 +42,26 @@ function HandleVoteMessageReception(voteMessage, sSenderFullName, sSenderRealm)
 	local voteData = voteMessage.voteData;
 	local pollData = GetPollData(voteData.sPollGUID);
 
-	local bCurrentlyVoting = IsCurrentlyVotingForPoll(voteData.sPollGUID);
-
-	local bVoteRegistered = false;
-	if not bCurrentlyVoting then
-		RegisterVote(voteData);
-		AddVoteToResultsDisplay(voteData);
-		bVoteRegistered = true;
-	end
+	RegisterVote(voteData);
+	local bShouldAddVoteToDisplay = true;
 
 	if pollData.sPollMasterFullName == Me() then
-		if not bVoteRegistered then
-			RegisterVote(voteData);
-		end
+
 		local resultsMessageData =
 		{
 			sPollGUID = voteData.sPollGUID,
 			pollAnswers = pollData.answers,
 			results = pollData.results
 		}
+
 		SendPollMessage({ resultsData = resultsMessageData }, "Results", "WHISPER", sSenderFullName, sSenderRealm);
-		BroadcastVote(voteData, sSenderFullName);
+		SendPollMessage({ voteData = voteData, bIsBroadcast = true, sExcludedGuyFromBroadcast = sSenderFullName }, "Vote", pollData.sPollType);	-- Broadcast the vote to everyone else
+		bShouldAddVoteToDisplay = false;	-- Because we receive the results before going further
 	end
 
-	if bCurrentlyVoting then
+	if IsCurrentlyVotingForPoll(voteData.sPollGUID) then
 		LoadAdditionalAnswersForVoting(voteData.newAnswers);
+	elseif bShouldAddVoteToDisplay then
+		AddVoteToResultsDisplay(voteData);
 	end
 end
