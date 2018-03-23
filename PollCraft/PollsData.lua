@@ -15,7 +15,8 @@ pollData =
 		[sAnswerGUID] = iX,	-- Where iX is the current amount of votes on that answer. If answer is not in this list, answer has 0 votes
 	},
 	bIVoted,
-	voters = {}	-- List of players BTags
+	voters = {},	-- Dictionary of <sPlayersBTag, bool /* has voted */> - Only known by poll master. Dictionary for ease of access
+	iVotersCount,	-- Only updated by the poll master - Known by everyone
 }
 
 -- Polls each have "unique" IDs composed like so: "PlayerGUIDXXXXXXX" where "XXXXXXX" is a random number between 1000000 and 9999999 (not really unique, but close enough)
@@ -87,7 +88,8 @@ function RegisterVote(voteData)
 	g_pollCraftData.savedPollsData[sPollGUID].answers = pollAnswers;
 
 	g_pollCraftData.savedPollsData[sPollGUID].voters = g_pollCraftData.savedPollsData[sPollGUID].voters or {};
-	table.insert(g_pollCraftData.savedPollsData[sPollGUID].voters, voteData.sVoterBTag);
+	--g_pollCraftData.savedPollsData[sPollGUID].voters[voteData.sVoterBTag] = true;
+	g_pollCraftData.savedPollsData[sPollGUID].iVotersCount = (pollData.iVotersCount or 0) + 1;
 
 	local pollResults = pollData.results or {};
 	for i = 1, #voteData.vote do
@@ -97,6 +99,7 @@ function RegisterVote(voteData)
 		end
 		pollResults[sCurrentVoteGUID] = pollResults[sCurrentVoteGUID] + 1;
 	end
+
 	g_pollCraftData.savedPollsData[sPollGUID].results = pollResults;
 end
 
@@ -109,4 +112,6 @@ function RegisterResults(resultsData)
 	end
 	g_pollCraftData.savedPollsData[sPollGUID].answers = resultsData.pollAnswers;
 	g_pollCraftData.savedPollsData[sPollGUID].results = resultsData.results;
+	g_pollCraftData.savedPollsData[sPollGUID].voters = resultsData.voters;
+	g_pollCraftData.savedPollsData[sPollGUID].iVotersCount = resultsData.iVotersCount;
 end

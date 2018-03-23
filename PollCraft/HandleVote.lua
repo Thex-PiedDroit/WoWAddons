@@ -27,15 +27,14 @@ function SendVoteAway(self)
 
 	SendPollMessage({ voteData = voteData }, "Vote", "WHISPER", pollData.sPollMasterFullName, pollData.sPollMasterRealm);
 	g_pollCraftData.savedPollsData[pollData.sPollGUID].bIVoted = true;
-	TickVoteForPoll(pollData.sPollGUID, true, pollData.sPollMasterFullName == Me());
+	TickVoteCheckBoxForPoll(pollData.sPollGUID, true, pollData.sPollMasterFullName == Me());
 end
 
 
 function HandleVoteMessageReception(voteMessage, sSenderFullName, sSenderRealm)
 
 	if voteMessage.bIsBroadcast and
-		((sSenderFullName ~= nil and sSenderFullName == Me())
-		or (voteMessage.sExcludedGuyFromBroadcast == Me())) then
+		(sSenderFullName == Me() or voteMessage.sExcludedRecipient == Me()) then
 		return;
 	end
 
@@ -50,16 +49,21 @@ function HandleVoteMessageReception(voteMessage, sSenderFullName, sSenderRealm)
 
 	if pollData.sPollMasterFullName == Me() then
 
+		local sSenderBTag = voteData.sVoterBTag;
+		pollData.voters = pollData.voters or {};
+		pollData.voters[sSenderBTag] = true;
+
 		local resultsMessageData =
 		{
 			sPollGUID = voteData.sPollGUID,
 			pollAnswers = pollData.answers,
-			results = pollData.results
+			results = pollData.results,
+			iVotersCount = pollData.iVotersCount,
 		}
 
 		SendPollMessage({ resultsData = resultsMessageData }, "Results", "WHISPER", sSenderFullName, sSenderRealm);
-		SendPollMessage({ voteData = voteData, bIsBroadcast = true, sExcludedGuyFromBroadcast = sSenderFullName }, "Vote", pollData.sPollType);	-- Broadcast the vote to everyone else
-		bShouldAddVoteToDisplay = false;	-- Because we receive the results before going further
+		SendPollMessage({ voteData = voteData, bIsBroadcast = true, sExcludedRecipient = sSenderFullName }, "Vote", pollData.sPollType);	-- Broadcast the vote to everyone else
+		bShouldAddVoteToDisplay = sSenderFullName ~= Me();	-- When the poll master votes, they will receive the result, which will update the full display.
 	end
 
 	if IsCurrentlyVotingForPoll(voteData.sPollGUID) then
@@ -67,4 +71,6 @@ function HandleVoteMessageReception(voteMessage, sSenderFullName, sSenderRealm)
 	elseif bShouldAddVoteToDisplay then
 		AddVoteToResultsDisplay(voteData);
 	end
+
+	UpdateVotersCountLabel(pollData);
 end

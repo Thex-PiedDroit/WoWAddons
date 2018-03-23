@@ -284,7 +284,7 @@ function AddAbortedMessageToQuestionInPollsList(sPollGUID)
 end
 
 
-function TickVoteForPoll(sPollGUID, bVoted, bIsPollMine)
+function TickVoteCheckBoxForPoll(sPollGUID, bVoted, bIsPollMine)
 
 	local sPollListType = "theirs";
 	if bIsPollMine then

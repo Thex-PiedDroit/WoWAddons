@@ -60,17 +60,20 @@ function InitResultsFrame()
 	answersFrame:SetPoint("BOTTOM", changeVoteButton, "TOP", 0, (fInnerFramesMargin * 2) - 8);
 	local answersFrameLabel = CreateLabel(answersFrame, "Answers:", 16);
 	answersFrameLabel:SetPoint("TOPLEFT", 10, -fMarginBetweenUpperBordersAndText);
+	local answersCountLabel = CreateLabel(answersFrame, "Voters count: X", 16);
+	answersCountLabel:SetPoint("TOPRIGHT", -10, -fMarginBetweenUpperBordersAndText);
 
 	answersFrame.content.answersBoxes = {};
 	answersParentFrame = answersFrame.content;
 	answersScrollFrame = answersFrame;
+	answersParentFrame.countLabel = answersCountLabel;
 
 	changeVoteButton:SetFrameLevel(answersParentFrame:GetFrameLevel() + 10);
 
 
 		--[[      POLL ABORTED      ]]--
-	local pollAbortedLabel = CreateLabel(answersFrame, ColoriseText("(This poll has been aborted by its master)", g_cRedWarningColor), 16);
-	pollAbortedLabel:SetPoint("LEFT", answersFrameLabel, "RIGHT", 10, 0);
+	local pollAbortedLabel = CreateLabel(answersFrame, ColoriseText("(This poll has been aborted by its creator)", g_cRedWarningColor), 14);
+	pollAbortedLabel:SetPoint("BOTTOMLEFT", answersFrameLabel, "BOTTOMRIGHT", 10, 0);
 	pollAbortedLabel:Hide();
 	mainFrame.pollAbortedLabel = pollAbortedLabel;
 
@@ -288,9 +291,16 @@ function LoadPollResultsFrame(pollData)
 		LoadAnswer(pollData.answers[i]);
 	end
 
+	UpdateVotersCountLabel(pollData);
+
 	if pollData.results ~= nil then
 		LoadResults(pollData.results);
 	end
+end
+
+function UpdateVotersCountLabel(pollData)
+
+	answersParentFrame.countLabel:SetText("Voters count: " .. tostring(pollData.iVotersCount or 0));
 end
 
 function LoadAndOpenPollResultsFrame(pollData)

@@ -2,14 +2,6 @@
 g_cerberus.RegisterAddon("PollCraft", { "S_sPollCraftSavedAddonVersion", "S_pollCraftData" });
 
 
-local _, sPlayerBTag = BNGetInfo();
-function MyBTag()
-	if sPlayerBTag == nil then
-		local _, sNewBTag = BNGetInfo();
-		sPlayerBTag = sNewBTag;
-	end
-	return sPlayerBTag;
-end
 local sPlayerGUID = UnitGUID("player");
 function MyGUID()
 	if sPlayerGUID == nil then
@@ -28,6 +20,14 @@ end
 local playerFullName = sPlayerName .. "-" .. sPlayerRealm;
 function Me()
 	return playerFullName;
+end
+local _, sPlayerBTag = BNGetInfo();
+function MyBTag()
+	if sPlayerBTag == nil then
+		local _, sNewBTag = BNGetInfo();
+		sPlayerBTag = sNewBTag or playerFullName;	-- Discovery accounts don't have a btag so use full name in that case
+	end
+	return sPlayerBTag;
 end
 
 
@@ -96,8 +96,13 @@ function table.clone(T)
 
 	local copy = {};
 	for key, value in pairs(T) do
-		copy[key] = value;
+		if type(value) == "table" then
+			copy[key] = table.clone(T);
+		else
+			copy[key] = value;
+		end
 	end
+
 	return copy;
 end
 

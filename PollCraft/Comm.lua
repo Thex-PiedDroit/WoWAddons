@@ -11,14 +11,13 @@ local function ReceiveMessage(_, sMessage)
 
 	if not bSuccess then
 		PollCraft_Print("Could not deserialize a message. Error message:");
-		print(messageObject);
 		return;
 	end
 
 	local actualMessage = messageObject.message;
 
 	if actualMessage.sSpecificTarget ~= nil and actualMessage.sSpecificTarget ~= Me() then
-		return;		-- Because for some reason, blizzard decided that cross-realm WHISPERS do not work in parties and raid groups
+		return;
 	end
 
 	local sMessageType = actualMessage.sMessageType;
