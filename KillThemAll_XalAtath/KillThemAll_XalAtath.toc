@@ -1,4 +1,4 @@
-## Interface: 70300
+## Interface: 80000
 ## Title: |cff00ccffKillThemAll_XalAtath|r
 ## Version: 1.0
 ## Notes: Adds Xal'Atath, Blade of the Black Empire to KillThemAll

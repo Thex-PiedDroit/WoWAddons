@@ -1,4 +1,4 @@
-## Interface: 70300
+## Interface: 80000
 ## Title: |cff00ccffKillThemAll_LichKing|r
 ## Version: 1.2
 ## Notes: Adds The Lich King to KillThemAll
