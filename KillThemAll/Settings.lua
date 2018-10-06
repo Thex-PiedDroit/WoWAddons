@@ -109,8 +109,8 @@ end
 
 
 
-local TryRecoverPreviousVersion = nil;
-local GetCombinedGlobalSettingsWithCharOverrides = nil;
+local TryRecoverPreviousVersion = nil; --[[function()]]
+local GetCombinedGlobalSettingsWithCharOverrides = nil; --[[function()]]
 
 
 function LoadSettings()
@@ -127,8 +127,9 @@ function LoadSettings()
 end
 
 
-local RecoverFromVersion1_3 = nil;
-local RecoverFromEarlierVersion = nil;
+local RecoverFromVersion1_3 = nil; --[[function()]]
+local RecoverFromEarlierVersion = nil; --[[function()]]
+
 
 --[[local]] TryRecoverPreviousVersion = function()
 

@@ -127,8 +127,8 @@ function SetGods(godsNames, bSilent)
 		end
 
 		CallEventListener(g_interfaceEventsListener, "OnGodsChanged");
-
 		return;
+
 	elseif godsNames == nil or #godsNames == 0 or TableContains(godsNames, "NONE") then
 		g_currentGods = {};
 
@@ -137,7 +137,6 @@ function SetGods(godsNames, bSilent)
 		end
 
 		CallEventListener(g_interfaceEventsListener, "OnGodsChanged");
-
 		return;
 	end
 
@@ -149,8 +148,8 @@ function SetGods(godsNames, bSilent)
 		table.remove(godsNames, iDefaultIndex);
 		local defaultGods = GetWords(string.upper(g_ktaCurrentSettings.m_default.m_sGods));
 		local containsAll = TableContains(defaultGods, "ALL");
-		SetGods(defaultGods, bSilent);
 
+		SetGods(defaultGods, bSilent);
 		return;
 	end
 
@@ -274,7 +273,7 @@ end
 
 function SetSoundChannel(sSoundChannel, bSilent, bFromInterface)
 
-	SetOverrideValue("m_sSoundChannel", TryParseSoundChannel(sSoundChannel, g_ktaCurrentSettings.m_sSoundChannel));
+	SetOverrideValue("m_sSoundChannel", TryParseSoundChannel(sSoundChannel, g_ktaCurrentSettings.m_sSoundChannel, bSilent));
 
 	if not bSilent then
 		KTA_Print("The soundfiles will now be played on the channel " .. g_ktaCurrentSettings.m_sSoundChannel .. ".");
@@ -420,9 +419,9 @@ function events:ADDON_LOADED(sAddonName)
 		return;
 	end
 
+	HookGodsChangedSettingsListener();
 	LoadSettings();
 	InitSettingsFrames();
-	HookGodsChangedSettingsListener();
 
 	bLoading = false;
 end

@@ -3,12 +3,12 @@ Cerberus_HookThisFile();
 
 g_godsListSettings = {};
 
-AddGodToSettingsList = nil;
+AddGodToSettingsList = nil; --[[function(god)]]
 
 local panelSize =
 {
-	x = 500,
-	y = 40
+	x = 500.0,
+	y = 40.0
 };
 
 function InitGodsListSettings(parent, listLabelAnchor, offset)
@@ -17,7 +17,7 @@ function InitGodsListSettings(parent, listLabelAnchor, offset)
 	godsLabel:SetPoint("TOPLEFT", listLabelAnchor, "BOTTOMLEFT", offset.x, offset.y);
 
 	local godsListFrame = CreateBackdroppedFrame("KTA_GodsListSettingsFrame", parent, panelSize);
-	godsListFrame:SetPoint("TOPLEFT", godsLabel, "BOTTOMLEFT", -4, -5);
+	godsListFrame:SetPoint("TOPLEFT", godsLabel, "BOTTOMLEFT", -4.0, -5.0);
 
 	g_godsListSettings = godsListFrame;
 
@@ -29,12 +29,12 @@ end
 
 local godsLabelOrigin =
 {
-	x = 35,
-	y = -13
+	x = 35.0,
+	y = -13.0
 };
-local godsCheckButtonsMarginFromBorders = 10;
-local fMarginBetweenButtonsAndLabels = 5;
-local fCheckButtonsSize = 20;
+local fGodsCheckButtonsMarginFromBorders = 10.0;
+local fMarginBetweenButtonsAndLabels = 5.0;
+local fCheckButtonsSize = 20.0;
 local iGodsCountPerRow = 3;
 
 local iGodsCountInList = 0;
@@ -45,11 +45,11 @@ local iGodsCountInList = 0;
 	local offset =
 	{
 		x = (panelSize.x / iGodsCountPerRow) * (iGodsCountInList % iGodsCountPerRow),
-		y = (iRowsCountMinusOne * (godsCheckButtonsMarginFromBorders * 0.5)) + (iRowsCountMinusOne * fCheckButtonsSize)
+		y = (iRowsCountMinusOne * (fGodsCheckButtonsMarginFromBorders * 0.5)) + (iRowsCountMinusOne * fCheckButtonsSize)
 	};
 
 	local godCheckButton = CreateCheckButton(god.m_sDataName .. "_CheckButton", g_godsListSettings, fCheckButtonsSize);
-	godCheckButton:SetPoint("TOPLEFT", godsCheckButtonsMarginFromBorders + offset.x, -godsCheckButtonsMarginFromBorders - offset.y);
+	godCheckButton:SetPoint("TOPLEFT", fGodsCheckButtonsMarginFromBorders + offset.x, -fGodsCheckButtonsMarginFromBorders - offset.y);
 	godCheckButton:SetChecked(TableContainsUniqueItem(g_currentGods, god));
 
 	local godNameLabel = CreateLabel(g_godsListSettings, god.m_sDisplayName);
@@ -73,7 +73,7 @@ local iGodsCountInList = 0;
 	end);
 
 	g_godsListSettings.godsCheckButtonsList[iGodIndex] = godCheckButton;
-	g_godsListSettings:SetHeight((godsCheckButtonsMarginFromBorders * 2) + fCheckButtonsSize + offset.y);
+	g_godsListSettings:SetHeight((fGodsCheckButtonsMarginFromBorders * 2) + fCheckButtonsSize + offset.y);
 
 	iGodsCountInList = iGodsCountInList + 1;
 end

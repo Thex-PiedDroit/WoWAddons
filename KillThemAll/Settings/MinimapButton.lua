@@ -23,13 +23,13 @@ function InitMinimapButton(settingsPanel)
 	{
 		type = "launcher",
 		icon = "Interface/Icons/Spell_shadow_auraofdarkness",
-		OnClick = function(clickedframe, button)
+		OnClick = function(clickedFrame, sButton)
 
-			if button == "LeftButton" then
+			if sButton == "LeftButton" then
 				ToggleDeactivated();
 				KTA_Print("KillThemAll is now " .. ((g_ktaCurrentSettings.m_bDeactivated and "deactivated") or "activated"));
 
-			elseif button == "RightButton" then
+			elseif sButton == "RightButton" then
 				OpenSettingsPanel();
 			end
 		end,

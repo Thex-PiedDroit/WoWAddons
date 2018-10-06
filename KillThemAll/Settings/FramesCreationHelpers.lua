@@ -17,11 +17,11 @@ local function CreateBackdrop(frame, fAlpha)
 		bgFile = "Interface/Tooltips/UI-Tooltip-Background",
 		edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
 		tile = true,
-		tileSize = 16,
-		edgeSize = 16,
-		insets = { left = 4, right = 4, top = 4, bottom = 4 },
+		tileSize = 16.0,
+		edgeSize = 16.0,
+		insets = { left = 4.0, right = 4.0, top = 4.0, bottom = 4.0 },
 	});
-	frame:SetBackdropColor(0, 0, 0, fAlpha);
+	frame:SetBackdropColor(0.0, 0.0, 0.0, fAlpha);
 end
 
 
@@ -66,7 +66,7 @@ end
 
 function CreateCheckButton(sName, parent, fSize, OnCheckCallback, callbackArguments)
 	local checkButton = CreateFrame("CheckButton", sPrefix .. sName, parent, "OptionsCheckButtonTemplate");
-	fSize = fSize or 20;
+	fSize = fSize or 20.0;
 	checkButton:SetSize(fSize, fSize);
 
 	if OnCheckCallback ~= nil then
@@ -120,14 +120,15 @@ function CreateDropDownList(sName, parent, fWidth, options, sCurrentValue, OnBut
 				OnButtonSelectedCallback(self.value, unpack(callbackArguments));
 			end
 			CloseDropDownMenus();
-		end;
+		end
 
 		for i = 1, #options do
-			if options[i].sText == sCurrentValue then
+			if options[i].m_sText == sCurrentValue then
 				iSelectedItemIndex = i;
 			end
-			buttons.text = options[i].sText;
-			buttons.value = options[i].value;
+
+			buttons.text = options[i].m_sText;
+			buttons.value = options[i].m_value;
 			buttons.checked = IsCheckedVerifier(buttons.value);
 			UIDropDownMenu_AddButton(buttons);
 		end

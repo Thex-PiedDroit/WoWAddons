@@ -164,12 +164,14 @@ function GetAvailableSoundChannels()
 	return soundChannels;
 end
 
-function TryParseSoundChannel(sSoundChannel, sDefaultChannel)
+function TryParseSoundChannel(sSoundChannel, sDefaultChannel, bSilent)
 
 	local sOutSoundChannel = sDefaultChannel;
 
 	if sSoundChannel == nil or sSoundChannel == "" then
-		PrintInvalidParameters("Please provide a channel name. Available sound channels are: Master, Sound, Music, Ambience, Dialog and Default.");
+		if not bSilent then
+			PrintInvalidParameters("Please provide a channel name. Available sound channels are: Master, Sound, Music, Ambience, Dialog and Default.");
+		end
 		return sDefaultChannel;
 	end
 
@@ -182,7 +184,9 @@ function TryParseSoundChannel(sSoundChannel, sDefaultChannel)
 	sOutSoundChannel = soundChannels[sSoundChannel];
 	if sOutSoundChannel == nil then
 		sOutSoundChannel = sDefaultChannel;
-		PrintInvalidParameters("Sound channel not found. Available sound channels are: Master, Sound, Music, Ambience, Dialog and Default.");
+		if not bSilent then
+			PrintInvalidParameters("Sound channel not found. Available sound channels are: Master, Sound, Music, Ambience, Dialog and Default.");
+		end
 	end
 
 	return sOutSoundChannel;
@@ -198,8 +202,14 @@ function table.Clone(T)
 
 	local copy = {};
 	for sKey, value in pairs(T) do
+
+		if type(value) == "table" then
+			value = table.Clone(value);
+		end
+
 		copy[sKey] = value;
 	end
+
 	return copy;
 end
 
@@ -215,6 +225,20 @@ function table.Len(T)
 		end
 	end
 	return iCount;
+end
+
+function table.PrintMembers(T)
+
+	for sKey, value in pairs(T) do
+
+		if type(value) == "table" then
+			print(sKey .. " = {");
+			table.PrintMembers(value);
+			print("}");
+		else
+			print(tostring(sKey) .. " = " .. tostring(value));
+		end
+	end
 end
 
 string.StartsWith = function(self, sStart)
