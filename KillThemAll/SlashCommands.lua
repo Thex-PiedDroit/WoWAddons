@@ -173,30 +173,30 @@ function SlashCmdList.KillThemAll(sMessage)
 		local bDefaultAsked, iWordDefaultIndex = TableContains(args, "DEFAULT");
 		if bDefaultAsked then
 			table.remove(args, iWordDefaultIndex);
-			command["DEFAULT"].Func(args);
+			command["DEFAULT"].m_Func(args);
 			command = nil;
 
 		else
 			local commandBackup = command;
 
 			if TableContains(args, "DELAY") then
-				commandBackup["DELAY"].Func();
+				commandBackup["DELAY"].m_Func();
 				command = nil;
 			end
 			if TableContains(args, { "GOD", "GODS" }) then
-				commandBackup["GODS"].Func();
+				commandBackup["GODS"].m_Func();
 				command = nil;
 			end
 			if TableContains(args, { "SOUNDCHANNEL", "CHANNEL" }) then
-				commandBackup["SOUNDCHANNEL"].Func();
+				commandBackup["SOUNDCHANNEL"].m_Func();
 				command = nil;
 			end
 		end
 
 		if command ~= nil then
-			command["DELAY"].Func();
-			command["GODS"].Func();
-			command["SOUNDCHANNEL"].Func();
+			command["DELAY"].m_Func();
+			command["GODS"].m_Func();
+			command["SOUNDCHANNEL"].m_Func();
 		end
 
 		return;		-- To avoid "Unknown command"

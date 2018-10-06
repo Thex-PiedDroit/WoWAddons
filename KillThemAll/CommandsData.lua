@@ -8,7 +8,7 @@ local function GetGodsSeparatedStringList()
 		sGodsSeparatedStringList = "";
 
 		for i = 1, #g_allSoundLibraries, 1 do
-			sGodsSeparatedStringList = sGodsSeparatedStringList .. "[" .. g_allSoundLibraries[i].sDataName .. "]";
+			sGodsSeparatedStringList = sGodsSeparatedStringList .. "[" .. g_allSoundLibraries[i].m_sDataName .. "]";
 		end
 	end
 

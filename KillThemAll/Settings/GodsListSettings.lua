@@ -48,18 +48,18 @@ local iGodsCountInList = 0;
 		y = (iRowsCountMinusOne * (godsCheckButtonsMarginFromBorders * 0.5)) + (iRowsCountMinusOne * fCheckButtonsSize)
 	};
 
-	local godCheckButton = CreateCheckButton(god.sDataName .. "_CheckButton", g_godsListSettings, fCheckButtonsSize);
+	local godCheckButton = CreateCheckButton(god.m_sDataName .. "_CheckButton", g_godsListSettings, fCheckButtonsSize);
 	godCheckButton:SetPoint("TOPLEFT", godsCheckButtonsMarginFromBorders + offset.x, -godsCheckButtonsMarginFromBorders - offset.y);
 	godCheckButton:SetChecked(TableContainsUniqueItem(g_currentGods, god));
 
-	local godNameLabel = CreateLabel(g_godsListSettings, god.sDisplayName);
+	local godNameLabel = CreateLabel(g_godsListSettings, god.m_sDisplayName);
 	godNameLabel:SetPoint("LEFT", godCheckButton, "RIGHT", fMarginBetweenButtonsAndLabels, 1);
 
 	godCheckButton:SetScript("OnClick", function()
 		if TableContainsUniqueItem(g_currentGods, god, true) then
-			RemoveGods({ god.sDataName }, true);
+			RemoveGods({ god.m_sDataName }, true);
 		else
-			AddGods({ god.sDataName }, true);
+			AddGods({ god.m_sDataName }, true);
 		end
 	end);
 

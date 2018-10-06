@@ -1,8 +1,8 @@
 
 Cerberus_HookThisFile();
 
-g_ilGynoth = g_soundLibrary:Inherit({ sDisplayName = "Il'Gynoth", sDataName = "IlGynoth" });
-g_ilGynoth.generalSoundFilesList =
+g_ilGynoth = g_soundLibrary:Inherit({ m_sDisplayName = "Il'Gynoth", m_sDataName = "IlGynoth" });
+g_ilGynoth.m_generalSoundFilesList =
 {
 	"sound/Creature/Ilgynoth/VO_701_Ilgynoth_06.ogg",	-- "Oblivion offers solace. Take the gift! Take it!"
 	"sound/Creature/Ilgynoth/VO_701_Ilgynoth_10.ogg",	-- "Release your grip on hope"
@@ -18,7 +18,7 @@ g_ilGynoth.generalSoundFilesList =
 	"sound/Creature/Ilgynoth/VO_701_Ilgynoth_25.ogg",	-- "Flesh is his gift. He is your true creator"
 	"sound/Creature/Ilgynoth/VO_701_Ilgynoth_26.ogg",	-- "The lord of ravens will turn the key"
 };
-g_ilGynoth.deathSoundFilesList =
+g_ilGynoth.m_deathSoundFilesList =
 {
 	"sound/Creature/Ilgynoth/VO_701_Ilgynoth_07.ogg",	-- "You have failed those who needed you"
 	"sound/Creature/Ilgynoth/VO_701_Ilgynoth_08.ogg",	-- "Your light sputters out"

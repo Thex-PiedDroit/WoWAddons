@@ -1,8 +1,8 @@
 
 Cerberus_HookThisFile();
 
-g_xalAtath = g_soundLibrary:Inherit({ sDisplayName = "Xal'Atath", sDataName = "XalAtath" });
-g_xalAtath.generalSoundFilesList =
+g_xalAtath = g_soundLibrary:Inherit({ m_sDisplayName = "Xal'Atath", m_sDataName = "XalAtath" });
+g_xalAtath.m_generalSoundFilesList =
 {
 	"Sound/creature/xalatath_blade_of_the_black_empire/vo_703_xalatath_blade_of_the_black_empire_13.ogg",	-- So much fury in this soul! It will be a good harvest!
 	"Sound/creature/xalatath_blade_of_the_black_empire/vo_703_xalatath_blade_of_the_black_empire_26.ogg",	-- I long for the day our masters can truly pass into this realm. (...)
@@ -17,7 +17,7 @@ g_xalAtath.generalSoundFilesList =
 	"Sound/creature/xalatath_blade_of_the_black_empire/vo_72_xalatath_blade_of_the_black_empire_24_f.ogg",	-- Your allies consider me a bad influence; yet all i've ever done is speed you along the path you chose.
 	"Sound/creature/xalatath_blade_of_the_black_empire/vo_72_xalatath_blade_of_the_black_empire_25_f.ogg",	-- I can feel the pulse of your world quickening. Soon, all will be drenched in its life blood.
 };
-g_xalAtath.deathSoundFilesList =
+g_xalAtath.m_deathSoundFilesList =
 {
 	"Sound/creature/xalatath_blade_of_the_black_empire/vo_703_xalatath_blade_of_the_black_empire_32.ogg",	-- Delicious
 	"Sound/creature/xalatath_blade_of_the_black_empire/vo_703_xalatath_blade_of_the_black_empire_33.ogg",	-- Every little death helps

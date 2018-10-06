@@ -1,8 +1,8 @@
 
 Cerberus_HookThisFile();
 
-g_yoggSaron = g_soundLibrary:Inherit({ sDisplayName = "Yogg-Saron", sDataName = "YoggSaron" });
-g_yoggSaron.generalSoundFilesList =
+g_yoggSaron = g_soundLibrary:Inherit({ m_sDisplayName = "Yogg-Saron", m_sDataName = "YoggSaron" });
+g_yoggSaron.m_generalSoundFilesList =
 {
 	"sound/Creature/YoggSaron/AK_YoggSaron_Whisper01.ogg",				-- "You will be alone in the end"
 	"sound/Creature/YoggSaron/AK_YoggSaron_Whisper02.ogg",				-- "Trust is your weakness"
@@ -17,7 +17,7 @@ g_yoggSaron.generalSoundFilesList =
 	"sound/Creature/YoggSaron/AK_YoggSaron_HowlingFjordWhisper07.ogg",	-- "You are a pawn of forces unseen"
 	"sound/Creature/YoggSaron/AK_YoggSaron_HowlingFjordWhisper08.ogg",	-- "It was your fault"
 };
-g_yoggSaron.deathSoundFilesList =
+g_yoggSaron.m_deathSoundFilesList =
 {
 	"sound/Creature/YoggSaron/UR_YoggSaron_Insanity01.ogg",				-- "Your will is no longer your own"
 };

@@ -1,8 +1,8 @@
 
 Cerberus_HookThisFile();
 
-g_lichking = g_soundLibrary:Inherit({ sDisplayName = "The Lich King", sDataName = "LichKing" });
-g_lichking.generalSoundFilesList =
+g_lichking = g_soundLibrary:Inherit({ m_sDisplayName = "The Lich King", m_sDataName = "LichKing" });
+g_lichking.m_generalSoundFilesList =
 {
 	"Sound/creature/LichKing/EH_LichKing_Chapter1Whisper01.ogg",	-- No mercy
 	"Sound/creature/LichKing/EH_LichKing_Chapter1Whisper02.ogg",	-- Kill them all
@@ -18,7 +18,7 @@ g_lichking.generalSoundFilesList =
 	"Sound/creature/LichKing/EH_LichKing_Greeting5.ogg",			-- Bow to your master
 	"Sound/creature/LichKing/HR_Lich King_Icewall01.ogg",			-- There is no escape
 };
-g_lichking.deathSoundFilesList =
+g_lichking.m_deathSoundFilesList =
 {
 	"Sound/creature/LichKing/EH_LichKing_Chapter1Whisper16.ogg",	-- Living or dead, you will serve me
 	"Sound/creature/LichKing/EH_LichKing_Chapter3Shout12.ogg",		-- The light has abandonned you

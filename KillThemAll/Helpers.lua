@@ -144,7 +144,7 @@ function GodExists(sGodName)
 	sGodName = string.upper(sGodName);
 
 	for i = 1, #g_allSoundLibraries, 1 do
-		if string.upper(g_allSoundLibraries[i].sDataName) == sGodName then
+		if string.upper(g_allSoundLibraries[i].m_sDataName) == sGodName then
 			return true, i;
 		end
 	end
@@ -164,7 +164,7 @@ function GetAvailableSoundChannels()
 	return soundChannels;
 end
 
-function TrySetSoundChannel(sSoundChannel, sDefaultChannel)
+function TryParseSoundChannel(sSoundChannel, sDefaultChannel)
 
 	local sOutSoundChannel = sDefaultChannel;
 
@@ -176,7 +176,7 @@ function TrySetSoundChannel(sSoundChannel, sDefaultChannel)
 	sSoundChannel = string.upper(sSoundChannel);
 
 	if soundChannel == "DEFAULT" and soundChannels["DEFAULT"] == nil then
-		soundChannels["DEFAULT"] = g_ktaOptions.default.sSoundChannel;
+		soundChannels["DEFAULT"] = g_ktaCurrentSettings.m_default.m_sSoundChannel;
 	end
 
 	sOutSoundChannel = soundChannels[sSoundChannel];
@@ -201,4 +201,23 @@ function table.Clone(T)
 		copy[sKey] = value;
 	end
 	return copy;
+end
+
+function table.Len(T)
+
+	local iCount = 0;
+	for _, value in pairs(T) do
+
+		if type(value) == "table" then
+			iCount = iCount + table.Len(value);
+		else
+			iCount = iCount + 1;
+		end
+	end
+	return iCount;
+end
+
+string.StartsWith = function(self, sStart)
+
+	return self:find("^" .. sStart) ~= nil;
 end

@@ -3,18 +3,18 @@ Cerberus_HookThisFile();
 
 g_soundLibrary =
 {
-	generalSoundFilesList = {},
-	deathSoundFilesList = {},
+	m_generalSoundFilesList = {},
+	m_deathSoundFilesList = {},
 
 	PlayRandomSound = function(self, sSoundType, sChannel)
 
 		if sSoundType == "General" then
-			local iRand = math.random(1, #self.generalSoundFilesList);
-			PlaySoundFile(self.generalSoundFilesList[iRand], sChannel);
+			local iRand = math.random(1, #self.m_generalSoundFilesList);
+			PlaySoundFile(self.m_generalSoundFilesList[iRand], sChannel);
 
 		elseif sSoundType == "Death" then
-			local iRand = math.random(1, #self.deathSoundFilesList);
-			PlaySoundFile(self.deathSoundFilesList[iRand], sChannel);
+			local iRand = math.random(1, #self.m_deathSoundFilesList);
+			PlaySoundFile(self.m_deathSoundFilesList[iRand], sChannel);
 		end
 	end,
 };

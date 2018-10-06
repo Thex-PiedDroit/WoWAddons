@@ -7,7 +7,7 @@ g_interfaceEventsListener = {};
 
 local InitDelayEditBoxes = nil;
 local function SoundChannelDropDownListCheckButtonsVerifier(sValue)
-	return g_ktaOptions.sSoundChannel == sValue;
+	return g_ktaCurrentSettings.m_sSoundChannel == sValue;
 end
 
 
@@ -31,7 +31,7 @@ function InitSettingsFrames()
 	local deactivatedCheckButtonPos = { x = 60, y = -45 };
 	local deactivatedCheckButton = CreateCheckButton("DeactivateCheckButton", mainFrame, fCheckButtonsSize);
 	deactivatedCheckButton:SetPoint("TOPLEFT", deactivatedCheckButtonPos.x, deactivatedCheckButtonPos.y);
-	deactivatedCheckButton:SetChecked(g_ktaOptions.bDeactivated);
+	deactivatedCheckButton:SetChecked(g_ktaCurrentSettings.m_bDeactivated);
 
 	local deactivatedLabel = CreateLabel(deactivatedCheckButton, "Deactivated");
 	deactivatedLabel:SetPoint("LEFT", deactivatedCheckButton, "RIGHT", fMarginBetweenButtonsAndLabels, 0);
@@ -41,33 +41,33 @@ function InitSettingsFrames()
 	end);
 
 	AddListenerEvent(g_interfaceEventsListener, "OnToggleDeactivated", function()
-		deactivatedCheckButton:SetChecked(g_ktaOptions.bDeactivated);
+		deactivatedCheckButton:SetChecked(g_ktaCurrentSettings.m_bDeactivated);
 	end);
 
 
 	-- MUTE DURING COMBAT
 	local muteDuringCombatCheckButton = CreateCheckButton("MuteInCombatCheckButton", mainFrame, fCheckButtonsSize);
 	muteDuringCombatCheckButton:SetPoint("TOP", deactivatedCheckButton, "BOTTOM", 0, 0);
-	muteDuringCombatCheckButton:SetChecked(g_ktaOptions.bMuteDuringCombat);
+	muteDuringCombatCheckButton:SetChecked(g_ktaCurrentSettings.m_bMuteDuringCombat);
 
 	local muteDuringCombatLabel = CreateLabel(muteDuringCombatCheckButton, "Mute during Combat");
 	muteDuringCombatLabel:SetPoint("LEFT", muteDuringCombatCheckButton, "RIGHT", fMarginBetweenButtonsAndLabels, 0.5);
 
 	muteDuringCombatCheckButton:SetScript("OnClick", function()
-		g_ktaOptions.bMuteDuringCombat = not g_ktaOptions.bMuteDuringCombat;
+		SetOverrideValue("m_bMuteDuringCombat", not g_ktaCurrentSettings.m_bMuteDuringCombat);
 	end);
 
 
 	-- HIDE MINIMAP BUTTON
 	local hideMinimapCheckButton = CreateCheckButton("HideMinimapButtonCheckButton", mainFrame, fCheckButtonsSize);
 	hideMinimapCheckButton:SetPoint("TOP", muteDuringCombatCheckButton, "BOTTOM", 0, 0);
-	hideMinimapCheckButton:SetChecked(g_ktaOptions.minimapButton.hide);
+	hideMinimapCheckButton:SetChecked(g_ktaCurrentSettings.m_minimapButton.hide);
 
 	local hideMinimapLabel = CreateLabel(hideMinimapCheckButton, "Hide minimap button");
 	hideMinimapLabel:SetPoint("LEFT", hideMinimapCheckButton, "RIGHT", fMarginBetweenButtonsAndLabels, 0);
 
 	hideMinimapCheckButton:SetScript("OnClick", function()
-		SetMinimapButtonHidden(not g_ktaOptions.minimapButton.hide);
+		SetMinimapButtonHidden(not g_ktaCurrentSettings.m_minimapButton.hide);
 	end);
 
 
@@ -83,12 +83,12 @@ function InitSettingsFrames()
 	availableSoundChannels["DEFAULT"] = nil;
 	local optionsForList = {};
 	for sKey, sValue in pairs(availableSoundChannels) do
-		table.insert(optionsForList, { sText = sValue, value = sKey });
+		table.insert(optionsForList, { m_sText = sValue, m_value = sKey });
 	end
-	local soundChannelsDropdownList = CreateDropDownList("SoundChannelsList", mainFrame, 100, optionsForList, g_ktaOptions.sSoundChannel, SetSoundChannel, { true, true }, SoundChannelDropDownListCheckButtonsVerifier);
+	local soundChannelsDropdownList = CreateDropDownList("SoundChannelsList", mainFrame, 100.0, optionsForList, g_ktaCurrentSettings.m_sSoundChannel, SetSoundChannel, { true, true }, SoundChannelDropDownListCheckButtonsVerifier);
 	soundChannelsDropdownList:SetPoint("TOPLEFT", soundChannelLabel, "BOTTOMLEFT", -20, -5);
 	AddListenerEvent(g_interfaceEventsListener, "OnSoundChannelChanged", function()
-		UIDropDownMenu_SetText(soundChannelsDropdownList, g_ktaOptions.sSoundChannel);
+		UIDropDownMenu_SetText(soundChannelsDropdownList, g_ktaCurrentSettings.m_sSoundChannel);
 	end);
 
 
@@ -121,11 +121,11 @@ local SetDelayButtonCallback = nil;
 	minDelayEditBox:SetPoint("TOPLEFT", minDelayLabel, "BOTTOMLEFT", marginBetweenEditBoxesAndLabels.x, marginBetweenEditBoxesAndLabels.y);
 
 	minDelayEditBox:SetScript("OnSizeChanged", function()	-- OnShow is called before setting the size, so setting a text then is useless; OnSizeChanged guarentees that the box has been initialized
-		minDelayEditBox:SetText(g_ktaOptions.iMinDelay);
+		minDelayEditBox:SetText(g_ktaCurrentSettings.m_iMinDelay);
 	end);
 
 	minDelayEditBox:SetScript("OnShow", function()
-		minDelayEditBox:SetText(g_ktaOptions.iMinDelay);
+		minDelayEditBox:SetText(g_ktaCurrentSettings.m_iMinDelay);
 	end);
 
 
@@ -137,11 +137,11 @@ local SetDelayButtonCallback = nil;
 	maxDelayEditBox:SetPoint("TOPLEFT", maxDelayLabel, "BOTTOMLEFT", marginBetweenEditBoxesAndLabels.x, marginBetweenEditBoxesAndLabels.y);
 
 	maxDelayEditBox:SetScript("OnSizeChanged", function()	-- OnShow is called before setting the size, so setting a text then is useless; OnSizeChanged guarentees that the box has been initialized
-		maxDelayEditBox:SetText(g_ktaOptions.iMaxDelay);
+		maxDelayEditBox:SetText(g_ktaCurrentSettings.m_iMaxDelay);
 	end);
 
 		maxDelayEditBox:SetScript("OnShow", function()
-		maxDelayEditBox:SetText(g_ktaOptions.iMaxDelay);
+		maxDelayEditBox:SetText(g_ktaCurrentSettings.m_iMaxDelay);
 	end);
 
 
@@ -163,8 +163,8 @@ local SetDelayButtonCallback = nil;
 
 
 	AddListenerEvent(g_interfaceEventsListener, "OnDelayChanged", function()
-		minDelayEditBox:SetText(g_ktaOptions.iMinDelay);
-		maxDelayEditBox:SetText(g_ktaOptions.iMaxDelay);
+		minDelayEditBox:SetText(g_ktaCurrentSettings.m_iMinDelay);
+		maxDelayEditBox:SetText(g_ktaCurrentSettings.m_iMaxDelay);
 	end);
 
 
@@ -180,7 +180,7 @@ end
 	local iNewMin = minEditBox:GetNumber();
 	local iNewMax = maxEditBox:GetNumber();
 
-	if iNewMin == g_ktaOptions.iMinDelay and iNewMax == g_ktaOptions.iMaxDelay then
+	if iNewMin == g_ktaCurrentSettings.m_iMinDelay and iNewMax == g_ktaCurrentSettings.m_iMaxDelay then
 		return;
 	end
 
