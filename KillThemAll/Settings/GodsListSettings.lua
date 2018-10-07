@@ -3,9 +3,9 @@ Cerberus_HookThisFile();
 
 g_godsListSettings = {};
 
-AddGodToSettingsList = nil; --[[function(god)]]
+--[[global]] AddGodToSettingsList = nil; --[[function(god)]]	-- Global cause other modules might want to use it
 
-local panelSize =
+local l_panelSize =
 {
 	x = 500.0,
 	y = 40.0
@@ -18,7 +18,7 @@ function InitGodsListSettings(parent, listLabelAnchor, offset)
 	local godsLabel = CreateLabel(parent, "Gods");
 	godsLabel:SetPoint("TOPLEFT", listLabelAnchor, "BOTTOMLEFT", offset.x, offset.y);
 
-	local godsListFrame = CreateBackdroppedFrame("KTA_GodsListSettingsFrame", parent, panelSize);
+	local godsListFrame = CreateBackdroppedFrame("KTA_GodsListSettingsFrame", parent, l_panelSize);
 	godsListFrame:SetPoint("TOPLEFT", godsLabel, "BOTTOMLEFT", -4.0, -5.0);
 	godsListFrame.godsLabel = godsLabel;
 
@@ -37,33 +37,33 @@ function InitGodsListSettings(parent, listLabelAnchor, offset)
 end
 
 
-local godsLabelOrigin =
+local l_godsLabelOrigin =
 {
 	x = 35.0,
 	y = -13.0
 };
-local fGodsCheckButtonsMarginFromBorders = 10.0;
-local fMarginBetweenButtonsAndLabels = 5.0;
-local fCheckButtonsSize = 20.0;
-local iGodsCountPerRow = 3;
+local l_fGodsCheckButtonsMarginFromBorders = 10.0;
+local l_fMarginBetweenButtonsAndLabels = 5.0;
+local l_fCheckButtonsSize = 20.0;
+local l_iGodsCountPerRow = 3;
 
-local iGodsCountInList = 0;
+local l_iGodsCountInList = 0;
 
 --[[global]] AddGodToSettingsList = function(god)
 
-	local iRowsCountMinusOne = math.floor(iGodsCountInList / iGodsCountPerRow);
+	local iRowsCountMinusOne = math.floor(l_iGodsCountInList / l_iGodsCountPerRow);
 	local offset =
 	{
-		x = (panelSize.x / iGodsCountPerRow) * (iGodsCountInList % iGodsCountPerRow),
-		y = (iRowsCountMinusOne * (fGodsCheckButtonsMarginFromBorders * 0.5)) + (iRowsCountMinusOne * fCheckButtonsSize)
+		x = (l_panelSize.x / l_iGodsCountPerRow) * (l_iGodsCountInList % l_iGodsCountPerRow),
+		y = (iRowsCountMinusOne * (l_fGodsCheckButtonsMarginFromBorders * 0.5)) + (iRowsCountMinusOne * l_fCheckButtonsSize)
 	};
 
-	local godCheckButton = CreateCheckButton(god.m_sDataName .. "_CheckButton", g_godsListSettings, fCheckButtonsSize);
-	godCheckButton:SetPoint("TOPLEFT", fGodsCheckButtonsMarginFromBorders + offset.x, -fGodsCheckButtonsMarginFromBorders - offset.y);
+	local godCheckButton = CreateCheckButton(god.m_sDataName .. "_CheckButton", g_godsListSettings, l_fCheckButtonsSize);
+	godCheckButton:SetPoint("TOPLEFT", l_fGodsCheckButtonsMarginFromBorders + offset.x, -l_fGodsCheckButtonsMarginFromBorders - offset.y);
 	godCheckButton:SetChecked(TableContainsUniqueItem(g_currentGods, god));
 
 	local godNameLabel = CreateLabel(g_godsListSettings, god.m_sDisplayName);
-	godNameLabel:SetPoint("LEFT", godCheckButton, "RIGHT", fMarginBetweenButtonsAndLabels, 1);
+	godNameLabel:SetPoint("LEFT", godCheckButton, "RIGHT", l_fMarginBetweenButtonsAndLabels, 1);
 	HookTooltipToElement(godCheckButton, GetGodsText, g_godsListSettings.hoverFrames[1]);
 	table.insert(g_godsListSettings.hoverFrames, godCheckButton);
 
@@ -75,7 +75,7 @@ local iGodsCountInList = 0;
 		end
 	end);
 
-	local iGodIndex = iGodsCountInList + 1;
+	local iGodIndex = l_iGodsCountInList + 1;
 	if g_godsListSettings.godsCheckButtonsList == nil then
 		g_godsListSettings.godsCheckButtonsList = {};
 	end
@@ -85,7 +85,7 @@ local iGodsCountInList = 0;
 	end);
 
 	g_godsListSettings.godsCheckButtonsList[iGodIndex] = godCheckButton;
-	g_godsListSettings:SetHeight((fGodsCheckButtonsMarginFromBorders * 2) + fCheckButtonsSize + offset.y);
+	g_godsListSettings:SetHeight((l_fGodsCheckButtonsMarginFromBorders * 2) + l_fCheckButtonsSize + offset.y);
 
-	iGodsCountInList = iGodsCountInList + 1;
+	l_iGodsCountInList = l_iGodsCountInList + 1;
 end

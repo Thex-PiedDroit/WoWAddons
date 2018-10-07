@@ -1,7 +1,7 @@
 
 Cerberus_HookThisFile();
 
-local minimapButton = LibStub("LibDBIcon-1.0", true);
+local l_minimapButton = LibStub("LibDBIcon-1.0", true);
 
 
 function SetMinimapButtonHidden(bHidden)
@@ -9,9 +9,9 @@ function SetMinimapButtonHidden(bHidden)
 	g_ktaCurrentSettings.m_minimapButton.hide = bHidden;
 
 	if bHidden then
-		minimapButton:Hide("KillThemAll");
+		l_minimapButton:Hide("KillThemAll");
 	else
-		minimapButton:Show("KillThemAll");
+		l_minimapButton:Show("KillThemAll");
 	end
 end
 
@@ -53,6 +53,6 @@ function InitMinimapButton(settingsPanel)
 		GameTooltip:Hide();
 	end
 
-	minimapButton:Register("KillThemAll", minimapLDB, g_ktaCurrentSettings.m_minimapButton);
+	l_minimapButton:Register("KillThemAll", minimapLDB, g_ktaCurrentSettings.m_minimapButton);
 	SetMinimapButtonHidden(g_ktaCurrentSettings.m_minimapButton.hide);
 end

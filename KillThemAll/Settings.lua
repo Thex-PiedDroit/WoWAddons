@@ -31,7 +31,7 @@ g_ktaCurrentSettings =
 }
 ]]
 
-local ktaDefaultSettings =
+local l_ktaDefaultSettings =
 {
 	m_default =
 	{
@@ -267,7 +267,7 @@ local RecoverFromEarlierVersion = nil; --[[function()]]
 	S_sAddonVersion = sCurrentAddonVersion;
 
 	if sCurrentlySavedAddonVersion == nil or sCurrentlySavedAddonVersion == sCurrentAddonVersion then
-		S_ktaGlobalSettings = S_ktaGlobalSettings or table.Clone(ktaDefaultSettings);
+		S_ktaGlobalSettings = S_ktaGlobalSettings or table.Clone(l_ktaDefaultSettings);
 		return;
 	end
 
@@ -283,7 +283,7 @@ end
 
 --[[local]] RecoverFromVersion1_3 = function()
 
-	local settings = table.Clone(ktaDefaultSettings);
+	local settings = table.Clone(l_ktaDefaultSettings);
 
 	if S_ktaOptions ~= nil then
 
@@ -331,7 +331,7 @@ end
 
 --[[local]] RecoverFromEarlierVersion = function()
 
-	local settings = table.Clone(ktaDefaultSettings);
+	local settings = table.Clone(l_ktaDefaultSettings);
 
 	if S_ktaOptions ~= nil then
 

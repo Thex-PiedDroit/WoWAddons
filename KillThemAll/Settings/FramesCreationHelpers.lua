@@ -1,7 +1,7 @@
 
 Cerberus_HookThisFile();
 
-local sPrefix = "KillThemAll_";
+local l_sPrefix = "KillThemAll_";
 
 
 function GetFrameSizeAsTable(frame)
@@ -44,7 +44,7 @@ end
 
 function CreateBackdroppedFrame(sName, parent, size)
 
-	local newFrame = CreateFrame("Frame", sPrefix .. sName, parent);
+	local newFrame = CreateFrame("Frame", l_sPrefix .. sName, parent);
 	newFrame:SetSize(size.x, size.y);
 
 	CreateBackdrop(newFrame, 0.5);
@@ -54,7 +54,7 @@ end
 
 function CreateButton(sName, parent, size, sText, OnClickCallback, callbackArguments)
 
-	local button = CreateFrame("Button", sPrefix .. sName, parent, "UIPanelButtonTemplate");
+	local button = CreateFrame("Button", l_sPrefix .. sName, parent, "UIPanelButtonTemplate");
 	button:SetSize(size.x, size.y);
 	button:SetText(sText);
 
@@ -67,7 +67,7 @@ end
 
 function CreateCheckButton(sName, parent, fSize, OnCheckCallback, callbackArguments)
 
-	local checkButton = CreateFrame("CheckButton", sPrefix .. sName, parent, "OptionsCheckButtonTemplate");
+	local checkButton = CreateFrame("CheckButton", l_sPrefix .. sName, parent, "OptionsCheckButtonTemplate");
 	fSize = fSize or 20.0;
 	checkButton:SetSize(fSize, fSize);
 
@@ -80,7 +80,7 @@ end
 
 function CreateEditBox(sName, parent, size, bOnlyNumeric, OnEnterPressedCallback, callbackArguments, fFontSize)
 
-	local editBox = CreateFrame("EditBox", sPrefix .. sName, parent, "InputBoxTemplate");
+	local editBox = CreateFrame("EditBox", l_sPrefix .. sName, parent, "InputBoxTemplate");
 	editBox:SetSize(size.x, size.y);
 	editBox:SetAutoFocus(false);
 	editBox:SetNumeric(bOnlyNumeric);
@@ -110,7 +110,7 @@ end
 
 function CreateDropDownList(sName, parent, fWidth, options, sCurrentValue, OnButtonSelectedCallback, callbackArguments, IsCheckedVerifier)
 
-	local dropDownList = CreateFrame("Frame", sPrefix .. sName, parent, "UIDropDownMenuTemplate");
+	local dropDownList = CreateFrame("Frame", l_sPrefix .. sName, parent, "UIDropDownMenuTemplate");
 	UIDropDownMenu_SetWidth(dropDownList, fWidth);
 
 	local iSelectedItemIndex = 0;

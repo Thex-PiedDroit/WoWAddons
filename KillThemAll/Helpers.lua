@@ -152,7 +152,7 @@ function GodExists(sGodName)
 	return false;
 end
 
-local soundChannels =
+local l_soundChannels =
 {
 	["MASTER"] = "Master",
 	["SOUND"] = "Sound",
@@ -161,7 +161,7 @@ local soundChannels =
 	["DIALOG"] = "Dialog"
 };
 function GetAvailableSoundChannels()
-	return soundChannels;
+	return l_soundChannels;
 end
 
 function TryParseSoundChannel(sSoundChannel, sDefaultChannel, bSilent)
@@ -177,11 +177,11 @@ function TryParseSoundChannel(sSoundChannel, sDefaultChannel, bSilent)
 
 	sSoundChannel = string.upper(sSoundChannel);
 
-	if soundChannel == "DEFAULT" and soundChannels["DEFAULT"] == nil then
-		soundChannels["DEFAULT"] = g_ktaCurrentSettings.m_default.m_sSoundChannel;
+	if soundChannel == "DEFAULT" and l_soundChannels["DEFAULT"] == nil then
+		l_soundChannels["DEFAULT"] = g_ktaCurrentSettings.m_default.m_sSoundChannel;
 	end
 
-	sOutSoundChannel = soundChannels[sSoundChannel];
+	sOutSoundChannel = l_soundChannels[sSoundChannel];
 	if sOutSoundChannel == nil then
 		sOutSoundChannel = sDefaultChannel;
 		if not bSilent then

@@ -21,8 +21,8 @@ g_soundLibrary =
 
 g_allSoundLibraries = {};
 
-local mtSoundLibrary = {};
-mtSoundLibrary.__index =
+local l_mtSoundLibrary = {};
+l_mtSoundLibrary.__index =
 {
 	New = function(self, members)
 		return setmetatable(members or {}, { __index = self });
@@ -36,4 +36,4 @@ mtSoundLibrary.__index =
 	end,
 };
 
-setmetatable(g_soundLibrary, mtSoundLibrary);
+setmetatable(g_soundLibrary, l_mtSoundLibrary);

@@ -1,18 +1,18 @@
 
 Cerberus_HookThisFile();
 
-local sGodsSeparatedStringList = nil;
+local l_sGodsSeparatedStringList = nil;
 local function GetGodsSeparatedStringList()
 
-	if sGodsSeparatedStringList == nil then
-		sGodsSeparatedStringList = "";
+	if l_sGodsSeparatedStringList == nil then
+		l_sGodsSeparatedStringList = "";
 
 		for i = 1, #g_allSoundLibraries, 1 do
-			sGodsSeparatedStringList = sGodsSeparatedStringList .. "[" .. g_allSoundLibraries[i].m_sDataName .. "]";
+			l_sGodsSeparatedStringList = l_sGodsSeparatedStringList .. "[" .. g_allSoundLibraries[i].m_sDataName .. "]";
 		end
 	end
 
-	return sGodsSeparatedStringList;
+	return l_sGodsSeparatedStringList;
 end
 
 g_allCommands =
@@ -213,7 +213,7 @@ g_allCommands =
 	},
 };
 
-local aliases = setmetatable(
+local l_aliases = setmetatable(
 {
 	["ADDGOD"] = g_allCommands["ADDGODS"],
 	["ADD"] = g_allCommands["ADDGODS"],
@@ -229,7 +229,7 @@ local aliases = setmetatable(
 
 	["DBG"] = g_allCommands["DEBUG"],
 }, { __index = function() return nil end });
-setmetatable(g_allCommands, { __index = aliases });
+setmetatable(g_allCommands, { __index = l_aliases });
 
 local setDefaultAliases = setmetatable(
 {

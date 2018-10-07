@@ -10,10 +10,10 @@ end
 g_currentGods = {};
 g_sCharacterNameAndRealm = UnitName("player") .. "-" .. GetRealmName();
 
-local fTimeSinceLastSound = 0.0;
-local fRandomTimeToWait = 0.0;
-local bDead = UnitIsDeadOrGhost("Player");
-local bLoading = true;
+local l_fTimeSinceLastSound = 0.0;
+local l_fRandomTimeToWait = 0.0;
+local l_bDead = UnitIsDeadOrGhost("Player");
+local l_bLoading = true;
 g_bShouldVariablesBeSaved = true;
 
 function DisplayDelay()
@@ -359,22 +359,22 @@ function ResetValues()
 end
 
 
-local eventsListener = CreateFrame("Frame");
-local events = {};
+local l_eventsListener = CreateFrame("Frame");
+local l_events = {};
 
 function StartWaiting()
 
-	if bLoading then
+	if l_bLoading then
 		return;
 	end
 
-	fRandomTimeToWait = math.random(g_ktaCurrentSettings.m_iMinDelay, g_ktaCurrentSettings.m_iMaxDelay);
-	fTimeSinceLastSound = 0.0;
+	l_fRandomTimeToWait = math.random(g_ktaCurrentSettings.m_iMinDelay, g_ktaCurrentSettings.m_iMaxDelay);
+	l_fTimeSinceLastSound = 0.0;
 end
 
 function PlayRandomSound(sSoundType)
 
-	if bLoading or g_ktaCurrentSettings.m_bDeactivated then
+	if l_bLoading or g_ktaCurrentSettings.m_bDeactivated then
 		return;
 	end
 
@@ -385,35 +385,35 @@ end
 
 local function TryStartWaiting()
 
-	if not bDead and fRandomTimeToWait == 0.0 then
+	if not l_bDead and l_fRandomTimeToWait == 0.0 then
 		StartWaiting();
 	end
 end
 
-function events:PLAYER_ALIVE(...)
+function l_events:PLAYER_ALIVE(...)
 
-	bDead = UnitIsDeadOrGhost("Player");
+	l_bDead = UnitIsDeadOrGhost("Player");
 	TryStartWaiting();
 end
 
-function events:PLAYER_UNGHOST(...)
+function l_events:PLAYER_UNGHOST(...)
 
-	bDead = false;
+	l_bDead = false;
 	TryStartWaiting();
 end
 
-function events:PLAYER_DEAD(...)
+function l_events:PLAYER_DEAD(...)
 
-	bDead = true;
+	l_bDead = true;
 
-	if bLoading or #g_currentGods == 0 then
+	if l_bLoading or #g_currentGods == 0 then
 		return;
 	end
 
 	PlayRandomSound("Death");
 end
 
-function events:ADDON_LOADED(sAddonName)
+function l_events:ADDON_LOADED(sAddonName)
 
 	if sAddonName ~= "KillThemAll" then
 		return;
@@ -423,10 +423,10 @@ function events:ADDON_LOADED(sAddonName)
 	LoadSettings();
 	InitSettingsFrames();
 
-	bLoading = false;
+	l_bLoading = false;
 end
 
-function events:PLAYER_LOGOUT()
+function l_events:PLAYER_LOGOUT()
 
 	if not g_bShouldVariablesBeSaved then
 		return;
@@ -435,12 +435,12 @@ function events:PLAYER_LOGOUT()
 	SaveSettings();
 end
 
-eventsListener:SetScript("OnEvent", function(self, sEvent, ...)
-	events[sEvent](self, ...);
+l_eventsListener:SetScript("OnEvent", function(self, sEvent, ...)
+	l_events[sEvent](self, ...);
 end);
 
-for sEvent, _ in pairs(events) do
-	eventsListener:RegisterEvent(sEvent);
+for sEvent, _ in pairs(l_events) do
+	l_eventsListener:RegisterEvent(sEvent);
 end
 
 
@@ -450,16 +450,16 @@ local function KTAUpdate(self, fElapsed)
 		return;
 	end
 
-	if bDead or #g_currentGods == 0 or g_ktaCurrentSettings.m_bDeactivated or (g_ktaCurrentSettings.m_bMuteDuringCombat and InCombatLockdown()) then
+	if l_bDead or #g_currentGods == 0 or g_ktaCurrentSettings.m_bDeactivated or (g_ktaCurrentSettings.m_bMuteDuringCombat and InCombatLockdown()) then
 		return;
 	end
 
-	fTimeSinceLastSound = fTimeSinceLastSound + fElapsed;
+	l_fTimeSinceLastSound = l_fTimeSinceLastSound + fElapsed;
 
-	if fTimeSinceLastSound >= fRandomTimeToWait then
+	if l_fTimeSinceLastSound >= l_fRandomTimeToWait then
 		PlayRandomSound("General");
 		StartWaiting();
 	end
 end
 
-eventsListener:SetScript("OnUpdate", KTAUpdate);
+l_eventsListener:SetScript("OnUpdate", KTAUpdate);
