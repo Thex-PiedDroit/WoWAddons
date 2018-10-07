@@ -11,6 +11,8 @@ local panelSize =
 	y = 40.0
 };
 
+local function GetGodsText() return "Global value: " .. tostring(S_ktaGlobalSettings.m_sGods); end
+
 function InitGodsListSettings(parent, listLabelAnchor, offset)
 
 	local godsLabel = CreateLabel(parent, "Gods");
@@ -20,11 +22,18 @@ function InitGodsListSettings(parent, listLabelAnchor, offset)
 	godsListFrame:SetPoint("TOPLEFT", godsLabel, "BOTTOMLEFT", -4.0, -5.0);
 	godsListFrame.godsLabel = godsLabel;
 
+	local godsHoverFrame = CreateFrame("Frame", "KTA_GodsHoverFrame", parent);
+	godsListFrame.hoverFrames = { godsHoverFrame };
+	HookTooltipToElement(godsHoverFrame, GetGodsText);
+
 	g_godsListSettings = godsListFrame;
 
 	for i = 1, #g_allSoundLibraries, 1 do
 		AddGodToSettingsList(g_allSoundLibraries[i]);
 	end
+
+	godsHoverFrame:SetPoint("TOPLEFT", godsLabel, "TOPLEFT");
+	godsHoverFrame:SetPoint("BOTTOMRIGHT", godsListFrame, "BOTTOMRIGHT");
 end
 
 
@@ -55,6 +64,8 @@ local iGodsCountInList = 0;
 
 	local godNameLabel = CreateLabel(g_godsListSettings, god.m_sDisplayName);
 	godNameLabel:SetPoint("LEFT", godCheckButton, "RIGHT", fMarginBetweenButtonsAndLabels, 1);
+	HookTooltipToElement(godCheckButton, GetGodsText, g_godsListSettings.hoverFrames[1]);
+	table.insert(g_godsListSettings.hoverFrames, godCheckButton);
 
 	godCheckButton:SetScript("OnClick", function()
 		if TableContainsUniqueItem(g_currentGods, god, true) then

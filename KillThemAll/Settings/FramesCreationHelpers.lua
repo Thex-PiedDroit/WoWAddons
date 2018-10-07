@@ -26,6 +26,7 @@ end
 
 
 function CreateLabel(parent, sText, fFontSize, sAlignment)
+
 	local label = parent:CreateFontString(nil, "ARTWORK", "GameFontHighlight");
 	label:SetText(sText);
 
@@ -65,6 +66,7 @@ function CreateButton(sName, parent, size, sText, OnClickCallback, callbackArgum
 end
 
 function CreateCheckButton(sName, parent, fSize, OnCheckCallback, callbackArguments)
+
 	local checkButton = CreateFrame("CheckButton", sPrefix .. sName, parent, "OptionsCheckButtonTemplate");
 	fSize = fSize or 20.0;
 	checkButton:SetSize(fSize, fSize);
@@ -77,6 +79,7 @@ function CreateCheckButton(sName, parent, fSize, OnCheckCallback, callbackArgume
 end
 
 function CreateEditBox(sName, parent, size, bOnlyNumeric, OnEnterPressedCallback, callbackArguments, fFontSize)
+
 	local editBox = CreateFrame("EditBox", sPrefix .. sName, parent, "InputBoxTemplate");
 	editBox:SetSize(size.x, size.y);
 	editBox:SetAutoFocus(false);
@@ -106,6 +109,7 @@ function CreateEditBox(sName, parent, size, bOnlyNumeric, OnEnterPressedCallback
 end
 
 function CreateDropDownList(sName, parent, fWidth, options, sCurrentValue, OnButtonSelectedCallback, callbackArguments, IsCheckedVerifier)
+
 	local dropDownList = CreateFrame("Frame", sPrefix .. sName, parent, "UIDropDownMenuTemplate");
 	UIDropDownMenu_SetWidth(dropDownList, fWidth);
 
@@ -139,11 +143,16 @@ function CreateDropDownList(sName, parent, fWidth, options, sCurrentValue, OnBut
 	return dropDownList;
 end
 
-function HookTooltipToElement(element)
+function HookTooltipToElement(element, TextInitializationCallback, anchor)
 
 	element:SetScript("OnEnter", function(self)
-		GameTooltip:SetOwner (self, "ANCHOR_RIGHT");
-		GameTooltip:SetText (self.m_sTooltipText, nil, nil, nil, nil, true);
+
+		if self.m_bShouldNotShowTooltip then
+			return;
+		end
+
+		GameTooltip:SetOwner (anchor or self, "ANCHOR_RIGHT");
+		GameTooltip:SetText(TextInitializationCallback(), nil, nil, nil, nil, true);
 		GameTooltip:Show();
 	end);
 

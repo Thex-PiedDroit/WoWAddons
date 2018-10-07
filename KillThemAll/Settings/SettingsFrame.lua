@@ -38,12 +38,12 @@ function InitSettingsFrames()
 
 	settingsOverrideStuff =
 	{
-		["m_bDeactivated"] = { textLabel = nil, buttonsFrame = nil, },
-		["m_bMuteDuringCombat"] = { textLabel = nil, buttonsFrame = nil, },
-		["m_iMinDelay"] = { textLabel = nil, buttonsFrame = nil, },
-		["m_iMaxDelay"] = { textLabel = nil, buttonsFrame = nil, },
-		["m_sSoundChannel"] = { textLabel = nil, buttonsFrame = nil, },
-		["m_sGods"] = { textLabel = nil, buttonsFrame = nil, },
+		["m_bDeactivated"] = { m_textLabel = nil, m_buttonsFrame = nil, m_hoverFrames = nil, },
+		["m_bMuteDuringCombat"] = { m_textLabel = nil, m_buttonsFrame = nil, m_hoverFrames = nil, },
+		["m_iMinDelay"] = { m_textLabel = nil, m_buttonsFrame = nil, m_hoverFrames = nil, },
+		["m_iMaxDelay"] = { m_textLabel = nil, m_buttonsFrame = nil, m_hoverFrames = nil, },
+		["m_sSoundChannel"] = { m_textLabel = nil, m_buttonsFrame = nil, m_hoverFrames = nil, },
+		["m_sGods"] = { m_textLabel = nil, m_buttonsFrame = nil, m_hoverFrames = nil, },
 	};
 
 
@@ -55,6 +55,8 @@ function InitSettingsFrames()
 
 	local deactivatedLabel = CreateLabel(deactivatedCheckButton, "Deactivated");
 	deactivatedLabel:SetPoint("LEFT", deactivatedCheckButton, "RIGHT", fMarginBetweenButtonsAndLabels, 0.0);
+	HookTooltipToElement(deactivatedCheckButton, function() return "Global value: " .. tostring(S_ktaGlobalSettings.m_bDeactivated); end);
+
 
 	deactivatedCheckButton:SetScript("OnClick", function()
 		ToggleDeactivated();
@@ -65,8 +67,9 @@ function InitSettingsFrames()
 	end);
 
 	local deactivateOverrideFrame = CreateOverrideButtons("DeactivateKTA", mainFrame, "LEFT", deactivatedCheckButton, "RIGHT", 180.0, 0.0);
-	settingsOverrideStuff["m_bDeactivated"].textLabel = deactivatedLabel;
-	settingsOverrideStuff["m_bDeactivated"].buttonsFrame = deactivateOverrideFrame;
+	settingsOverrideStuff["m_bDeactivated"].m_textLabel = deactivatedLabel;
+	settingsOverrideStuff["m_bDeactivated"].m_buttonsFrame = deactivateOverrideFrame;
+	settingsOverrideStuff["m_bDeactivated"].m_hoverFrames = { deactivatedCheckButton };
 	UpdateLabelColorAndButtonsVisibilityIfOverridden("m_bDeactivated");
 
 
@@ -77,14 +80,16 @@ function InitSettingsFrames()
 
 	local muteDuringCombatLabel = CreateLabel(muteDuringCombatCheckButton, "Mute during Combat");
 	muteDuringCombatLabel:SetPoint("LEFT", muteDuringCombatCheckButton, "RIGHT", fMarginBetweenButtonsAndLabels, 0.5);
+	HookTooltipToElement(muteDuringCombatCheckButton, function() return "Global value: " .. tostring(S_ktaGlobalSettings.m_bMuteDuringCombat); end);
 
 	muteDuringCombatCheckButton:SetScript("OnClick", function()
 		SetOverrideValue("m_bMuteDuringCombat", not g_ktaCurrentSettings.m_bMuteDuringCombat);
 	end);
 
 	local muteInCombatOverrideFrame = CreateOverrideButtons("MuteDuringCombat", mainFrame, "LEFT", muteDuringCombatCheckButton, "RIGHT", 180.0, 0.0);
-	settingsOverrideStuff["m_bMuteDuringCombat"].textLabel = muteDuringCombatLabel;
-	settingsOverrideStuff["m_bMuteDuringCombat"].buttonsFrame = muteInCombatOverrideFrame;
+	settingsOverrideStuff["m_bMuteDuringCombat"].m_textLabel = muteDuringCombatLabel;
+	settingsOverrideStuff["m_bMuteDuringCombat"].m_buttonsFrame = muteInCombatOverrideFrame;
+	settingsOverrideStuff["m_bMuteDuringCombat"].m_hoverFrames = { muteDuringCombatCheckButton };
 	UpdateLabelColorAndButtonsVisibilityIfOverridden("m_bMuteDuringCombat");
 
 
@@ -121,9 +126,15 @@ function InitSettingsFrames()
 		UIDropDownMenu_SetText(soundChannelsDropdownList, g_ktaCurrentSettings.m_sSoundChannel);
 	end);
 
+	local soundChannelHoverFrame = CreateFrame("Frame", "KTA_SoundChannelHoverFrame", mainFrame);
+	soundChannelHoverFrame:SetPoint("TOPLEFT", soundChannelLabel, "TOPLEFT");
+	soundChannelHoverFrame:SetPoint("BOTTOMRIGHT", soundChannelsDropdownList, "BOTTOMRIGHT");
+	HookTooltipToElement(soundChannelHoverFrame, function() return "Global value: " .. tostring(S_ktaGlobalSettings.m_sSoundChannel); end);
+
 	local soundChannelOverrideFrame = CreateOverrideButtons("SoundChannel", mainFrame, "LEFT", soundChannelsDropdownList, "RIGHT", 70.0, 2.5);
-	settingsOverrideStuff["m_sSoundChannel"].textLabel = soundChannelLabel;
-	settingsOverrideStuff["m_sSoundChannel"].buttonsFrame = soundChannelOverrideFrame;
+	settingsOverrideStuff["m_sSoundChannel"].m_textLabel = soundChannelLabel;
+	settingsOverrideStuff["m_sSoundChannel"].m_buttonsFrame = soundChannelOverrideFrame;
+	settingsOverrideStuff["m_sSoundChannel"].m_hoverFrames = { soundChannelHoverFrame };
 	UpdateLabelColorAndButtonsVisibilityIfOverridden("m_sSoundChannel");
 
 
@@ -131,8 +142,9 @@ function InitSettingsFrames()
 	InitGodsListSettings(mainFrame, soundChannelsDropdownList, { x = 20.0, y = -8.0 - fMarginYBetweenElements });
 
 	local godsOverrideFrame = CreateOverrideButtons("Gods", mainFrame, "TOP", g_godsListSettings, "BOTTOM", 0.0, 0.0);
-	settingsOverrideStuff["m_sGods"].textLabel = g_godsListSettings.godsLabel;
-	settingsOverrideStuff["m_sGods"].buttonsFrame = godsOverrideFrame;
+	settingsOverrideStuff["m_sGods"].m_textLabel = g_godsListSettings.godsLabel;
+	settingsOverrideStuff["m_sGods"].m_buttonsFrame = godsOverrideFrame;
+	settingsOverrideStuff["m_sGods"].m_hoverFrames = g_godsListSettings.hoverFrames;
 	UpdateLabelColorAndButtonsVisibilityIfOverridden("m_sGods");
 
 
@@ -177,6 +189,14 @@ local SetDelayButtonCallback = nil; --[[function(self, minEditBox, maxEditBox)]]
 		minDelayEditBox:SetText(g_ktaCurrentSettings.m_iMinDelay);
 	end);
 
+	local minDelayHoverFrame = CreateFrame("Frame", "KTA_MinDelayHoverFrame", mainFrame);
+	minDelayHoverFrame:SetPoint("TOPLEFT", minDelayLabel, "TOPLEFT");
+	minDelayHoverFrame:SetPoint("BOTTOMRIGHT", minDelayEditBox, "BOTTOMRIGHT");
+
+	local function GetMinDelayText() return "Global value: " .. tostring(S_ktaGlobalSettings.m_iMinDelay); end;
+	HookTooltipToElement(minDelayHoverFrame, GetMinDelayText);
+	HookTooltipToElement(minDelayEditBox, GetMinDelayText, minDelayHoverFrame);
+
 
 	-- MAX DELAY
 	local maxDelayLabel = CreateLabel(mainFrame, "Max delay");
@@ -189,9 +209,17 @@ local SetDelayButtonCallback = nil; --[[function(self, minEditBox, maxEditBox)]]
 		maxDelayEditBox:SetText(g_ktaCurrentSettings.m_iMaxDelay);
 	end);
 
-		maxDelayEditBox:SetScript("OnShow", function()
+	maxDelayEditBox:SetScript("OnShow", function()
 		maxDelayEditBox:SetText(g_ktaCurrentSettings.m_iMaxDelay);
 	end);
+
+	local maxDelayHoverFrame = CreateFrame("Frame", "KTA_MinDelayHoverFrame", mainFrame);
+	maxDelayHoverFrame:SetPoint("TOPLEFT", maxDelayLabel, "TOPLEFT");
+	maxDelayHoverFrame:SetPoint("BOTTOMRIGHT", maxDelayEditBox, "BOTTOMRIGHT");
+
+	local function GetMaxDelayText() return "Global value: " .. tostring(S_ktaGlobalSettings.m_iMaxDelay); end;
+	HookTooltipToElement(maxDelayHoverFrame, GetMaxDelayText);
+	HookTooltipToElement(maxDelayEditBox, GetMaxDelayText, maxDelayHoverFrame);
 
 
 	-- TAB BEHAVIOUR
@@ -222,11 +250,13 @@ local SetDelayButtonCallback = nil; --[[function(self, minEditBox, maxEditBox)]]
 	setDelayButton:SetPoint("BOTTOMLEFT", maxDelayEditBox, "BOTTOMRIGHT", 15.0, 0.0);
 
 	local minMaxDelayOverrideFrame = CreateOverrideButtons("MinMaxDelay", mainFrame, "LEFT", setDelayButton, "RIGHT", 10.5, 0.0);
-	settingsOverrideStuff["m_iMinDelay"].textLabel = minDelayLabel;
-	settingsOverrideStuff["m_iMinDelay"].buttonsFrame = minMaxDelayOverrideFrame;
+	settingsOverrideStuff["m_iMinDelay"].m_textLabel = minDelayLabel;
+	settingsOverrideStuff["m_iMinDelay"].m_buttonsFrame = minMaxDelayOverrideFrame;
+	settingsOverrideStuff["m_iMinDelay"].m_hoverFrames = { minDelayHoverFrame, minDelayEditBox };
 	UpdateLabelColorAndButtonsVisibilityIfOverridden("m_iMinDelay");
-	settingsOverrideStuff["m_iMaxDelay"].textLabel = maxDelayLabel;
-	settingsOverrideStuff["m_iMaxDelay"].buttonsFrame = minMaxDelayOverrideFrame;
+	settingsOverrideStuff["m_iMaxDelay"].m_textLabel = maxDelayLabel;
+	settingsOverrideStuff["m_iMaxDelay"].m_buttonsFrame = minMaxDelayOverrideFrame;
+	settingsOverrideStuff["m_iMaxDelay"].m_hoverFrames = { maxDelayHoverFrame, maxDelayEditBox };
 	UpdateLabelColorAndButtonsVisibilityIfOverridden("m_iMaxDelay");
 
 	return minDelayEditBox;
@@ -262,30 +292,35 @@ end
 	end
 
 	local setGlobalButton = CreateButton(sButtonName .. "_SetValueGlobalButton", overrideFrame, overrideButtonsSize, sMakeGlobalText);
-	setGlobalButton.m_sTooltipText = sMakeGlobalTooltip;
-	HookTooltipToElement(setGlobalButton);
-
 	setGlobalButton:SetPoint(sMyAnchor, anchorElement, sParentAnchor, fOffsetX, fOffsetY);
+	HookTooltipToElement(setGlobalButton, function() return sMakeGlobalTooltip; end);
 
 	local revertButton = CreateButton(sButtonName .. "_RevertToGlobalButton", overrideFrame, overrideButtonsSize, sRevertText);
-	revertButton.m_sTooltipText = sRevertTooltip;
-	HookTooltipToElement(revertButton);
-
 	revertButton:SetPoint("LEFT", setGlobalButton, "RIGHT", -2.0, 0.0);
+	HookTooltipToElement(revertButton, function() return sRevertTooltip; end);
 
 	return overrideFrame;
 end
 
 --[[local]] UpdateLabelColorAndButtonsVisibilityIfOverridden = function(sAssociatedVariableName)
 
-	local textLabel = settingsOverrideStuff[sAssociatedVariableName].textLabel;
-	local buttonsFrame = settingsOverrideStuff[sAssociatedVariableName].buttonsFrame;
+	local textLabel = settingsOverrideStuff[sAssociatedVariableName].m_textLabel;
+	local buttonsFrame = settingsOverrideStuff[sAssociatedVariableName].m_buttonsFrame;
+	local hoverFrames = settingsOverrideStuff[sAssociatedVariableName].m_hoverFrames;
 
 	if g_ktaCurrentCharSettingsOverrides ~= nil and g_ktaCurrentCharSettingsOverrides[sAssociatedVariableName] ~= nil then
 		textLabel:SetTextColor(unpack(overriddenValueLabelColor));
 		buttonsFrame:Show();
+
+		for i = 1, #hoverFrames, 1 do
+			hoverFrames[i].m_bShouldNotShowTooltip = false;
+		end
 	else
 		textLabel:SetTextColor(1.0, 1.0, 1.0);
 		buttonsFrame:Hide();
+
+		for i = 1, #hoverFrames, 1 do
+			hoverFrames[i].m_bShouldNotShowTooltip = true;
+		end
 	end
 end
