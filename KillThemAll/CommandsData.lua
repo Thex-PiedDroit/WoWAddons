@@ -1,18 +1,18 @@
 
 Cerberus_HookThisFile();
 
-local sGodsSeparatedStringList = nil;
+local l_sGodsSeparatedStringList = nil;
 local function GetGodsSeparatedStringList()
 
-	if sGodsSeparatedStringList == nil then
-		sGodsSeparatedStringList = "";
+	if l_sGodsSeparatedStringList == nil then
+		l_sGodsSeparatedStringList = "";
 
 		for i = 1, #g_allSoundLibraries, 1 do
-			sGodsSeparatedStringList = sGodsSeparatedStringList .. "[" .. g_allSoundLibraries[i].sDataName .. "]";
+			l_sGodsSeparatedStringList = l_sGodsSeparatedStringList .. "[" .. g_allSoundLibraries[i].m_sDataName .. "]";
 		end
 	end
 
-	return sGodsSeparatedStringList;
+	return l_sGodsSeparatedStringList;
 end
 
 g_allCommands =
@@ -21,7 +21,7 @@ g_allCommands =
 	{
 		sTooltip = "Will change the timespan between two whispers. Giving \"default\" or 0 as only parameter will reset to default values.\nExample: \"/kta SetDelay 300 600\"",
 		sCommandSignature = "/kta SetDelay [<min:seconds> <max:seconds>] | [default|0]",
-		Func = function(delayMinMax)
+		m_Func = function(delayMinMax)
 			SetDelay(delayMinMax[1], delayMinMax[2]);
 		end,
 	},
@@ -30,7 +30,7 @@ g_allCommands =
 	{
 		sTooltip = "Will change the god(s) who whisper(s) to you. Multiple gods can be set at the same time by naming them one by one. Giving \"default\" will reset to default value. This won't affect whispers frequency.\nExample: \"/kta SetGods Cthun YoggSaron\"",
 		sCommandSignature = "/kta SetGods [<GodNames:" .. GetGodsSeparatedStringList() .. ">] | [All] | [None] | [Default]",
-		Func = function(godsToSet)
+		m_Func = function(godsToSet)
 			SetGods(godsToSet);
 		end,
 	},
@@ -39,7 +39,7 @@ g_allCommands =
 	{
 		sTooltip = "Will add god(s) to the currently whispering gods. This won't affect whispers frequency.\nExample: \"/kta AddGods Cthun YoggSaron\"",
 		sCommandSignature = "/kta AddGods [<GodName: " .. GetGodsSeparatedStringList() .. ">] | [All]",
-		Func = function(godsToAdd)
+		m_Func = function(godsToAdd)
 			AddGods(godsToAdd);
 		end,
 	},
@@ -48,7 +48,7 @@ g_allCommands =
 	{
 		sTooltip = "Will remove god(s) from the currently whispering gods. If all removed, no god will whisper until new ones are added. This won't affect whispers frequency.\nExample: \"/kta RemoveGods Cthun YoggSaron\"",
 		sCommandSignature = "/kta RemoveGods [<GodName:" .. GetGodsSeparatedStringList() .. ">] | [All]",
-		Func = function(godsToRemove)
+		m_Func = function(godsToRemove)
 			RemoveGods(godsToRemove);
 		end,
 	},
@@ -57,7 +57,7 @@ g_allCommands =
 	{
 		sTooltip = "Will change the sound channel the soundfiles will be played on.\nExample: \"/kta SetSoundChannel Dialog\"",
 		sCommandSignature = "/kta SetSoundChannel <SoundChannel: [Master]|[Sound]|[Music]|[Ambience]|[Dialog]|[Default]>",
-		Func = function(sSoundChannel)
+		m_Func = function(sSoundChannel)
 			SetSoundChannel(sSoundChannel);
 		end,
 	},
@@ -66,7 +66,7 @@ g_allCommands =
 	{
 		sTooltip = "Will change the default values to set when using the \"/kta reset\" or \"/kta [setGods]|[setDelay]|[setSoundChannel] default\" commands. Using \"/kta debug clearMemory\" will revert to initial values as on clear addon install.",
 		sCommandSignature = "/kta SetDefault [Delay] | [Gods] | [SoundChannel]",
-		Func = function()
+		m_Func = function()
 			KTA_Print("Invalid use of SetDefault command:");
 			PrintCommandTooltip(g_allCommands["SETDEFAULT"], true);
 		end,
@@ -75,7 +75,7 @@ g_allCommands =
 		{
 			sTooltip = "Will change the default gods to set when using the \"/kta reset\" or \"/kta setGods default\" commands. Using \"/kta debug clearMemory\" will revert to initial values as on clear addon install.\nExample: \"/kta SetDefault Gods Cthun YoggSaron\"",
 			sCommandSignature = "/kta SetDefault Gods [<GodName: " .. GetGodsSeparatedStringList() .. ">] | [All] | [None]",
-			Func = function(godsToSetAsDefault)
+			m_Func = function(godsToSetAsDefault)
 				SetDefaultGods(godsToSetAsDefault);
 			end,
 		},
@@ -83,7 +83,7 @@ g_allCommands =
 		{
 			sTooltip = "Will change the default delay to set when using the \"/kta reset\" or \"/kta setDelay default\" commands. Using \"/kta debug clearMemory\" will revert to initial values as on clear addon install.\nExample: \"/kta SetDefault Delay 300 600\"",
 			sCommandSignature = "/kta SetDefault Delay [<min:seconds> <max:seconds>]",
-			Func = function(delayMinMaxToSetAsDefault)
+			m_Func = function(delayMinMaxToSetAsDefault)
 				SetDefaultDelay(delayMinMaxToSetAsDefault[1], delayMinMaxToSetAsDefault[2]);
 			end,
 		},
@@ -91,7 +91,7 @@ g_allCommands =
 		{
 			sTooltip = "Will change the default sound channel to set when using the \"/kta reset\" or \"/kta SetSoundChannel default\" commands. Using \"/kta debug clearMemory\" will revert to initial values as on clear addon install.\nExample: \"/kta SetDefault SoundChannel Dialog\"",
 			sCommandSignature = "/kta SetDefault SoundChannel <SoundChannel: [Master]|[Sound]|[Music]|[Ambience]|[Dialog]|[Default]>",
-			Func = function(sSoundChannelToSetAsDefault)
+			m_Func = function(sSoundChannelToSetAsDefault)
 				SetDefaultSoundChannel(sSoundChannelToSetAsDefault);
 			end,
 		},
@@ -101,7 +101,7 @@ g_allCommands =
 	{
 		sTooltip = "Will reset all gods and values to default ones. You can change the default values and gods by using the \"/kta SetDefault\" command.",
 		sCommandSignature = "/kta Reset",
-		Func = function()
+		m_Func = function()
 			ResetValues();
 		end,
 	},
@@ -110,7 +110,7 @@ g_allCommands =
 	{
 		sTooltip = "Will display current parameters. If no parameter name is provided, all parameters will be listed. Example: \"/kta display default Gods Delay\"",
 		sCommandSignature = "/kta Display (default) [Delay] | [Gods] | [SoundChannel]",
-		Func = function()
+		m_Func = function()
 			DisplayDelay();
 			DisplayCurrentGods();
 			DisplaySoundChannel();
@@ -120,7 +120,7 @@ g_allCommands =
 		{
 			sTooltip = "Will display the current default values to set when using the \"/kta reset\" or \"/kta [setGods]|[setDelay]|[setSoundChannel] default\" commands.",
 			sCommandSignature = "/kta Display default [Delay] | [Gods] | [SoundChannel]",
-			Func = function(valuesToDisplay)
+			m_Func = function(valuesToDisplay)
 				DisplayDefaultValues(valuesToDisplay);
 			end,
 
@@ -144,7 +144,7 @@ g_allCommands =
 		{
 			sTooltip = "Will display which gods are currently able to whisper to you.",
 			sCommandSignature = "/kta Display gods",
-			Func = function()
+			m_Func = function()
 				DisplayCurrentGods();
 			end,
 		},
@@ -152,7 +152,7 @@ g_allCommands =
 		{
 			sTooltip = "Will display the timespan between which whispers might happen.",
 			sCommandSignature = "/kta Display delay",
-			Func = function()
+			m_Func = function()
 				DisplayDelay();
 			end,
 		},
@@ -160,7 +160,7 @@ g_allCommands =
 		{
 			sTooltip = "Will display the current sound channel the soundfiles will be played on.",
 			sCommandSignature = "/kta Display soundChannel",
-			Func = function()
+			m_Func = function()
 				DisplaySoundChannel();
 			end,
 		},
@@ -170,7 +170,7 @@ g_allCommands =
 	{
 		sTooltip = "Opens up the settings panel.",
 		sCommandSignature = "/kta Settings",
-		Func = function()
+		m_Func = function()
 			OpenSettingsPanel();
 		end,
 	},
@@ -179,7 +179,7 @@ g_allCommands =
 	{
 		sTooltip = "Several functions used for debugging purpose. In theory, you shouldn't need them.",
 		sCommandSignature = "/kta Debug [ClearMemory] | [NoSave] | [Save]",
-		Func = function()
+		m_Func = function()
 			KTA_Print("Invalid use of Debug command:");
 			PrintCommandTooltip(g_allCommands["DEBUG"], true);
 		end,
@@ -188,7 +188,7 @@ g_allCommands =
 		{
 			sTooltip = "Will erase all saved variables. This includes default variables values. They will be saved again when you log out. If you wish to clean your data as on fresh install, use the \"/kta Debug noSave\" command as well.",
 			sCommandSignature = "/kta Debug ClearMemory",
-			Func = function()
+			m_Func = function()
 				ClearMemory();
 			end,
 		},
@@ -196,7 +196,7 @@ g_allCommands =
 		{
 			sTooltip = "Will prevent the addon from saving variables at the end of this session (default values are not affected).",
 			sCommandSignature = "/kta Debug NoSave",
-			Func = function()
+			m_Func = function()
 				g_bShouldVariablesBeSaved = false;
 				KTA_Print("Variables will not be saved on logout (once). This can be reverted with the \"/kta debug save\" command");
 			end,
@@ -205,7 +205,7 @@ g_allCommands =
 		{
 			sTooltip = "Will make the game save variables at the end of this session. This is only useful if you used the \"/kta Debug noSave\" command this session.",
 			sCommandSignature = "/kta Debug Save",
-			Func = function()
+			m_Func = function()
 				g_bShouldVariablesBeSaved = true;
 				KTA_Print("Variables will be saved on logout");
 			end,
@@ -213,7 +213,7 @@ g_allCommands =
 	},
 };
 
-local aliases = setmetatable(
+local l_aliases = setmetatable(
 {
 	["ADDGOD"] = g_allCommands["ADDGODS"],
 	["ADD"] = g_allCommands["ADDGODS"],
@@ -229,7 +229,7 @@ local aliases = setmetatable(
 
 	["DBG"] = g_allCommands["DEBUG"],
 }, { __index = function() return nil end });
-setmetatable(g_allCommands, { __index = aliases });
+setmetatable(g_allCommands, { __index = l_aliases });
 
 local setDefaultAliases = setmetatable(
 {

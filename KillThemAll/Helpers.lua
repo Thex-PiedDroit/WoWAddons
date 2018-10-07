@@ -131,11 +131,11 @@ function AddListenerEvent(eventListener, sEventType, Callback)
 	table.insert(eventListener[sEventType], Callback);
 end
 
-function CallEventListener(eventListener, sEventType)
+function CallEventListener(eventListener, sEventType, ...)
 
 	local listeners = eventListener[sEventType] or {};
 	for i = 1, #listeners, 1 do
-		listeners[i]();
+		listeners[i](...);
 	end
 end
 
@@ -144,7 +144,7 @@ function GodExists(sGodName)
 	sGodName = string.upper(sGodName);
 
 	for i = 1, #g_allSoundLibraries, 1 do
-		if string.upper(g_allSoundLibraries[i].sDataName) == sGodName then
+		if string.upper(g_allSoundLibraries[i].m_sDataName) == sGodName then
 			return true, i;
 		end
 	end
@@ -152,7 +152,7 @@ function GodExists(sGodName)
 	return false;
 end
 
-local soundChannels =
+local l_soundChannels =
 {
 	["MASTER"] = "Master",
 	["SOUND"] = "Sound",
@@ -161,28 +161,32 @@ local soundChannels =
 	["DIALOG"] = "Dialog"
 };
 function GetAvailableSoundChannels()
-	return soundChannels;
+	return l_soundChannels;
 end
 
-function TrySetSoundChannel(sSoundChannel, sDefaultChannel)
+function TryParseSoundChannel(sSoundChannel, sDefaultChannel, bSilent)
 
 	local sOutSoundChannel = sDefaultChannel;
 
 	if sSoundChannel == nil or sSoundChannel == "" then
-		PrintInvalidParameters("Please provide a channel name. Available sound channels are: Master, Sound, Music, Ambience, Dialog and Default.");
+		if not bSilent then
+			PrintInvalidParameters("Please provide a channel name. Available sound channels are: Master, Sound, Music, Ambience, Dialog and Default.");
+		end
 		return sDefaultChannel;
 	end
 
 	sSoundChannel = string.upper(sSoundChannel);
 
-	if soundChannel == "DEFAULT" and soundChannels["DEFAULT"] == nil then
-		soundChannels["DEFAULT"] = g_ktaOptions.default.sSoundChannel;
+	if soundChannel == "DEFAULT" and l_soundChannels["DEFAULT"] == nil then
+		l_soundChannels["DEFAULT"] = g_ktaCurrentSettings.m_default.m_sSoundChannel;
 	end
 
-	sOutSoundChannel = soundChannels[sSoundChannel];
+	sOutSoundChannel = l_soundChannels[sSoundChannel];
 	if sOutSoundChannel == nil then
 		sOutSoundChannel = sDefaultChannel;
-		PrintInvalidParameters("Sound channel not found. Available sound channels are: Master, Sound, Music, Ambience, Dialog and Default.");
+		if not bSilent then
+			PrintInvalidParameters("Sound channel not found. Available sound channels are: Master, Sound, Music, Ambience, Dialog and Default.");
+		end
 	end
 
 	return sOutSoundChannel;
@@ -198,7 +202,46 @@ function table.Clone(T)
 
 	local copy = {};
 	for sKey, value in pairs(T) do
+
+		if type(value) == "table" then
+			value = table.Clone(value);
+		end
+
 		copy[sKey] = value;
 	end
+
 	return copy;
+end
+
+function table.Len(T)
+
+	local iCount = 0;
+	for _, value in pairs(T) do
+
+		if type(value) == "table" then
+			iCount = iCount + table.Len(value);
+		else
+			iCount = iCount + 1;
+		end
+	end
+	return iCount;
+end
+
+function table.PrintMembers(T)
+
+	for sKey, value in pairs(T) do
+
+		if type(value) == "table" then
+			print(sKey .. " = {");
+			table.PrintMembers(value);
+			print("}");
+		else
+			print(tostring(sKey) .. " = " .. tostring(value));
+		end
+	end
+end
+
+string.StartsWith = function(self, sStart)
+
+	return self:find("^" .. sStart) ~= nil;
 end

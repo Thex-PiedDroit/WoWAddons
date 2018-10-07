@@ -1,17 +1,17 @@
 
 Cerberus_HookThisFile();
 
-local minimapButton = LibStub("LibDBIcon-1.0", true);
+local l_minimapButton = LibStub("LibDBIcon-1.0", true);
 
 
 function SetMinimapButtonHidden(bHidden)
 
-	g_ktaOptions.minimapButton.hide = bHidden;
+	g_ktaCurrentSettings.m_minimapButton.hide = bHidden;
 
 	if bHidden then
-		minimapButton:Hide("KillThemAll");
+		l_minimapButton:Hide("KillThemAll");
 	else
-		minimapButton:Show("KillThemAll");
+		l_minimapButton:Show("KillThemAll");
 	end
 end
 
@@ -23,13 +23,13 @@ function InitMinimapButton(settingsPanel)
 	{
 		type = "launcher",
 		icon = "Interface/Icons/Spell_shadow_auraofdarkness",
-		OnClick = function(clickedframe, button)
+		OnClick = function(clickedFrame, sButton)
 
-			if button == "LeftButton" then
+			if sButton == "LeftButton" then
 				ToggleDeactivated();
-				KTA_Print("KillThemAll is now " .. ((g_ktaOptions.bDeactivated and "deactivated") or "activated"));
+				KTA_Print("KillThemAll is now " .. ((g_ktaCurrentSettings.m_bDeactivated and "deactivated") or "activated"));
 
-			elseif button == "RightButton" then
+			elseif sButton == "RightButton" then
 				OpenSettingsPanel();
 			end
 		end,
@@ -53,6 +53,6 @@ function InitMinimapButton(settingsPanel)
 		GameTooltip:Hide();
 	end
 
-	minimapButton:Register("KillThemAll", minimapLDB, g_ktaOptions.minimapButton);
-	SetMinimapButtonHidden(g_ktaOptions.minimapButton.hide);
+	l_minimapButton:Register("KillThemAll", minimapLDB, g_ktaCurrentSettings.m_minimapButton);
+	SetMinimapButtonHidden(g_ktaCurrentSettings.m_minimapButton.hide);
 end

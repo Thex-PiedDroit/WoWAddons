@@ -1,8 +1,8 @@
 
 Cerberus_HookThisFile();
 
-g_ashBringer = g_soundLibrary:Inherit({ sDisplayName = "Corrupted Ashbringer", sDataName = "Ashbringer" });
-g_ashBringer.generalSoundFilesList =
+g_ashBringer = g_soundLibrary:Inherit({ m_sDisplayName = "Corrupted Ashbringer", m_sDataName = "Ashbringer" });
+g_ashBringer.m_generalSoundFilesList =
 {
 	"Sound/creature/ashbringer/ash_speak_01.ogg",	-- I was pure once
 	"Sound/creature/ashbringer/ash_speak_04.ogg",	-- Betrayed by my order

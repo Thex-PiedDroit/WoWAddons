@@ -3,26 +3,26 @@ Cerberus_HookThisFile();
 
 g_soundLibrary =
 {
-	generalSoundFilesList = {},
-	deathSoundFilesList = {},
+	m_generalSoundFilesList = {},
+	m_deathSoundFilesList = {},
 
 	PlayRandomSound = function(self, sSoundType, sChannel)
 
 		if sSoundType == "General" then
-			local iRand = math.random(1, #self.generalSoundFilesList);
-			PlaySoundFile(self.generalSoundFilesList[iRand], sChannel);
+			local iRand = math.random(1, #self.m_generalSoundFilesList);
+			PlaySoundFile(self.m_generalSoundFilesList[iRand], sChannel);
 
 		elseif sSoundType == "Death" then
-			local iRand = math.random(1, #self.deathSoundFilesList);
-			PlaySoundFile(self.deathSoundFilesList[iRand], sChannel);
+			local iRand = math.random(1, #self.m_deathSoundFilesList);
+			PlaySoundFile(self.m_deathSoundFilesList[iRand], sChannel);
 		end
 	end,
 };
 
 g_allSoundLibraries = {};
 
-local mtSoundLibrary = {};
-mtSoundLibrary.__index =
+local l_mtSoundLibrary = {};
+l_mtSoundLibrary.__index =
 {
 	New = function(self, members)
 		return setmetatable(members or {}, { __index = self });
@@ -36,4 +36,4 @@ mtSoundLibrary.__index =
 	end,
 };
 
-setmetatable(g_soundLibrary, mtSoundLibrary);
+setmetatable(g_soundLibrary, l_mtSoundLibrary);

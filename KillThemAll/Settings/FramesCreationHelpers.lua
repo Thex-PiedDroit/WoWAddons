@@ -1,7 +1,7 @@
 
 Cerberus_HookThisFile();
 
-local sPrefix = "KillThemAll_";
+local l_sPrefix = "KillThemAll_";
 
 
 function GetFrameSizeAsTable(frame)
@@ -17,15 +17,16 @@ local function CreateBackdrop(frame, fAlpha)
 		bgFile = "Interface/Tooltips/UI-Tooltip-Background",
 		edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
 		tile = true,
-		tileSize = 16,
-		edgeSize = 16,
-		insets = { left = 4, right = 4, top = 4, bottom = 4 },
+		tileSize = 16.0,
+		edgeSize = 16.0,
+		insets = { left = 4.0, right = 4.0, top = 4.0, bottom = 4.0 },
 	});
-	frame:SetBackdropColor(0, 0, 0, fAlpha);
+	frame:SetBackdropColor(0.0, 0.0, 0.0, fAlpha);
 end
 
 
 function CreateLabel(parent, sText, fFontSize, sAlignment)
+
 	local label = parent:CreateFontString(nil, "ARTWORK", "GameFontHighlight");
 	label:SetText(sText);
 
@@ -43,7 +44,7 @@ end
 
 function CreateBackdroppedFrame(sName, parent, size)
 
-	local newFrame = CreateFrame("Frame", sPrefix .. sName, parent);
+	local newFrame = CreateFrame("Frame", l_sPrefix .. sName, parent);
 	newFrame:SetSize(size.x, size.y);
 
 	CreateBackdrop(newFrame, 0.5);
@@ -53,7 +54,7 @@ end
 
 function CreateButton(sName, parent, size, sText, OnClickCallback, callbackArguments)
 
-	local button = CreateFrame("Button", sPrefix .. sName, parent, "UIPanelButtonTemplate");
+	local button = CreateFrame("Button", l_sPrefix .. sName, parent, "UIPanelButtonTemplate");
 	button:SetSize(size.x, size.y);
 	button:SetText(sText);
 
@@ -65,8 +66,9 @@ function CreateButton(sName, parent, size, sText, OnClickCallback, callbackArgum
 end
 
 function CreateCheckButton(sName, parent, fSize, OnCheckCallback, callbackArguments)
-	local checkButton = CreateFrame("CheckButton", sPrefix .. sName, parent, "OptionsCheckButtonTemplate");
-	fSize = fSize or 20;
+
+	local checkButton = CreateFrame("CheckButton", l_sPrefix .. sName, parent, "OptionsCheckButtonTemplate");
+	fSize = fSize or 20.0;
 	checkButton:SetSize(fSize, fSize);
 
 	if OnCheckCallback ~= nil then
@@ -77,7 +79,8 @@ function CreateCheckButton(sName, parent, fSize, OnCheckCallback, callbackArgume
 end
 
 function CreateEditBox(sName, parent, size, bOnlyNumeric, OnEnterPressedCallback, callbackArguments, fFontSize)
-	local editBox = CreateFrame("EditBox", sPrefix .. sName, parent, "InputBoxTemplate");
+
+	local editBox = CreateFrame("EditBox", l_sPrefix .. sName, parent, "InputBoxTemplate");
 	editBox:SetSize(size.x, size.y);
 	editBox:SetAutoFocus(false);
 	editBox:SetNumeric(bOnlyNumeric);
@@ -106,7 +109,8 @@ function CreateEditBox(sName, parent, size, bOnlyNumeric, OnEnterPressedCallback
 end
 
 function CreateDropDownList(sName, parent, fWidth, options, sCurrentValue, OnButtonSelectedCallback, callbackArguments, IsCheckedVerifier)
-	local dropDownList = CreateFrame("Frame", sPrefix .. sName, parent, "UIDropDownMenuTemplate");
+
+	local dropDownList = CreateFrame("Frame", l_sPrefix .. sName, parent, "UIDropDownMenuTemplate");
 	UIDropDownMenu_SetWidth(dropDownList, fWidth);
 
 	local iSelectedItemIndex = 0;
@@ -120,14 +124,15 @@ function CreateDropDownList(sName, parent, fWidth, options, sCurrentValue, OnBut
 				OnButtonSelectedCallback(self.value, unpack(callbackArguments));
 			end
 			CloseDropDownMenus();
-		end;
+		end
 
 		for i = 1, #options do
-			if options[i].sText == sCurrentValue then
+			if options[i].m_sText == sCurrentValue then
 				iSelectedItemIndex = i;
 			end
-			buttons.text = options[i].sText;
-			buttons.value = options[i].value;
+
+			buttons.text = options[i].m_sText;
+			buttons.value = options[i].m_value;
 			buttons.checked = IsCheckedVerifier(buttons.value);
 			UIDropDownMenu_AddButton(buttons);
 		end
@@ -136,4 +141,22 @@ function CreateDropDownList(sName, parent, fWidth, options, sCurrentValue, OnBut
 	UIDropDownMenu_SetSelectedID(dropDownList, iSelectedItemIndex, false);
 
 	return dropDownList;
+end
+
+function HookTooltipToElement(element, TextInitializationCallback, anchor)
+
+	element:SetScript("OnEnter", function(self)
+
+		if self.m_bShouldNotShowTooltip then
+			return;
+		end
+
+		GameTooltip:SetOwner (anchor or self, "ANCHOR_RIGHT");
+		GameTooltip:SetText(TextInitializationCallback(), nil, nil, nil, nil, true);
+		GameTooltip:Show();
+	end);
+
+	element:SetScript("OnLeave", function(self)
+		GameTooltip_Hide();
+	end);
 end

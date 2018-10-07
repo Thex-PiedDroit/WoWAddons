@@ -80,21 +80,21 @@ function PrintHelp(sCmd, args, sParameters)
 	PrintCommandTooltip(tooltipToPrint, bNoToolTip);
 end
 
-local allCommandsAlphabeticalyOrdered = {};
+local l_allCommandsAlphabeticalyOrdered = {};
 
 function PrintAllCommands()
 
 	KTA_Print("All commands:");
-	if #allCommandsAlphabeticalyOrdered == 0 then
+	if #l_allCommandsAlphabeticalyOrdered == 0 then
 		for _, value in pairs(g_allCommands) do
-			table.insert(allCommandsAlphabeticalyOrdered, value);
+			table.insert(l_allCommandsAlphabeticalyOrdered, value);
 		end
 
-		sort(allCommandsAlphabeticalyOrdered, function(lhs, rhs) return lhs.sCommandSignature < rhs.sCommandSignature end);
+		sort(l_allCommandsAlphabeticalyOrdered, function(lhs, rhs) return lhs.sCommandSignature < rhs.sCommandSignature end);
 	end
 
-	for i = 1, #allCommandsAlphabeticalyOrdered do
-		PrintCommandTooltip(allCommandsAlphabeticalyOrdered[i], true);
+	for i = 1, #l_allCommandsAlphabeticalyOrdered do
+		PrintCommandTooltip(l_allCommandsAlphabeticalyOrdered[i], true);
 	end
 end
 
@@ -173,30 +173,30 @@ function SlashCmdList.KillThemAll(sMessage)
 		local bDefaultAsked, iWordDefaultIndex = TableContains(args, "DEFAULT");
 		if bDefaultAsked then
 			table.remove(args, iWordDefaultIndex);
-			command["DEFAULT"].Func(args);
+			command["DEFAULT"].m_Func(args);
 			command = nil;
 
 		else
 			local commandBackup = command;
 
 			if TableContains(args, "DELAY") then
-				commandBackup["DELAY"].Func();
+				commandBackup["DELAY"].m_Func();
 				command = nil;
 			end
 			if TableContains(args, { "GOD", "GODS" }) then
-				commandBackup["GODS"].Func();
+				commandBackup["GODS"].m_Func();
 				command = nil;
 			end
 			if TableContains(args, { "SOUNDCHANNEL", "CHANNEL" }) then
-				commandBackup["SOUNDCHANNEL"].Func();
+				commandBackup["SOUNDCHANNEL"].m_Func();
 				command = nil;
 			end
 		end
 
 		if command ~= nil then
-			command["DELAY"].Func();
-			command["GODS"].Func();
-			command["SOUNDCHANNEL"].Func();
+			command["DELAY"].m_Func();
+			command["GODS"].m_Func();
+			command["SOUNDCHANNEL"].m_Func();
 		end
 
 		return;		-- To avoid "Unknown command"
