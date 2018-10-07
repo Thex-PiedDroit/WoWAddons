@@ -11,7 +11,7 @@ local panelSize =
 	y = 40.0
 };
 
-local function GetGodsText() return "Global value: " .. tostring(S_ktaGlobalSettings.m_sGods); end
+local function GetGodsText() return GetSettingGlobalValueTextForTooltip(tostring(S_ktaGlobalSettings.m_sGods)); end
 
 function InitGodsListSettings(parent, listLabelAnchor, offset)
 

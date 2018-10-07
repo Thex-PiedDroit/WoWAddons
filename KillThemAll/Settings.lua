@@ -59,7 +59,7 @@ local ktaDefaultSettings =
 
 function SaveSettings()
 
-	if g_ktaCurrentCharSettingsOverrides.m_sGods ~= nil then
+	if g_ktaCurrentCharSettingsOverrides ~= nil and g_ktaCurrentCharSettingsOverrides.m_sGods ~= nil then
 		g_ktaCurrentCharSettingsOverrides.m_sGods = TableToString(GodsToStringTable(g_currentGods, false)) or "NONE";
 	end
 
@@ -69,9 +69,34 @@ end
 
 function SaveCurrentProfileAsGlobal()
 
-	S_ktaGlobalSettings = g_ktaCurrentSettings;
-	g_ktaCurrentCharSettingsOverrides = nil;
-	S_ktaCharSpecificOverrides[g_sCharacterNameAndRealm] = nil;
+	if g_ktaCurrentCharSettingsOverrides == nil then
+		return;
+	end
+
+	local variablesToSave = {};
+	for sKey, _ in pairs(g_ktaCurrentCharSettingsOverrides) do
+		table.insert(variablesToSave, sKey);
+	end
+
+	for i = 1, #variablesToSave, 1 do
+		SaveVariableAsGlobal(variablesToSave[i]);
+	end
+end
+
+function RevertAllSettingsToGlobals()
+
+	if g_ktaCurrentCharSettingsOverrides == nil then
+		return;
+	end
+
+	local variablesToRevert = {};
+	for sKey, _ in pairs(g_ktaCurrentCharSettingsOverrides) do
+		table.insert(variablesToRevert, sKey);
+	end
+
+	for i = 1, #variablesToRevert, 1 do
+		RemoveVariableOverride(variablesToRevert[i]);
+	end
 end
 
 function SetOverrideValue(sVariableName, value)
@@ -97,9 +122,14 @@ function SetOverrideDefaultValue(sVariableName, value)
 	g_ktaCurrentSettings.m_default[sVariableName] = value;
 end
 
-function SetValueAsGlobal(sVariableName, value)
+function SaveVariableAsGlobal(sVariableName)
 
-	g_ktaCurrentSettings[sVariableName] = value;
+	if g_ktaCurrentCharSettingsOverrides == nil then
+		return;
+	end
+
+	S_ktaGlobalSettings[sVariableName] = g_ktaCurrentCharSettingsOverrides[sVariableName];
+	g_ktaCurrentSettings[sVariableName] = g_ktaCurrentCharSettingsOverrides[sVariableName];
 	g_ktaCurrentCharSettingsOverrides[sVariableName] = nil;
 
 	if table.Len(g_ktaCurrentCharSettingsOverrides) == 0 then
@@ -109,9 +139,14 @@ function SetValueAsGlobal(sVariableName, value)
 	CallEventListener(g_interfaceEventsListener, "OnVariableOverrideStateChanged", sVariableName);
 end
 
-function SetValueAsDefaultGlobal(sVariableName, value)
+function SaveDefaultVariableAsGlobal(sVariableName)
 
-	g_ktaCurrentSettings.m_default[sVariableName] = value;
+	if g_ktaCurrentCharSettingsOverrides == nil or g_ktaCurrentCharSettingsOverrides.m_default == nil then
+		return;
+	end
+
+	S_ktaGlobalSettings.m_default[sVariableName] = g_ktaCurrentCharSettingsOverrides[sVariableName];
+	g_ktaCurrentSettings.m_default[sVariableName] = g_ktaCurrentCharSettingsOverrides.m_default[sVariableName];
 	g_ktaCurrentCharSettingsOverrides.m_default[sVariableName] = nil;
 
 	if table.Len(g_ktaCurrentCharSettingsOverrides.m_default) == 0 then
@@ -128,6 +163,54 @@ function SetValueAsDefaultGlobal(sVariableName, value)
 
 	g_ktaCurrentCharSettingsOverrides.m_default[sVariableName] = value;
 	g_ktaCurrentSettings.m_default[sVariableName] = value;
+end
+
+function RemoveVariableOverride(sVariableName)
+
+	if g_ktaCurrentCharSettingsOverrides == nil then
+		return;
+	end
+
+	g_ktaCurrentCharSettingsOverrides[sVariableName] = nil;
+	g_ktaCurrentSettings[sVariableName] = S_ktaGlobalSettings[sVariableName];
+
+	if table.Len(g_ktaCurrentCharSettingsOverrides) == 0 then
+		g_ktaCurrentCharSettingsOverrides = nil;
+	end
+
+	CallEventListener(g_interfaceEventsListener, "OnVariableOverrideStateChanged", sVariableName);
+
+
+	if sVariableName == "m_sGods" then
+		SetGods(GetWords(g_ktaCurrentSettings.m_sGods), true);
+	elseif sVariableName ==  "m_iMinDelay" or sVariableName ==  "m_iMaxDelay" then
+		SetDelay(g_ktaCurrentSettings.m_iMinDelay, g_ktaCurrentSettings.m_iMaxDelay, true);
+	elseif sVariableName == "m_sSoundChannel" then
+		SetSoundChannel(g_ktaCurrentSettings.m_sSoundChannel, true, false);
+	elseif sVariableName ==  "m_bDeactivated" then
+		CallEventListener(g_interfaceEventsListener, "OnToggleDeactivated");
+	elseif sVariableName ==  "m_bMuteDuringCombat" then
+		CallEventListener(g_interfaceEventsListener, "OnToggleMuteDuringCombat");
+	end
+end
+
+function RemoveDefaultVariableOverride(sVariableName)
+
+	if g_ktaCurrentCharSettingsOverrides == nil or g_ktaCurrentCharSettingsOverrides.m_default == nil then
+		return;
+	end
+
+	g_ktaCurrentCharSettingsOverrides.m_default[sVariableName] = nil;
+	g_ktaCurrentSettings.m_default[sVariableName] = S_ktaGlobalSettings.m_default[sVariableName];
+
+	if table.Len(g_ktaCurrentCharSettingsOverrides.m_default) == 0 then
+
+		g_ktaCurrentCharSettingsOverrides.m_default = nil;
+
+		if table.Len(g_ktaCurrentCharSettingsOverrides) == 0 then
+			g_ktaCurrentCharSettingsOverrides = nil;
+		end
+	end
 end
 
 function ClearMemory()
