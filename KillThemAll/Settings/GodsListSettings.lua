@@ -18,6 +18,7 @@ function InitGodsListSettings(parent, listLabelAnchor, offset)
 
 	local godsListFrame = CreateBackdroppedFrame("KTA_GodsListSettingsFrame", parent, panelSize);
 	godsListFrame:SetPoint("TOPLEFT", godsLabel, "BOTTOMLEFT", -4.0, -5.0);
+	godsListFrame.godsLabel = godsLabel;
 
 	g_godsListSettings = godsListFrame;
 

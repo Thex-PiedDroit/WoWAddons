@@ -1,7 +1,7 @@
 
 g_cerberus.RegisterAddon("KillThemAll", { "S_ktaGlobalSettings", "S_ktaCharSpecificOverrides", "S_sAddonVersion" });
 
-g_ktaCurrentCharSettingsOverrides = {};
+g_ktaCurrentCharSettingsOverrides = nil;
 g_ktaCurrentSettings = {};
 --[[
 g_ktaCurrentSettings =
@@ -67,12 +67,25 @@ function SaveSettings()
 	S_ktaGlobalSettings.m_minimapButton = g_ktaCurrentSettings.m_minimapButton;
 end
 
+function SaveCurrentProfileAsGlobal()
+
+	S_ktaGlobalSettings = g_ktaCurrentSettings;
+	g_ktaCurrentCharSettingsOverrides = nil;
+	S_ktaCharSpecificOverrides[g_sCharacterNameAndRealm] = nil;
+end
+
 function SetOverrideValue(sVariableName, value)
+
+	if (g_ktaCurrentCharSettingsOverrides == nil or g_ktaCurrentCharSettingsOverrides[sVariableName] == nil) and g_ktaCurrentSettings[sVariableName] == value then
+		return;		-- This happens on load, when we're setting the gods and delay for the first time
+	end
 
 	g_ktaCurrentCharSettingsOverrides = g_ktaCurrentCharSettingsOverrides or {};
 
 	g_ktaCurrentCharSettingsOverrides[sVariableName] = value;
 	g_ktaCurrentSettings[sVariableName] = value;
+
+	CallEventListener(g_interfaceEventsListener, "OnVariableOverrideStateChanged", sVariableName);
 end
 
 function SetOverrideDefaultValue(sVariableName, value)
@@ -83,6 +96,40 @@ function SetOverrideDefaultValue(sVariableName, value)
 	g_ktaCurrentCharSettingsOverrides.m_default[sVariableName] = value;
 	g_ktaCurrentSettings.m_default[sVariableName] = value;
 end
+
+function SetValueAsGlobal(sVariableName, value)
+
+	g_ktaCurrentSettings[sVariableName] = value;
+	g_ktaCurrentCharSettingsOverrides[sVariableName] = nil;
+
+	if table.Len(g_ktaCurrentCharSettingsOverrides) == 0 then
+		g_ktaCurrentCharSettingsOverrides = nil;
+	end
+
+	CallEventListener(g_interfaceEventsListener, "OnVariableOverrideStateChanged", sVariableName);
+end
+
+function SetValueAsDefaultGlobal(sVariableName, value)
+
+	g_ktaCurrentSettings.m_default[sVariableName] = value;
+	g_ktaCurrentCharSettingsOverrides.m_default[sVariableName] = nil;
+
+	if table.Len(g_ktaCurrentCharSettingsOverrides.m_default) == 0 then
+
+		g_ktaCurrentCharSettingsOverrides.m_default = nil;
+
+		if table.Len(g_ktaCurrentCharSettingsOverrides) == 0 then
+			g_ktaCurrentCharSettingsOverrides = nil;
+		end
+	end
+
+	g_ktaCurrentCharSettingsOverrides = g_ktaCurrentCharSettingsOverrides or {};
+	g_ktaCurrentCharSettingsOverrides.m_default = g_ktaCurrentCharSettingsOverrides.m_default or {};
+
+	g_ktaCurrentCharSettingsOverrides.m_default[sVariableName] = value;
+	g_ktaCurrentSettings.m_default[sVariableName] = value;
+end
+
 function ClearMemory()
 
 	if S_ktaGlobalSettings ~= nil then
@@ -103,7 +150,7 @@ end
 function HookGodsChangedSettingsListener()
 
 	AddListenerEvent(g_interfaceEventsListener, "OnGodsChanged", function()
-		g_ktaCurrentCharSettingsOverrides.m_sGods = TableToString(GodsToStringTable(g_currentGods, false)) or "NONE";
+		SetOverrideValue("m_sGods", TableToString(GodsToStringTable(g_currentGods, false)) or "NONE");
 	end);
 end
 
@@ -119,11 +166,10 @@ function LoadSettings()
 	S_ktaCharSpecificOverrides = S_ktaCharSpecificOverrides or {};
 
 	local settings = GetCombinedGlobalSettingsWithCharOverrides();
+	g_ktaCurrentSettings = settings;
 
 	SetGods(GetWords(settings.m_sGods), true);
 	SetDelay(settings.m_iMinDelay, settings.m_iMaxDelay, true);
-
-	g_ktaCurrentSettings = settings;
 end
 
 

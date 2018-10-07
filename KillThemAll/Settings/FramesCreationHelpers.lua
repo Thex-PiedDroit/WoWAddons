@@ -138,3 +138,16 @@ function CreateDropDownList(sName, parent, fWidth, options, sCurrentValue, OnBut
 
 	return dropDownList;
 end
+
+function HookTooltipToElement(element)
+
+	element:SetScript("OnEnter", function(self)
+		GameTooltip:SetOwner (self, "ANCHOR_RIGHT");
+		GameTooltip:SetText (self.m_sTooltipText, nil, nil, nil, nil, true);
+		GameTooltip:Show();
+	end);
+
+	element:SetScript("OnLeave", function(self)
+		GameTooltip_Hide();
+	end);
+end

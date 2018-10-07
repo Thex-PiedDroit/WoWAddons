@@ -131,11 +131,11 @@ function AddListenerEvent(eventListener, sEventType, Callback)
 	table.insert(eventListener[sEventType], Callback);
 end
 
-function CallEventListener(eventListener, sEventType)
+function CallEventListener(eventListener, sEventType, ...)
 
 	local listeners = eventListener[sEventType] or {};
 	for i = 1, #listeners, 1 do
-		listeners[i]();
+		listeners[i](...);
 	end
 end
 
