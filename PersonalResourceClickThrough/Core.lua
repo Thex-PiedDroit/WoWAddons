@@ -4,22 +4,22 @@ SlashCmdList.RELOADUI = ReloadUI
 
 
 
-local eventsListener = CreateFrame("Frame");
-local events = {};
+local l_eventsListener = CreateFrame("Frame");
+local l_events = {};
 
-function events:ADDON_LOADED(arg)
+function l_events:ADDON_LOADED(sAddonName)
 
-	if arg ~= "PersonalResourceClickThrough" then
+	if sAddonName ~= "PersonalResourceClickThrough" then
 		return;
 	end
 
 	C_NamePlate.SetNamePlateSelfClickThrough(true);
 end
 
-eventsListener:SetScript("OnEvent", function(self, event, ...)
-	events[event](self, ...);
+l_eventsListener:SetScript("OnEvent", function(self, sEvent, ...)
+	l_events[sEvent](self, ...);
 end);
 
-for k, v in pairs(events) do
-	eventsListener:RegisterEvent(k);
+for k, v in pairs(l_events) do
+	l_eventsListener:RegisterEvent(k);
 end

@@ -53,6 +53,7 @@ function InitMinimapButton(settingsPanel)
 		GameTooltip:Hide();
 	end
 
+	g_ktaCurrentSettings.m_minimapButton = g_ktaCurrentSettings.m_minimapButton or {};
 	l_minimapButton:Register("KillThemAll", minimapLDB, g_ktaCurrentSettings.m_minimapButton);
 	SetMinimapButtonHidden(g_ktaCurrentSettings.m_minimapButton.hide);
 end

@@ -266,16 +266,23 @@ local RecoverFromEarlierVersion = nil; --[[function()]]
 	local sCurrentlySavedAddonVersion = S_sAddonVersion or S_AddonVersion;
 	S_sAddonVersion = sCurrentAddonVersion;
 
+	sCurrentAddonVersion = string.match(sCurrentAddonVersion, "%d+%.%d+");	-- Transforms (for example) "1.12.4" into "1.12"
+	if sCurrentlySavedAddonVersion ~= nil then
+		sCurrentlySavedAddonVersion = string.match(sCurrentlySavedAddonVersion, "%d+%.%d+");
+	end
+
 	if sCurrentlySavedAddonVersion == nil or sCurrentlySavedAddonVersion == sCurrentAddonVersion then
 		S_ktaGlobalSettings = S_ktaGlobalSettings or table.Clone(l_ktaDefaultSettings);
 		return;
 	end
 
 
-	if sCurrentlySavedAddonVersion:StartsWith("1.3") then
+	if sCurrentlySavedAddonVersion == "1.3" then
 		RecoverFromVersion1_3();
-	else
+	elseif sCurrentlySavedAddonVersion == "1.2" or sCurrentlySavedAddonVersion == "1.1" or sCurrentlySavedAddonVersion == "1.0" then
 		RecoverFromEarlierVersion();
+	else
+		S_ktaGlobalSettings = S_ktaGlobalSettings or table.Clone(l_ktaDefaultSettings);
 	end
 
 	S_AddonVersion = nil;
