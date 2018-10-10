@@ -1,6 +1,6 @@
 ## Interface: 80000
 ## Title: |cff00ccffKillThemAll_LichKing|r
-## Version: 1.2
+## Version: 1.3
 ## Notes: Adds The Lich King to KillThemAll
 ## Author: Thex
 ## DefaultState: enabled
