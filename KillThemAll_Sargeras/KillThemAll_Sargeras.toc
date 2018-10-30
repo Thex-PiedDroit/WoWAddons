@@ -1,0 +1,11 @@
+## Interface: 80000
+## Title: |cff00ccffKillThemAll_Sargeras|r
+## Version: 1.1
+## Notes: Adds Sargeras, the Dark Titan to KillThemAll
+## Author: Смердокрыл
+## DefaultState: enabled
+##Dependencies: KillThemAll
+
+Libraries\Cerberus\Cerberus.lua
+Core.lua
+Sargeras.lua
