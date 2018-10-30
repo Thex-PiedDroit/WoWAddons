@@ -12,14 +12,24 @@ g_sargeras.m_generalSoundFilesList =
 };                                            
 g_sargeras.m_deathSoundFilesList =            
 {                                             
-	"Interface\\AddOns\\KillThemAll_Sargeras\\CustomSounds\\vo_73_voice_of_sargeras_custom_CAST_SOULSTONE.ogg",	-- The mortals must not disrupt the rebirth.
 	"Interface\\AddOns\\KillThemAll_Sargeras\\CustomSounds\\vo_73_voice_of_sargeras_custom_LOW_HEALTH_or_BG_RESURRECTION_TIMER.ogg",	-- The hour of rebirth draws near...
 	"Interface\\AddOns\\KillThemAll_Sargeras\\CustomSounds\\wg_sargeras_custom_DEATH.ogg",	-- You have failed me!
 };
+g_sargeras.m_resurrection = "Interface\\AddOns\\KillThemAll_Sargeras\\CustomSounds\\wg_sargeras_custom_RESURRECTED.ogg",	-- Become the instrument of my wrath once again.
 
---[[
-	"Interface\\AddOns\\ArtifactWhispers\\SoundFiles\\DestroLock Artifact\\vo_73_voice_of_sargeras_custom_ENEMY_VANISH.ogg",	-- One still eludes us...
-	"Interface\\AddOns\\ArtifactWhispers\\SoundFiles\\DestroLock Artifact\\vo_73_voice_of_sargeras_custom_IN_CAPITAL_CITY.ogg"	-- Pledge the hearts of your people to my cause.
-	"Interface\\AddOns\\ArtifactWhispers\\SoundFiles\\DestroLock Artifact\\vo_73_voice_of_sargeras_custom_LVLUP_or_LEARNING_SPELL.ogg"	-- Knowledge beyond imagining!
+-- Combat sound files:
+g_sargeras.m_killSoundFilesList = 
+{
 	"Interface\\AddOns\\ArtifactWhispers\\SoundFiles\\DestroLock Artifact\\vo_73_voice_of_sargeras_custom_KILL_ENEMY.ogg"	-- Might beyond measure!
-]]--
+	"Interface\\AddOns\\ArtifactWhispers\\SoundFiles\\DestroLock Artifact\\vo_73_voice_of_sargeras_custom_KILL_ENEMY_2.ogg"	-- Victory!
+}
+g_sargeras.m_enemy_vanish = "Interface\\AddOns\\ArtifactWhispers\\SoundFiles\\DestroLock Artifact\\vo_73_voice_of_sargeras_custom_ENEMY_VANISH.ogg",	-- One still eludes us...
+g_sargeras.m_low_resource = "Interface\\AddOns\\ArtifactWhispers\\SoundFiles\\DestroLock Artifact\\vo_73_voice_of_sargeras_custom_LOW_RESOURCE.ogg" -- Essence is needed.
+
+-- Spell sound files:
+g_sargeras.m_soulstone = "Interface\\AddOns\\KillThemAll_Sargeras\\CustomSounds\\vo_73_voice_of_sargeras_custom_CAST_SOULSTONE.ogg",	-- The mortals must not disrupt the rebirth.
+g_sargeras.m_levelup = "Interface\\AddOns\\ArtifactWhispers\\SoundFiles\\DestroLock Artifact\\vo_73_voice_of_sargeras_custom_LVLUP_or_LEARNING_SPELL.ogg"	-- Knowledge beyond imagining!
+-- ^levelup or when learning new spell
+
+-- Exploration sound files:
+g_sargeras.m_capital_city = "Interface\\AddOns\\ArtifactWhispers\\SoundFiles\\DestroLock Artifact\\vo_73_voice_of_sargeras_custom_IN_CAPITAL_CITY.ogg"	-- Pledge the hearts of your people to my cause.
