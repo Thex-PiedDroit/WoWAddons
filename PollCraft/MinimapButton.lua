@@ -1,7 +1,7 @@
 
 Cerberus_HookThisFile();
 
-local minimapButton = LibStub("LibDBIcon-1.0", true);
+local minimapButton = LibStub("LibDBIcon-1.0");
 
 function SetMinimapButtonHidden(bHidden)
 

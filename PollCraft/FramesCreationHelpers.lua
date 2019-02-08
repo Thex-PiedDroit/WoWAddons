@@ -60,7 +60,7 @@ function CreateLabel(parent, sText, fFontSize, sAlignment)
 end
 
 function CreateCheckButton(sName, parent, OnCheckCallback, callbackArguments, fSize)
-	local checkButton = CreateFrame("CheckButton", sPrefix .. sName, parent, "OptionsCheckButtonTemplate");
+	local checkButton = CreateFrame("CheckButton", sPrefix .. sName, parent, "InterfaceOptionsCheckButtonTemplate");
 	fSize = fSize or 22;
 	checkButton:SetSize(fSize, fSize);
 
