@@ -1,15 +1,12 @@
-## Interface: 80000
+## Interface: 80200
 ## Title: |cff00ccffKillThemAll|r
-## Version: 1.4.1
+## Version: 1.4.2
 ## Notes: Randomly plays Old Gods whispers audio files
 ## Author: Thex
 ## DefaultState: enabled
 ## SavedVariables: S_ktaGlobalSettings, S_ktaCharSpecificOverrides, S_sAddonVersion
 
-Libraries\LibStub\LibStub.lua
-Libraries\CallbackHandler-1.0\CallbackHandler-1.0.xml
-Libraries\Libdatabroker-1-1\LibDataBroker-1.1.lua
-Libraries\LibDBIcon-1.0\LibDBIcon-1.0.xml
+Libraries\LibDBIcon-1.0\embeds.xml
 Libraries\Cerberus\Cerberus.lua
 
 Settings.lua
