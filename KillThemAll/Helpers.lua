@@ -245,3 +245,8 @@ string.StartsWith = function(self, sStart)
 
 	return self:find("^" .. sStart) ~= nil;
 end
+
+function TestAudio()
+
+	PlayRandomSound("General");
+end

@@ -26,10 +26,15 @@ local l_fMarginYBetweenElements = 10.0;
 local l_overriddenValueLabelColor = { 0.9, 0.6, 0.3 };
 local l_overrideButtonsSize = { x = 120.0, y = 30.0 };
 local l_settingsOverrideStuff = {};
+
+local l_testAudioButtonSize = { x = 120.0, y = 30.0 };
+
 --[[global]] GetSettingGlobalValueTextForTooltip = nil; --[[function(sValue)]]
 
 local CreateOverrideButtons = nil;	--[[function(sButtonName, sAssociatedVariableName, frame, sMyAnchor, anchorElement, sParentAnchor, fOffsetX, fOffsetY, bForAllValues)]]
 local UpdateLabelColorAndButtonsVisibilityIfOverridden = nil; --[[function(sAssociatedVariableName)]]
+
+local DrawTestAudioButton = nil;	--[[function(parentFrame)]]
 
 
 function InitSettingsFrames()
@@ -155,6 +160,8 @@ function InitSettingsFrames()
 
 	-- GLOBAL OVERRIDE BUTTONS
 	CreateOverrideButtons("AllSettings", nil, mainFrame, "TOPLEFT", g_godsListSettings, "BOTTOMLEFT", 0.0, -50.0, true);
+
+	DrawTestAudioButton(mainFrame);
 
 
 	-- BIND PANEL TO INTERFACE SETTINGS
@@ -343,6 +350,15 @@ end
 			end
 		end);
 	end
+end
+
+--[[local]] DrawTestAudioButton = function(parentFrame)
+
+	local testButton = CreateButton("TestAudioButton", parentFrame, l_testAudioButtonSize, "Test", TestAudio);
+	testButton:SetPoint("BOTTOMRIGHT", parentFrame, "BOTTOMRIGHT", -20.0, 20.0);
+	--testButton:SetScript("OnClick", function(self)
+	--	TestAudio();
+	--end);
 end
 
 --[[local]] UpdateLabelColorAndButtonsVisibilityIfOverridden = function(sAssociatedVariableName, sSecondAssociatedVariableName)

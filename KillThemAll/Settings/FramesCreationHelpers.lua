@@ -59,7 +59,11 @@ function CreateButton(sName, parent, size, sText, OnClickCallback, callbackArgum
 	button:SetText(sText);
 
 	if OnClickCallback ~= nil then
-		button:SetScript("OnClick", function(self) OnClickCallback(self, unpack(callbackArguments)) end);
+		if callbackArguments ~= nil then
+			button:SetScript("OnClick", function(self) OnClickCallback(self, unpack(callbackArguments)) end);
+		else
+			button:SetScript("OnClick", function(self) OnClickCallback(self) end);
+		end
 	end
 
 	return button;
