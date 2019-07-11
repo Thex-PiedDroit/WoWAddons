@@ -1,8 +1,8 @@
 ## Interface: 80200
 ## Title: |cff00ccffKillThemAll_XalAtath|r
-## Version: 1.2.1
+## Version: 1.3
 ## Notes: Adds Xal'Atath, Blade of the Black Empire to KillThemAll
-## Author: Thex
+## Author: Thex, TwoSouls
 ## DefaultState: enabled
 ##Dependencies: KillThemAll
 
