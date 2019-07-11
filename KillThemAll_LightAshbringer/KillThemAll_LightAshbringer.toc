@@ -1,0 +1,10 @@
+## Interface: 80200
+## Title: |cff00ccffKillThemAll_LightAshbringer|r
+## Version: 1.0
+## Notes: Adds Light Ashbringer to KillThemAll
+## Author: TwoSouls
+## DefaultState: enabled
+##Dependencies: KillThemAll
+
+Core.lua
+LightAshbringer.lua
