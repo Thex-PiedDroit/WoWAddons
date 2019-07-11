@@ -20,7 +20,7 @@ g_xalAtath.m_generalSoundFilesList =
 g_xalAtath.m_deathSoundFilesList =
 {
 	1391162,--"Sound/creature/xalatath_blade_of_the_black_empire/vo_703_xalatath_blade_of_the_black_empire_32.ogg",	-- Delicious
-	1391163--"Sound/creature/xalatath_blade_of_the_black_empire/vo_703_xalatath_blade_of_the_black_empire_33.ogg",	-- Every little death helps
+	1391163,--"Sound/creature/xalatath_blade_of_the_black_empire/vo_703_xalatath_blade_of_the_black_empire_33.ogg",	-- Every little death helps
 	1391164,--"Sound/creature/xalatath_blade_of_the_black_empire/vo_703_xalatath_blade_of_the_black_empire_34.ogg",	-- Enjoy that?
 	1391165,--"Sound/creature/xalatath_blade_of_the_black_empire/vo_703_xalatath_blade_of_the_black_empire_35.ogg",	-- Boring
 	1391167,--"Sound/creature/xalatath_blade_of_the_black_empire/vo_703_xalatath_blade_of_the_black_empire_37.ogg",	-- *Long laugh*
