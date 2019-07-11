@@ -424,6 +424,7 @@ function l_events:ADDON_LOADED(sAddonName)
 	InitSettingsFrames();
 
 	l_bLoading = false;
+	StartWaiting();
 end
 
 function l_events:PLAYER_LOGOUT()
