@@ -76,7 +76,7 @@ g_allCommands =
 			sTooltip = "Will change the default gods to set when using the \"/kta reset\" or \"/kta setGods default\" commands. Using \"/kta debug clearMemory\" will revert to initial values as on clear addon install.\nExample: \"/kta SetDefault Gods Cthun YoggSaron\"",
 			sCommandSignature = "/kta SetDefault Gods [<GodName: " .. GetGodsSeparatedStringList() .. ">] | [All] | [None]",
 			m_Func = function(godsToSetAsDefault)
-				SetDefaultGods(godsToSetAsDefault);
+				MakeGodsDefault(godsToSetAsDefault);
 			end,
 		},
 		["DELAY"] =

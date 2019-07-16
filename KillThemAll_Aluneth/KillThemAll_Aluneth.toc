@@ -1,10 +1,10 @@
 ## Interface: 80200
 ## Title: |cff00ccffKillThemAll_Aluneth|r
-## Version: 1.0
+## Version: 1.0.1
 ## Notes: Adds Aluneth, Greatstaff of the Magna to KillThemAll
 ## Author: Laiev
 ## DefaultState: enabled
 ##Dependencies: KillThemAll
 
-Core.lua
 Aluneth.lua
+Core.lua
