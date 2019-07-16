@@ -251,7 +251,7 @@ function LoadSettings()
 	local settings = GetCombinedGlobalSettingsWithCharOverrides();
 	g_ktaCurrentSettings = settings;
 
-	SetGods(GetWords(settings.m_sGods), true);
+	SetGods(GetWords(settings.m_sGods), true, true);
 	SetDelay(settings.m_iMinDelay, settings.m_iMaxDelay, true);
 end
 

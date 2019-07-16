@@ -11,11 +11,11 @@ function l_events:ADDON_LOADED(sAddonName)
 	end
 
 	if g_godsListSettings ~= nil then
-		if S_ktaOptions ~= nil and S_ktaOptions.sGods ~= nil then
+		if g_ktaCurrentSettings ~= nil and g_ktaCurrentSettings.m_sGods ~= nil then
 
-			local currentGods = GetWords(string.upper(S_ktaOptions.sGods));
-			if TableContains(currentGods, g_xalAtath.sDataName) then
-				SetGods(currentGods, true);
+			local currentGods = GetWords(string.upper(g_ktaCurrentSettings.m_sGods));
+			if TableContains(currentGods, g_xalAtath.m_sDataName) then
+				SetGods(currentGods, true, true);
 			end
 		end
 

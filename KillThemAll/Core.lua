@@ -114,44 +114,27 @@ function GetGodByName(sGodName)
 	return nil;
 end
 
-function SetGods(godsNames, bSilent)
+local function SetAllGods()
 
-	bSilent = bSilent or false;
+	g_currentGods = g_allSoundLibraries;
+end
 
+local function SetNoGods()
 
-	if TableContains(godsNames, "ALL") then
-		g_currentGods = g_allSoundLibraries;
+	g_currentGods = {};
+end
 
-		if not bSilent then
-			KTA_Print("You feel the presence of all gods around you.");
-		end
+local function SetDefaultGods(godsNames)
 
-		CallEventListener(g_interfaceEventsListener, "OnGodsChanged");
-		return;
+	local defaultGods = GetWords(string.upper(g_ktaCurrentSettings.m_default.m_sGods));
+	local containsAll = TableContains(defaultGods, "ALL");
 
-	elseif godsNames == nil or #godsNames == 0 or TableContains(godsNames, "NONE") then
-		g_currentGods = {};
+	SetGods(defaultGods, bSilent);
+end
 
-		if not bSilent then
-			DisplayCurrentGods();
-		end
-
-		CallEventListener(g_interfaceEventsListener, "OnGodsChanged");
-		return;
-	end
-
+local function SetSpecificGods(godsNames, bSilent)
 
 	local newGods = {};
-
-	local bDefaultCall, iDefaultIndex = TableContains(godsNames, "DEFAULT");
-	if bDefaultCall then
-		table.remove(godsNames, iDefaultIndex);
-		local defaultGods = GetWords(string.upper(g_ktaCurrentSettings.m_default.m_sGods));
-		local containsAll = TableContains(defaultGods, "ALL");
-
-		SetGods(defaultGods, bSilent);
-		return;
-	end
 
 	for i = 1, #godsNames, 1 do
 		local currentGod = GetGodByName(godsNames[i]);
@@ -164,7 +147,7 @@ function SetGods(godsNames, bSilent)
 		end
 	end
 
-	if #newGods == 0 and not bDefaultCall then
+	if #newGods == 0 then
 		if not bSilent then
 			KTA_Print("No valid god name found.");
 			PrintAvailableGods();
@@ -173,12 +156,41 @@ function SetGods(godsNames, bSilent)
 	end
 
 	g_currentGods = newGods;
+end
+
+local function SetGodsFromList(godsNames, bSilent)
+
+	local bDefaultCall, iDefaultIndex = TableContains(godsNames, "DEFAULT");
+
+	if bDefaultCall then
+		table.remove(godsNames, iDefaultIndex);
+		SetDefaultGods(godsNames);
+	else
+		SetSpecificGods(godsNames, bSilent);
+	end
+end
+
+function SetGods(godsNames, bSilent, bFromLoading)
+
+	bSilent = bSilent or false;
+
+
+	if TableContains(godsNames, "ALL") then
+		SetAllGods();
+	elseif godsNames == nil or #godsNames == 0 or TableContains(godsNames, "NONE") then
+		SetNoGods();
+	else
+		SetGodsFromList(godsNames, bSilent);
+	end
+
+	if not bFromLoading then
+		CallEventListener(g_interfaceEventsListener, "OnGodsChanged");
+	end
 
 	if not bSilent then
 		DisplayCurrentGods();
 	end
 
-	CallEventListener(g_interfaceEventsListener, "OnGodsChanged");
 	StartWaiting();
 end
 
@@ -187,7 +199,7 @@ function AddGods(godsNames, bSilent)
 	SetGods(TableCat(GodsToStringTable(g_currentGods, false), godsNames), bSilent);
 end
 
-function SetDefaultGods(godsNames, bSilent)
+function MakeGodsDefault(godsNames, bSilent)
 
 	bSilent = bSilent or false;
 
