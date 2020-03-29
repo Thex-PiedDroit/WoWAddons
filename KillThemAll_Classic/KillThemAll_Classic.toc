@@ -1,0 +1,22 @@
+## Interface: 11302
+## Title: |cff00ccffKillThemAll|r
+## Version: 1.0
+## Notes: Randomly plays Old Gods whispers audio files
+## Author: Thex
+## DefaultState: enabled
+## SavedVariables: S_ktaGlobalSettings, S_ktaCharSpecificOverrides, S_sAddonVersion
+
+Libraries\LibDBIcon-1.0\embeds.xml
+Libraries\Cerberus\Cerberus.lua
+
+Settings.lua
+Settings\FramesCreationHelpers.lua
+Settings\MinimapButton.lua
+Settings\GodsListSettings.lua
+Settings\SettingsFrame.lua
+Helpers.lua
+Gods\SoundLibraryBase.lua
+Gods\Cthun.lua
+Core.lua
+CommandsData.lua
+SlashCommands.lua
