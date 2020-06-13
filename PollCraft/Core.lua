@@ -1,24 +1,38 @@
 
-SLASH_RELOADUI1 = "/rl"
-SlashCmdList.RELOADUI = ReloadUI
-
---------------------------------
+Cerberus_HookThisFile();
 
 
 local pollCraftEventListener = CreateFrame("Frame");
 local events = {};
 
+DEBUG_VERSION = true;
 
-function events:ADDON_LOADED(addonName)
 
-	if addonName ~= "PollCraft" then
+function events:ADDON_LOADED(sAddonName)
+
+	if sAddonName ~= "PollCraft" then
 		return;
 	end
 
+	LoadData();
+
 	InitCreatePollFrame();
-	--InitTests();
-	--TestOneSimpleVote();
-	--TestSomeVotes();
+	InitCurrentPollsFrame();
+	InitMinimapButton();
+
+	if DEBUG_VERSION then
+		--TestCreateSimplePoll();
+		--TestAddSomePollsToData();
+		--TestOneSimpleVote();
+		--TestSomeVotes();
+	end
+
+	OpenCurrentPollsFrameTab(g_currentPollsMotherFrame.pollsListFrame);
+end
+
+function events:PLAYER_LOGOUT()
+
+	SaveData();
 end
 
 pollCraftEventListener:SetScript("OnEvent", function(self, event, ...)

@@ -1,12 +1,16 @@
 
+Cerberus_HookThisFile();
+
 g_createPollFrame = {};
 
-local mainFrameSize =
+local containingFrameSize =
 {
 	x = 800,
 	y = 600
 };
-local framesMargin = (mainFrameSize.x / 40);
+local fInnerFramesMargin = GetInnerFramesMargin();
+local fMarginBetweenUpperBordersAndText = GetTextMarginFromUpperFramesBorders();
+local fSizeDifferenceBetweenFrameAndEditBox = GetSizeDifferenceBetweenFrameAndEditBox();
 
 local CreatePollTypesDropdownList = nil;
 local answersParentFrame = nil;
@@ -22,145 +26,137 @@ function InitCreatePollFrame()
 		return;
 	end
 
-	local mainFrame = CreateBackdroppedFrame("CreatePollFrame", UIParent, mainFrameSize.x, mainFrameSize.y, true);
-	mainFrame:SetPoint("CENTER", 0, 0);
+	local containingFrame = CreateBackdroppedFrame("CreatePollFrame", UIParent, containingFrameSize, true);
+	containingFrame:SetPoint("CENTER", 0, 0);
+	MakeFrameClosable(containingFrame, "CreatePollFrameCloseButton");
 
-	local titleFrame = CreateBackdroppedFrame("CreatePollFrameTitleBackdrop", mainFrame, 250, 35);
-	titleFrame:SetPoint("TOP", 0, -20);
-	local mainFrameTitle = CreateLabel(titleFrame, "PollCraft - Create Poll", 20);
-	mainFrameTitle:SetPoint("CENTER", 0, 0);
-
+	local mainFrame = CreateBackdropTitledInnerFrame("CreatePollFrame", containingFrame, "PollCraft - Create Poll");
+	local innerFrameSize = GetFrameSizeAsTable(mainFrame);
 
 
-	local optionsFrameSize =
-	{
-		x = mainFrameSize.x - framesMargin,
-		y = mainFrameSize.y - (framesMargin * 4)
-	};
+		--[[      CREATE POLL BUTTON      ]]--
+	local createPollButton = CreateButton("CreatePollButton", mainFrame, { x = 120, y = 30 }, "Create Poll", SendNewPollAway);
+	createPollButton:SetPoint("BOTTOM", mainFrame, "BOTTOM", 0, fInnerFramesMargin * 2);
 
-	local newPollFrame = CreateBackdroppedFrame("CreatePollFrame", mainFrame, optionsFrameSize.x, optionsFrameSize.y);
-	newPollFrame:SetPoint("BOTTOM", 0, mainFrameSize.x / 80);
 
-	local pollTypesListPosY = -50;
-	CreatePollTypesDropdownList(newPollFrame, pollTypesListPosY);
-	mainFrame.pollTypesDropDownList = newPollFrame.pollTypesDropDownList;
+		--[[      POLL OPTIONS      ]]--
+	CreatePollTypesDropdownList(mainFrame);
+	containingFrame.pollTypesDropDownList = mainFrame.pollTypesDropDownList;
 
-	local allowNewAnswersLabel = CreateLabel(newPollFrame, "Allow users to add answers", 16);
-	allowNewAnswersLabel:SetPoint("TOPLEFT", framesMargin + 220, pollTypesListPosY + 22);
-	local allowNewAnswersCheck = CreateCheckButton(newPollFrame, "AllowNewAnswersCheckButton");
-	allowNewAnswersCheck:SetPoint("TOPLEFT", framesMargin + 195, pollTypesListPosY + 25);
-	mainFrame.allowNewAnswersCheck = allowNewAnswersCheck;
+	local fChecksPosX = fInnerFramesMargin + 195;
+	local allowNewAnswersLabel = CreateLabel(mainFrame, "Allow users to add answers", 16);
+	allowNewAnswersLabel:SetPoint("TOPLEFT", fChecksPosX + 25, fMarginBetweenUpperBordersAndText);
+	local allowNewAnswersCheck = CreateCheckButton("AllowNewAnswersCheckButton", mainFrame);
+	allowNewAnswersCheck:SetPoint("TOPLEFT", fChecksPosX, fMarginBetweenUpperBordersAndText + 3);
+	containingFrame.allowNewAnswersCheck = allowNewAnswersCheck;
 
-	local allowMultipleVotesLabel = CreateLabel(newPollFrame, "Allow multiple votes", 16);
-	allowMultipleVotesLabel:SetPoint("TOPLEFT", framesMargin + 220, pollTypesListPosY - 5);
-	local allowMultipleVotesCheck = CreateCheckButton(newPollFrame, "AllowMultipleVotesCheckButton");
-	allowMultipleVotesCheck:SetPoint("TOPLEFT", framesMargin + 195, pollTypesListPosY - 2);
-	mainFrame.allowMultipleVotesCheck = allowMultipleVotesCheck;
+	local allowMultipleVotesLabel = CreateLabel(mainFrame, "Allow multiple votes", 16);
+	allowMultipleVotesLabel:SetPoint("TOPLEFT", allowNewAnswersLabel, "TOPLEFT", 0, fMarginBetweenUpperBordersAndText * 1.5);
+	local allowMultipleVotesCheck = CreateCheckButton("AllowMultipleVotesCheckButton", mainFrame);
+	allowMultipleVotesCheck:SetPoint("TOPLEFT", allowNewAnswersCheck, "TOPLEFT", 0, fMarginBetweenUpperBordersAndText * 1.5);
+	containingFrame.allowMultipleVotesCheck = allowMultipleVotesCheck;
 
 
 
-	--[[      QUESTION EDITBOX      ]]--
-	local questionEditBoxPosY = pollTypesListPosY - 80;
-
-	local questionEditBoxLabel = CreateLabel(newPollFrame, "Question:", 16);
-	questionEditBoxLabel:SetPoint("TOPLEFT", framesMargin, questionEditBoxPosY + 26);
-
+		--[[      QUESTION EDITBOX      ]]--
+	local fQuestionEditBoxPosY = fMarginBetweenUpperBordersAndText * 6;
 	local questionEditBoxSize =
 	{
-		x = optionsFrameSize.x - (framesMargin * 2),
+		x = innerFrameSize.x - (fInnerFramesMargin * 2) - fSizeDifferenceBetweenFrameAndEditBox,
 		y = 44
 	}
-	local newQuestionEditBox = CreateEditBox("QuestionEditBox", newPollFrame, questionEditBoxSize.x, questionEditBoxSize.y, false, nil, nil, 16);
-	newQuestionEditBox:SetPoint("TOP", 0, questionEditBoxPosY);
-	mainFrame.questionEditBoxScrollFrame = newQuestionEditBox;
+	local newQuestionEditBox = CreateEditBox("QuestionEditBox", mainFrame, questionEditBoxSize, false, nil, nil, 16);
+	newQuestionEditBox:SetPoint("TOPLEFT", mainFrame.pollTypesDropDownList, "BOTTOMLEFT", fInnerFramesMargin + (fSizeDifferenceBetweenFrameAndEditBox * 0.5), fMarginBetweenUpperBordersAndText * 2);
+	local questionEditBoxLabel = CreateLabel(newQuestionEditBox, "Question:", 16);
+	questionEditBoxLabel:SetPoint("TOPLEFT", 10 - (fSizeDifferenceBetweenFrameAndEditBox * 0.5), (fSizeDifferenceBetweenFrameAndEditBox * 0.5) - fMarginBetweenUpperBordersAndText);
+
+	containingFrame.questionEditBoxScrollFrame = newQuestionEditBox;
 
 
-	--[[      ANSWERS FRAME      ]]--
-	local answersEditBoxLabel = CreateLabel(newPollFrame, "Answers:", 16);
-	local answersFramePosY = questionEditBoxPosY - questionEditBoxSize.y - 58;
-	answersEditBoxLabel:SetPoint("TOPLEFT", framesMargin, answersFramePosY + 20);
-
+		--[[      ANSWERS FRAME      ]]--
 	local answersFrameSize =
 	{
-		x = questionEditBoxSize.x + 12,
-		y = optionsFrameSize.y - questionEditBoxSize.y + questionEditBoxPosY - 120;
+		x = questionEditBoxSize.x + fSizeDifferenceBetweenFrameAndEditBox,
+		y = 100		-- Placeholder before resizing
 	}
-	local answersFrame = CreateScrollFrame("AnswersFrame_InterfacePoll", newPollFrame, answersFrameSize.x, answersFrameSize.y);
-	answersFrame:SetPoint("TOP", 0, answersFramePosY);
+	local answersFrame = CreateScrollFrame("AnswersFrame_InterfacePoll", mainFrame, answersFrameSize);
+	answersFrame:SetPoint("TOP", newQuestionEditBox, "BOTTOM", 0, fMarginBetweenUpperBordersAndText * 2);
+	answersFrame:SetPoint("BOTTOM", createPollButton, "TOP", 0, (fInnerFramesMargin * 2) - 8);
+	local answersEditBoxLabel = CreateLabel(answersFrame, "Answers:", 16);
+	answersEditBoxLabel:SetPoint("TOPLEFT", 10, -fMarginBetweenUpperBordersAndText);
 
 	answersFrame.content.answersBoxes = {};
 	answersParentFrame = answersFrame.content;
 	answersScrollFrame = answersFrame;
 	CreateAnswerEditBox();
-	local answersFrameLevel = answersFrame.content:GetFrameLevel();
-	allowNewAnswersCheck:SetFrameLevel(answersFrameLevel + 10);
-	allowMultipleVotesCheck:SetFrameLevel(answersFrameLevel + 10);
-	newQuestionEditBox:SetFrameLevel(answersFrameLevel + 10);
+	local iAnswersFrameLevel = answersFrame.content:GetFrameLevel();
+	allowNewAnswersCheck:SetFrameLevel(iAnswersFrameLevel + 10);
+	allowMultipleVotesCheck:SetFrameLevel(iAnswersFrameLevel + 10);
+	newQuestionEditBox:SetFrameLevel(iAnswersFrameLevel + 10);
+
+	createPollButton:SetFrameLevel(iAnswersFrameLevel + 10);
 
 
-	local createPollButton = CreateButton("CreatePollButton", newPollFrame, 120, 30, "Create Poll", SendNewPollAway);
-	createPollButton:SetPoint("TOP", 0, answersFramePosY - answersFrameSize.y - (framesMargin * 0.5));
-	createPollButton:SetFrameLevel(answersFrameLevel + 10);
-
-
-	g_createPollFrame.createPollFrame = newPollFrame;
-	g_createPollFrame.panel = mainFrame;
+	g_createPollFrame.createPollFrame = mainFrame;
+	g_createPollFrame.panel = containingFrame;
 end
 
 
-CreatePollTypesDropdownList = function(parentFrame, posY)
+--[[local]] CreatePollTypesDropdownList = function(parentFrame)
 
 	local listLabel = CreateLabel(parentFrame, "Poll Type", 16);
-	listLabel:SetPoint("TOPLEFT", framesMargin + 3, posY + 22);
+	listLabel:SetPoint("TOPLEFT", fInnerFramesMargin + 10, fMarginBetweenUpperBordersAndText);
 
 	local availableOptions =
 	{
 		{
-			text = "Direct (raid/party)",
+			sText = "Direct (raid/party)",
 			value = "RAID",
 			checked = true
 		},
 		{
-			text = "Permanent (guild)",
+			sText = "Permanent (guild)",
 			value = "GUILD"
 		},
 	}
 
 	local pollTypesList = CreateDropDownList("PollTypesList", parentFrame, 140, availableOptions);
-	pollTypesList:SetPoint("TOPLEFT", 0, posY);
+	pollTypesList:SetPoint("TOPLEFT", 0, fMarginBetweenUpperBordersAndText * 2);
 	UIDropDownMenu_SetSelectedValue(pollTypesList, availableOptions[1].value, false);
 	parentFrame.pollTypesDropDownList = pollTypesList;
 end
 
 
-local answersCount = 0;
-local marginBetweenAnswers = 20;
-local answerEditBoxHeight = 44;
-local totalHeightOfEachAnswer = answerEditBoxHeight + marginBetweenAnswers;
+local iAnswersCount = 0;
+local fMarginBetweenAnswers = 20;
+local answerEditBoxSize = { x = 0, y = 44 };
+local fTotalHeightOfEachAnswer = answerEditBoxSize.y + fMarginBetweenAnswers;
 local AddOrRemoveAnswerEditBox = nil;
 local RemoveAnswer = nil;
 local answerObjects = {};
 
-CreateAnswerEditBox = function()
+--[[local]] CreateAnswerEditBox = function()
 
 	local answerObject = {};
 
-	local answerNumberStr = tostring(answersCount + 1);
+	local sAnswerNumberStr = tostring(iAnswersCount + 1);
 
-	local answerEditBoxWidth = answersParentFrame:GetWidth() - (framesMargin * 4) - 40;
+	if answerEditBoxSize.x == 0 then
+		answerEditBoxSize.x = answersParentFrame:GetWidth() - (fInnerFramesMargin * 2) - 90;
+	end
 
-	local boxPosY = -((totalHeightOfEachAnswer * answersCount) + marginBetweenAnswers);
+	local fBoxPosY = -((fTotalHeightOfEachAnswer * iAnswersCount) + fMarginBetweenAnswers);
 
-	local answerNumber = CreateLabel(answersParentFrame, answerNumberStr .. ".", 16);
-	answerNumber:SetPoint("TOPLEFT", framesMargin - 5, boxPosY - 5);
+	local newAnswerEditBox = CreateEditBox("AnswerEditBox", answersParentFrame, answerEditBoxSize, false, AddOrRemoveAnswerEditBox, iAnswersCount + 1, 16);
+	newAnswerEditBox:SetPoint("TOPLEFT", fInnerFramesMargin + 40, fBoxPosY);
 
-	local newAnswerEditBox = CreateEditBox("AnswerEditBox", answersParentFrame, answerEditBoxWidth, answerEditBoxHeight, false, AddOrRemoveAnswerEditBox, answersCount + 1, 16);
-	newAnswerEditBox:SetPoint("TOPLEFT", framesMargin + 30, boxPosY);
+	local answerNumber = CreateLabel(answersParentFrame, sAnswerNumberStr .. ".", 16);
+	answerNumber:SetPoint("TOPRIGHT", newAnswerEditBox, "TOPLEFT", -fInnerFramesMargin, 0);
 
-	local deleteButton = CreateIconButton("DeleteAnswer" .. answerNumberStr .. "Button", answersParentFrame, 20, "Interface/Buttons/Ui-grouploot-pass-up", "Interface/Buttons/Ui-grouploot-pass-down", nil, RemoveAnswer, answersCount + 1);
-	deleteButton:SetPoint("TOPLEFT", framesMargin + 30 + answerEditBoxWidth + 12, boxPosY);
+	local deleteButton = CreateIconButton("DeleteAnswer" .. sAnswerNumberStr .. "Button", answersParentFrame, 20, "Interface/Buttons/Ui-grouploot-pass-up", "Interface/Buttons/Ui-grouploot-pass-down", "Interface/Buttons/Ui-grouploot-pass-highlight", RemoveAnswer, iAnswersCount + 1);
+	deleteButton:SetPoint("TOPLEFT", newAnswerEditBox, "TOPRIGHT", fInnerFramesMargin, 0);
 
-	answersCount = answersCount + 1;
+	iAnswersCount = iAnswersCount + 1;
 
 	answerObject.number = answerNumber;
 	answerObject.editBoxScrollFrame = newAnswerEditBox;
@@ -170,92 +166,101 @@ CreateAnswerEditBox = function()
 	table.insert(answerObjects, answerObject);
 end
 
-AddOrRemoveAnswerEditBox = function(currentlyModifiedAnswerIndex)
+--[[local]] AddOrRemoveAnswerEditBox = function(iCurrentlyModifiedAnswerIndex)
 
-	local object = answerObjects[currentlyModifiedAnswerIndex];
-	local boxText = object.editBoxScrollFrame.EditBox:GetText();
+	local object = answerObjects[iCurrentlyModifiedAnswerIndex];
+	local sBoxText = object.editBoxScrollFrame.EditBox:GetText();
 
-	if boxText == nil or boxText == "" then
-		RemoveAnswer(currentlyModifiedAnswerIndex);
+	if sBoxText == nil or sBoxText == "" then
+		RemoveAnswer(iCurrentlyModifiedAnswerIndex);
 
-	elseif currentlyModifiedAnswerIndex == answersCount then
-		if answersCount < #answerObjects then
-			local nextObject = answerObjects[currentlyModifiedAnswerIndex + 1];
+	elseif iCurrentlyModifiedAnswerIndex == iAnswersCount then
+		if iAnswersCount < #answerObjects then
+			local nextObject = answerObjects[iCurrentlyModifiedAnswerIndex + 1];
 			nextObject.number:Show();
 			nextObject.editBoxScrollFrame:Show();
 			nextObject.deleteButton:Show();
-			answersCount = answersCount + 1;
+			iAnswersCount = iAnswersCount + 1;
 		else
 			CreateAnswerEditBox();
 		end
 	end
 
-	UpdateScrollBar(answersScrollFrame, answersCount * totalHeightOfEachAnswer);
+	UpdateScrollBar(answersScrollFrame, iAnswersCount * fTotalHeightOfEachAnswer);
 end
 
-RemoveAnswer = function(index)
+--[[local]] RemoveAnswer = function(iIndex)
 
-	if index == answersCount then
-		local editBox = answerObjects[index].editBoxScrollFrame.EditBox;
+	if iIndex == iAnswersCount then
+		local editBox = answerObjects[iIndex].editBoxScrollFrame.EditBox;
 		editBox:SetText("");
 		editBox:ClearFocus();
 		editBox:HighlightText(0, 0);	-- Forces highlight removal
 		return;
 	end
 
-	for i = index, answersCount - 1 do
+	for i = iIndex, iAnswersCount - 1 do
 
 		local nextObject = answerObjects[i + 1];
 		answerObjects[i].editBoxScrollFrame.EditBox:SetText(nextObject.editBoxScrollFrame.EditBox:GetText());
 
-		if i + 1 == answersCount then
+		if i + 1 == iAnswersCount then
 			nextObject.number:Hide();
 			nextObject.editBoxScrollFrame:Hide();
 			nextObject.deleteButton:Hide();
 		end
 	end
 
-	answersCount = answersCount - 1;
-	UpdateScrollBar(answersScrollFrame, answersCount * totalHeightOfEachAnswer);
+	iAnswersCount = iAnswersCount - 1;
+	UpdateScrollBar(answersScrollFrame, iAnswersCount * fTotalHeightOfEachAnswer);
 end
 
 
 local function GeneratePollGUID()
-	return PollCraft_MyGUID() .. tostring(math.random(1000000, 9999999));
+	return MyGUID() .. tostring(math.random(1000000, 9999999));
 end
 
-SendNewPollAway = function()
+function SendPollData(pollData)
+
+	SendPollMessage({ poll = pollData }, "NewPoll", pollData.sPollType);
+
+	g_currentPollsMotherFrame.panel:ClearAllPoints();
+	g_currentPollsMotherFrame.panel:SetPoint("TOPLEFT", g_createPollFrame.panel, "TOPRIGHT", 0, 0);
+end
+
+--[[local]] SendNewPollAway = function()
 
 	local data = g_createPollFrame.panel;
-	local newPoll =
+	local newPollData =
 	{
-		pollGUID = GeneratePollGUID(),
-		pollMasterFullName = PollCraft_Me(),
-		pollMasterRealm = PollCraft_MyRealm(),
-		pollType = UIDropDownMenu_GetSelectedValue(data.pollTypesDropDownList),
-		multiVotes = data.allowMultipleVotesCheck:GetChecked(),
-		allowNewAnswers = data.allowNewAnswersCheck:GetChecked(),
-		question = data.questionEditBoxScrollFrame.EditBox:GetText(),
+		sPollGUID = GeneratePollGUID(),
+		sPollMasterFullName = Me(),
+		sPollMasterRealm = MyRealm(),
+		sPollType = UIDropDownMenu_GetSelectedValue(data.pollTypesDropDownList),
+		bMultiVotes = data.allowMultipleVotesCheck:GetChecked(),
+		bAllowNewAnswers = data.allowNewAnswersCheck:GetChecked(),
+		sQuestion = data.questionEditBoxScrollFrame.EditBox:GetText(),
 		answers = {}
 	}
 
-	for i = 1, answersCount - 1 do
+	for i = 1, iAnswersCount - 1 do
 		local answerObject =
 		{
-			text = answerObjects[i].editBoxScrollFrame.EditBox:GetText(),
-			GUID = tostring(i)
+			sText = answerObjects[i].editBoxScrollFrame.EditBox:GetText(),
+			sGUID = tostring(i)
 		}
-		table.insert(newPoll.answers, answerObject);
+		table.insert(newPollData.answers, answerObject);
 	end
 
-	if newPoll.question == nil or newPoll.question == ""
-		or newPoll.answers == nil or #newPoll.answers < 2
-		or newPoll.answers[2] == nil or newPoll.answers[2].text == nil or newPoll.answers[2].text == "" then
+	if newPollData.sQuestion == nil or newPollData.sQuestion == ""
+		or newPollData.answers == nil or #newPollData.answers < 2
+		or newPollData.answers[2] == nil or newPollData.answers[2].sText == nil or newPollData.answers[2].sText == "" then
 		return;
 	end
 
-	SendPollMessage({ poll = newPoll }, "NewPoll", newPoll.pollType);
-	LoadAndOpenReceivePollFrame(newPoll, PollCraft_Me(), PollCraft_MyRealm());
-	g_receivePollFrame.containingFrame:ClearAllPoints();
-	g_receivePollFrame.containingFrame:SetPoint("TOPLEFT", g_createPollFrame.panel, "TOPRIGHT", 0, 0);
+	SendPollData(newPollData);
+end
+
+function OpenCreatePollFrame()
+	g_createPollFrame.panel:Show();
 end

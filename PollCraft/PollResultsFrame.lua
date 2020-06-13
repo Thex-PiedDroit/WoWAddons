@@ -1,52 +1,48 @@
 
-g_pollResultsFrame = {};
+Cerberus_HookThisFile();
 
-local framesMargin = 0;
+local fInnerFramesMargin = GetInnerFramesMargin();
+local fMarginBetweenUpperBordersAndText = GetTextMarginFromUpperFramesBorders();
+local fSizeDifferenceBetweenFrameAndEditBox = GetSizeDifferenceBetweenFrameAndEditBox();
 
 local answersParentFrame = nil;
 local answersScrollFrame = nil;
-local answersCount = 0;
+local iAnswersCount = 0;
 
-local HideAllAnswers = nil;
+ClearPollResultsFrame = nil;
 
 
 function InitResultsFrame()
 
-	if g_receivePollFrame.resultsFrame ~= nil then
+	if g_currentPollsMotherFrame.resultsFrame ~= nil then
+		ClearPollResultsFrame();
 		return;
 	end
 
-	framesMargin = g_receivePollFrame.framesMargin;
+	local motherFrameSize = GetMotherFrameSize();
+	local containingFrame = g_currentPollsMotherFrame.currentPollFrame;
 
-	local mainFrameSizeX, mainFrameSizeY = g_receivePollFrame.containingFrame:GetSize();
 
-	local innerFrameSize =
-	{
-		x = mainFrameSizeX - framesMargin,
-		y = mainFrameSizeY - (framesMargin * 5)
-	};
+	local mainFrame = CreateBackdropTitledInnerFrame("PollResultsFrame", containingFrame, "PollCraft - Poll results");
+	local innerFrameSize = GetFrameSizeAsTable(mainFrame);
 
-	local mainFrame = CreateBackdroppedFrame("PollResultsFrame", g_receivePollFrame.containingFrame, innerFrameSize.x, innerFrameSize.y, false);
-	mainFrame:SetPoint("BOTTOM", 0, mainFrameSizeX / 80);
 
-	local titleFrame = CreateBackdroppedFrame("PollResultsFrameTitleBackdrop", mainFrame, 250, 35);
-	titleFrame:SetPoint("TOP", g_receivePollFrame.containingFrame, "TOP", 0, -20);
-	local mainFrameTitle = CreateLabel(titleFrame, "PollCraft - Poll results", 20);
-	mainFrameTitle:SetPoint("CENTER", 0, 0);
+		--[[      CHANGE VOTE BUTTON      ]]--
+	local changeVoteButton = CreateButton("SendVoteButton", mainFrame, { x = 120, y = 30 }, "Change vote");
+	changeVoteButton:SetPoint("BOTTOM", mainFrame, "BOTTOM", 0, fInnerFramesMargin * 2);
 
 
 		--[[      QUESTION FRAME      ]]--
-	local questionPosY = -45;
-	local questionSectionLabel = CreateLabel(mainFrame, "Question:", 16);
-	questionSectionLabel:SetPoint("TOPLEFT", framesMargin, questionPosY + 22);
-
 	local questionFrameSize =
 	{
-		x = innerFrameSize.x - framesMargin,
-		y = 56
+		x = innerFrameSize.x - (fInnerFramesMargin * 2),
+		y = 44 + fSizeDifferenceBetweenFrameAndEditBox;
 	}
-	local questionFrame = CreateBackdroppedFrame("QuestionFrame", mainFrame, questionFrameSize.x, questionFrameSize.y);
-	questionFrame:SetPoint("TOP", 0, questionPosY);
+	local questionFrame = CreateBackdroppedFrame("QuestionFrame", mainFrame, questionFrameSize);
+	questionFrame:SetPoint("TOP", 0, fMarginBetweenUpperBordersAndText * 2);
+	local questionSectionLabel = CreateLabel(questionFrame, "Question:", 16);
+	questionSectionLabel:SetPoint("TOPLEFT", 10, -fMarginBetweenUpperBordersAndText);
+
 	local questionLabel = CreateLabel(questionFrame, "Question here", 16, "LEFT");
 	questionLabel:SetPoint("TOPLEFT", 13, -12);
 	questionLabel:SetPoint("BOTTOMRIGHT", -13, 12);
@@ -54,81 +50,94 @@ function InitResultsFrame()
 
 
 		--[[      ANSWERS FRAME      ]]--
-	local answersFrameLabel = CreateLabel(mainFrame, "Answers:", 16);
-	local answersFramePosY = questionPosY - questionFrameSize.y - 32;
-	answersFrameLabel:SetPoint("TOPLEFT", framesMargin, answersFramePosY + 20);
-
 	local answersFrameSize =
 	{
 		x = questionFrameSize.x,
-		y = innerFrameSize.y - questionFrameSize.y + questionPosY - 80;
+		y = 100		-- Placeholder before resizing
 	}
-	local answersFrame = CreateScrollFrame("AnswersFrame_PollResults", mainFrame, answersFrameSize.x, answersFrameSize.y);
-	answersFrame:SetPoint("TOP", 0, answersFramePosY);
+	local answersFrame = CreateScrollFrame("AnswersFrame_PollResults", mainFrame, answersFrameSize);
+	answersFrame:SetPoint("TOP", questionFrame, "BOTTOM", 0, fMarginBetweenUpperBordersAndText * 2);
+	answersFrame:SetPoint("BOTTOM", changeVoteButton, "TOP", 0, (fInnerFramesMargin * 2) - 8);
+	local answersFrameLabel = CreateLabel(answersFrame, "Answers:", 16);
+	answersFrameLabel:SetPoint("TOPLEFT", 10, -fMarginBetweenUpperBordersAndText);
+	local answersCountLabel = CreateLabel(answersFrame, "Voters count: X", 16);
+	answersCountLabel:SetPoint("TOPRIGHT", -10, -fMarginBetweenUpperBordersAndText);
 
 	answersFrame.content.answersBoxes = {};
 	answersParentFrame = answersFrame.content;
 	answersScrollFrame = answersFrame;
+	answersParentFrame.countLabel = answersCountLabel;
 
-
-	local changeVoteButton = CreateButton("SendVoteButton", mainFrame, 120, 30, "Change vote");
-	changeVoteButton:SetPoint("TOP", 0, answersFramePosY - answersFrameSize.y - (framesMargin * 0.4));
 	changeVoteButton:SetFrameLevel(answersParentFrame:GetFrameLevel() + 10);
 
 
-	g_pollResultsFrame = mainFrame;
-	g_receivePollFrame.resultsFrame = mainFrame;
-	mainFrame:Hide();
+		--[[      POLL ABORTED      ]]--
+	local pollAbortedLabel = CreateLabel(answersFrame, ColoriseText("(This poll has been aborted by its creator)", g_cRedWarningColor), 14);
+	pollAbortedLabel:SetPoint("BOTTOMLEFT", answersFrameLabel, "BOTTOMRIGHT", 10, 0);
+	pollAbortedLabel:Hide();
+	mainFrame.pollAbortedLabel = pollAbortedLabel;
 
-	mainFrame:SetScript("OnHide", function() HideAllAnswers(); answersCount = 0; end);
+
+		--[[      NO POLL FRAME      ]]--
+	local noPollFrame = CreateBackdropTitledInnerFrame("PollResultsFrame", containingFrame, "PollCraft - Current poll");
+	local noPollLabel = CreateLabel(noPollFrame, "Nothing to display", 20);
+	noPollLabel:SetPoint("CENTER");
+
+
+	g_currentPollsMotherFrame.resultsFrame = mainFrame;
+	g_currentPollsMotherFrame.noPollFrame = noPollFrame;
+	mainFrame:Hide();
 end
 
 
 local answerObjects = {};
 local answerObjectsIndexList = {};
-local answersFramesHeight = 70;
-local totalHeightOfEachAnswer = answersFramesHeight + (framesMargin * 0.25);
+local answersFramesSize = { x = 0, y = 70 };
+local answersTextFrameSize = table.clone(answersFramesSize);
+local fTotalHeightOfEachAnswer = answersFramesSize.y + (fInnerFramesMargin * 0.5);
 
 local function LoadAnswer(answerObject)
 
-	local answerText = answerObject.text;
-	local answerGUID = answerObject.GUID;
+	local sAnswerText = answerObject.sText;
+	local sAnswerGUID = answerObject.sGUID;
 
 	local object = nil;
 
-	if answersCount < #answerObjects then
-		object = answerObjects[answerObjectsIndexList[answersCount + 1]];
+	if iAnswersCount < #answerObjects then
+		object = answerObjects[answerObjectsIndexList[iAnswersCount + 1]];
 
 		object.answerContainingFrame:Show();
-		object.text:SetText(answerText);
+		object.text:SetText(sAnswerText);
 		object.text:Show();
 		object.textFrame:Show();
 		object.number:Show();
-		object.GUID = answerGUID;
-		object.votesCount = 0;
+		object.sGUID = sAnswerGUID;
+		object.iVotesCount = 0;
 		object.votesCountLabel:SetText("0");
 	else
-		local answerIndexStr = tostring(answersCount + 1);
+		local sAnswerIndexStr = tostring(iAnswersCount + 1);
 
-		local answerContainingFrameWidth = answersParentFrame:GetWidth() - (framesMargin * 2.5);
-		local textFramePosY = -((totalHeightOfEachAnswer * answersCount) + 10);
+		if answersFramesSize.x == 0 then
+			answersFramesSize.x = answersParentFrame:GetWidth() - (fInnerFramesMargin * 2) - answersParentFrame:GetParent().scrollbar:GetWidth();
+			answersTextFrameSize.x = answersFramesSize.x - (fInnerFramesMargin * 2) - 54;
+		end
 
-		local answerContainingFrame = CreateFrame("Frame", "Answer" .. answerIndexStr .. "ContainingFrame", answersParentFrame);
-		answerContainingFrame:SetSize(answerContainingFrameWidth, answersFramesHeight);
-		answerContainingFrame:SetPoint("TOPLEFT", framesMargin * 0.5, textFramePosY);
+		local answerContainingFrame = CreateFrame("Frame", "Answer" .. sAnswerIndexStr .. "ContainingFrame", answersParentFrame);
+		answerContainingFrame:SetSize(answersFramesSize.x, answersFramesSize.y);
+		local fTextFramePosY = -(fTotalHeightOfEachAnswer * iAnswersCount) - fInnerFramesMargin;
+		answerContainingFrame:SetPoint("TOPLEFT", fInnerFramesMargin, fTextFramePosY);
 
-		local answerFrameWidth = answerContainingFrameWidth - (framesMargin * 1.5) - 50;
-		local textFrame = CreateBackdroppedFrame("Answer" .. answerIndexStr .. "TextFrame", answerContainingFrame, answerFrameWidth, answersFramesHeight);
-		textFrame:SetPoint("TOPLEFT", framesMargin + 20, 0);
-		local answerLabel = CreateLabel(textFrame, answerText, 16, "LEFT");
-		answerLabel:SetPoint("TOPLEFT", framesMargin, -11);
-		answerLabel:SetPoint("BOTTOMRIGHT", -framesMargin, 11);
+		local textFrame = CreateBackdroppedFrame("Answer" .. sAnswerIndexStr .. "TextFrame", answerContainingFrame, answersTextFrameSize);
+		textFrame:SetPoint("TOPLEFT", fInnerFramesMargin + 22, 0);
+		local answerLabel = CreateLabel(textFrame, sAnswerText, 16, "LEFT");
+		answerLabel:SetPoint("TOPLEFT", fInnerFramesMargin, -11);
+		answerLabel:SetPoint("BOTTOMRIGHT", -fInnerFramesMargin, 11);
 
-		local newNumber = CreateLabel(answerContainingFrame, answerIndexStr .. '.', 16);
-		newNumber:SetPoint("TOPRIGHT", textFrame, "TOPLEFT", 14 - framesMargin, - 8);
+		local newNumber = CreateLabel(answerContainingFrame, sAnswerIndexStr .. '.', 16);
+		newNumber:SetPoint("TOPRIGHT", textFrame, "TOPLEFT", -2, -8);
 
 		local votesCountLabel = CreateLabel(answerContainingFrame, "0", 16);
-		votesCountLabel:SetPoint("LEFT", textFrame, "RIGHT", framesMargin - 5, 0);
+		votesCountLabel:SetPoint("LEFT", textFrame, "RIGHT", fInnerFramesMargin, 0);
 
 		object =
 		{
@@ -137,65 +146,57 @@ local function LoadAnswer(answerObject)
 			textFrame = textFrame,
 			text = answerLabel,
 			votesCountLabel = votesCountLabel,
-			votesCount = 0,
-			GUID = answerGUID,
+			iVotesCount = 0,
+			sGUID = sAnswerGUID,
 		}
 
 		table.insert(answerObjects, object);
-		table.insert(answerObjectsIndexList, answersCount + 1);
+		table.insert(answerObjectsIndexList, iAnswersCount + 1);
 	end
 
-	answersCount = answersCount + 1;
-	UpdateScrollBar(answersScrollFrame, answersCount * totalHeightOfEachAnswer);
+	iAnswersCount = iAnswersCount + 1;
+	UpdateScrollBar(answersScrollFrame, (iAnswersCount * fTotalHeightOfEachAnswer) - fInnerFramesMargin);
 end
 
-local function InsertAnswerObject(oldIndex, newIndex)
+local function InsertAnswerObject(iOldIndex, iNewIndex)
 
-	if newIndex >= oldIndex then
+	if iNewIndex >= iOldIndex then
 		PollCraft_Print("Error: Attempting to insert an answer object from top to bottom. This is unintended behaviour. If you really need to, you'll have to remake the InsertAnswerObject function.");
 		return;
 	end
 
-	local newPoint, _, _, newX, newY = answerObjects[answerObjectsIndexList[newIndex]].answerContainingFrame:GetPoint();
-	local cachedIndex = answerObjectsIndexList[oldIndex];
+	local sNewPoint, _, _, fNewX, fNewY = answerObjects[answerObjectsIndexList[iNewIndex]].answerContainingFrame:GetPoint();
+	local iCachedIndex = answerObjectsIndexList[iOldIndex];
 
-	for i = newIndex, oldIndex - 1 do
-		local nextPoint, _, _, nextX, nextY = answerObjects[answerObjectsIndexList[i + 1]].answerContainingFrame:GetPoint();
-		answerObjects[answerObjectsIndexList[i]].answerContainingFrame:SetPoint(nextPoint, nextX, nextY);
+	for i = iNewIndex, iOldIndex - 1 do
+		local sNextPoint, _, _, fNextX, fNextY = answerObjects[answerObjectsIndexList[i + 1]].answerContainingFrame:GetPoint();
+		answerObjects[answerObjectsIndexList[i]].answerContainingFrame:SetPoint(sNextPoint, fNextX, fNextY);
 
-		local newCurrentIndex = cachedIndex;
-		cachedIndex = answerObjectsIndexList[i];
-		answerObjectsIndexList[i] = newCurrentIndex;
+		local iNewCurrentIndex = iCachedIndex;
+		iCachedIndex = answerObjectsIndexList[i];
+		answerObjectsIndexList[i] = iNewCurrentIndex;
 	end
 
-	answerObjects[answerObjectsIndexList[oldIndex]].answerContainingFrame:SetPoint(newPoint, newX, newY);
-	answerObjectsIndexList[oldIndex] = cachedIndex;
-end
-
-HideAllAnswers = function()
-	for i = 1, #answerObjects do
-		local answerObject = answerObjects[answerObjectsIndexList[i]];
-		answerObject.answerContainingFrame:Hide();
-		answerObject.GUID = nil;
-	end
+	answerObjects[answerObjectsIndexList[iOldIndex]].answerContainingFrame:SetPoint(sNewPoint, fNewX, fNewY);
+	answerObjectsIndexList[iOldIndex] = iCachedIndex;
 end
 
 
-local function SortAnswer(index, votesCount)
+local function SortAnswer(iIndex, iVotesCount)
 
-	local newIndex = 1;
+	local iNewIndex = 1;
 
-	for i = index - 1, 1, -1 do
+	for i = iIndex - 1, 1, -1 do
 		local currentAnswerObject = answerObjects[answerObjectsIndexList[i]];
 
-		if currentAnswerObject.votesCount >= votesCount then
-			newIndex = i + 1;
+		if currentAnswerObject.iVotesCount >= iVotesCount then
+			iNewIndex = i + 1;
 			break;
 		end
 	end
 
-	if newIndex ~= index then
-		InsertAnswerObject(index, newIndex);
+	if iNewIndex ~= iIndex then
+		InsertAnswerObject(iIndex, iNewIndex);
 	end
 end
 
@@ -203,38 +204,53 @@ local function ReSortAnswers()
 
 	for i = 1, #answerObjects do
 		local currentAnswerObject = answerObjects[answerObjectsIndexList[i]];
-		currentAnswerObject.number:SetText(i);
+		currentAnswerObject.number:SetText(i .. ".");
 	end
 end
 
-local function VoteForAnswer(index, pointsToAdd)
+ClearPollResultsFrame = function()
 
-	pointsToAdd = pointsToAdd or 1;
+	ReSortAnswers();
 
-	local answerObject = answerObjects[answerObjectsIndexList[index]];
-	local newCount = answerObject.votesCount + pointsToAdd;
-	answerObject.votesCount = newCount;
-	answerObject.votesCountLabel:SetText(tostring(newCount));
+	for i = 1, #answerObjects do
+		local answerObject = answerObjects[answerObjectsIndexList[i]];
+		answerObject.answerContainingFrame:Hide();
+		answerObject.sGUID = nil;
+	end
 
-	SortAnswer(index, newCount);
+	g_currentPollsMotherFrame.sCurrentPollGUID = nil;
+	iAnswersCount = 0;
 end
 
-local function FindAnswerIndexByGUID(answerGUID)
 
-	for i = 1, answersCount do
-		if answerObjects[answerObjectsIndexList[i]].GUID == answerGUID then
+local function VoteForAnswer(iIndex, iPointsToAdd)
+
+	iPointsToAdd = iPointsToAdd or 1;
+
+	local answerObject = answerObjects[answerObjectsIndexList[iIndex]];
+	local iNewCount = answerObject.iVotesCount + iPointsToAdd;
+	answerObject.iVotesCount = iNewCount;
+	answerObject.votesCountLabel:SetText(tostring(iNewCount));
+
+	SortAnswer(iIndex, iNewCount);
+end
+
+local function FindAnswerIndexByGUID(sAnswerGUID)
+
+	for i = 1, iAnswersCount do
+		if answerObjects[answerObjectsIndexList[i]].sGUID == sAnswerGUID then
 			return i;
 		end
 	end
 
-	PollCraft_Print("Error: Could not find answer with GUID " .. answerGUID .. " in function FindAnswerIndexByGUID()");
+	PollCraft_Print("Error: Could not find answer with GUID " .. sAnswerGUID .. " in function FindAnswerIndexByGUID()");
 end
 
 local function ProcessVotes(votes)
 
 	local votesCopy = table.clone(votes);
 
-	for i = 1, answersCount do
+	for i = 1, iAnswersCount do
 
 		if #votesCopy == 0 then
 			return;
@@ -242,7 +258,7 @@ local function ProcessVotes(votes)
 
 		for j = 1, #votesCopy do
 			local currentAnswerObject = answerObjects[answerObjectsIndexList[i]];
-			if votesCopy[j] == currentAnswerObject.GUID then
+			if votesCopy[j] == currentAnswerObject.sGUID then
 				VoteForAnswer(i);
 				table.remove(votesCopy, j);
 				break;
@@ -254,32 +270,46 @@ end
 
 function LoadResults(results)
 
-	for answerGUID, result in pairs(results) do
-		local answerIndex = FindAnswerIndexByGUID(answerGUID);
-		VoteForAnswer(answerIndex, result);
+	for sAnswerGUID, result in pairs(results) do
+		local iAnswerIndex = FindAnswerIndexByGUID(sAnswerGUID);
+		VoteForAnswer(iAnswerIndex, result);
 	end
 end
 
-function LoadAndOpenPollResultsFrame(pollData)
+function LoadPollResultsFrame(pollData)
 
-	if g_receivePollFrame.resultsFrame == nil then
-		InitResultsFrame();
-	else
-		ReSortAnswers();
-	end
+	InitResultsFrame();
 
-	g_receivePollFrame.receivePollFrame:Hide();
-	g_receivePollFrame.resultsFrame.questionLabel:SetText(pollData.question);
+	g_currentPollsMotherFrame.resultsFrame.pollAbortedLabel:Hide();
+	g_currentPollsMotherFrame.noPollFrame:Hide();
+	g_currentPollsMotherFrame.voteFrame:Hide();
+	g_currentPollsMotherFrame.resultsFrame.questionLabel:SetText(pollData.sQuestion);
+
+	g_currentPollsMotherFrame.sCurrentPollGUID = pollData.sPollGUID;
 
 	for i = 1, #pollData.answers do
 		LoadAnswer(pollData.answers[i]);
 	end
 
-	LoadResults(pollData.results);
+	UpdateVotersCountLabel(pollData);
 
-	pollGUID = pollData.pollGUID;
-	g_receivePollFrame.resultsFrame:Show();
-	g_receivePollFrame.containingFrame:Show();
+	if pollData.results ~= nil then
+		LoadResults(pollData.results);
+	end
+end
+
+function UpdateVotersCountLabel(pollData)
+
+	answersParentFrame.countLabel:SetText("Voters count: " .. tostring(pollData.iVotersCount or 0));
+end
+
+function LoadAndOpenPollResultsFrame(pollData)
+
+	LoadPollResultsFrame(pollData);
+
+	g_currentPollsMotherFrame.panel:Show();
+	g_currentPollsMotherFrame.resultsFrame:Show();
+	g_currentPollsMotherFrame.currentPollFrame:Show();
 end
 
 function AddVoteToResultsDisplay(voteData)

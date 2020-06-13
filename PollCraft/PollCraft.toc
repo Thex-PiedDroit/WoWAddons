@@ -1,25 +1,31 @@
-## Interface: 70200
+## Interface: 80000
 ## Title: PollCraft
 ## Version: 0.1
 ## Notes: Adds tools to create polls in game
 ## Author: Thex
 ## DefaultState: enabled
+## SavedVariables: S_sPollCraftSavedAddonVersion, S_pollCraftData
 
 
-Libraries\LibStub\LibStub.lua
-Libraries\CallbackHandler-1.0\CallbackHandler-1.0.xml
+Libraries\LibDBIcon-1.0\embeds.xml
+Libraries\LibDBIcon-1.0\LibDBIcon-1.0\lib.xml
 Libraries\AceComm-3.0\AceComm-3.0.xml
 Libraries\AceSerializer-3.0\AceSerializer-3.0.xml
 
+Libraries\Cerberus\Cerberus.lua
 
 Helpers.lua
+SaveLoad.lua
 PollsData.lua
 Comm.lua
 FramesCreationHelpers.lua
 HandleVote.lua
-ReceivePollFrame.lua
+CurrentPollsFrame.lua
+VoteFrame.lua
 PollResultsFrame.lua
+PollsListFrame.lua
 CreatePollFrame.lua
 Core.lua
+MinimapButton.lua
 
 Tests.lua

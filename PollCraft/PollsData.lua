@@ -1,80 +1,117 @@
 
-
 --[[
 pollData =
 {
-	pollGUID,
-	pollMasterFullName,
-	pollMasterRealm,
-	pollType,
-	multiVotes,
-	allowNewAnswers,
-	question,	-- As text
+	sPollGUID,
+	sPollMasterFullName,
+	sPollMasterRealm,
+	sPollType,
+	bMultiVotes,
+	bAllowNewAnswers,
+	sQuestion,
 	answers = {}
 	results =
 	{
-		[answerGUID] = X,	-- Where X is the current amount of votes on that answer. If answer is not in this list, answer has 0 votes
-	}
+		[sAnswerGUID] = iX,	-- Where iX is the current amount of votes on that answer. If answer is not in this list, answer has 0 votes
+	},
+	bIVoted,
+	voters = {},	-- Dictionary of <sPlayersBTag, bool /* has voted */> - Only known by poll master. Dictionary for ease of access
+	iVotersCount,	-- Only updated by the poll master - Known by everyone
 }
 
 -- Polls each have "unique" IDs composed like so: "PlayerGUIDXXXXXXX" where "XXXXXXX" is a random number between 1000000 and 9999999 (not really unique, but close enough)
 ]]
 
-local currentPollsInMemory = {};
+
+Cerberus_HookThisFile();
 
 function UpdatePollData(newPollData)
 
-	currentPollsInMemory[newPollData.pollGUID] = newPollData;	-- TEMP
+	g_pollCraftData.savedPollsData[newPollData.sPollGUID] = newPollData;	-- TEMP
 end
 
 function AddPollDataToMemory(pollData)
 
-	local pollGUID = pollData.pollGUID;
+	local sPollGUID = pollData.sPollGUID;
 
-	if currentPollsInMemory[pollGUID] ~= nil then
+	if g_pollCraftData.savedPollsData[sPollGUID] ~= nil then
 		UpdatePollData(pollData);
 	else
-		currentPollsInMemory[pollGUID] = pollData;
+		g_pollCraftData.savedPollsData[sPollGUID] = pollData;
+		g_pollCraftData.savedPollsGUIDs[sPollGUID] = true;
+	end
+
+	RequestPollsListsUpdate();
+end
+
+function RemovePollDataFromMemory(sPollGUID, bKeepInList)
+	if g_pollCraftData.savedPollsData[sPollGUID] == nil then
+		return;
+	end
+
+	g_pollCraftData.savedPollsData[sPollGUID] = nil;
+	g_pollCraftData.savedPollsGUIDs[sPollGUID] = nil;
+
+	if bKeepInList then
+		AddAbortedMessageToQuestionInPollsList(sPollGUID);
+	else
+		RequestPollsListsUpdate();
 	end
 end
 
-function RemovePollDataFromMemory(pollGUID)
-	currentPollsInMemory[pollGUID] = nil;
+function GetPollData(sPollGUID)
+	return g_pollCraftData.savedPollsData[sPollGUID];
 end
 
-function GetPollData(pollGUID)
-	return currentPollsInMemory[pollGUID];
+function GetAllPollsGUID()
+	return g_pollCraftData.savedPollsGUIDs;
+end
+
+function GetAllPolls()
+	return g_pollCraftData.savedPollsData;
+end
+
+function IAlreadyVotedForThisPoll(sPollGUID)
+	return g_pollCraftData.savedPollsData[sPollGUID] ~= nil and g_pollCraftData.savedPollsData[sPollGUID].bIVoted;
 end
 
 
 function RegisterVote(voteData)
 
-	local pollData = currentPollsInMemory[voteData.pollGUID];
+	local sPollGUID = voteData.sPollGUID;
+	local pollData = GetPollData(sPollGUID);
 
 	local pollAnswers = pollData.answers;
 	for i = 1, #voteData.newAnswers do
 		table.insert(pollAnswers, voteData.newAnswers[i]);
 	end
-	currentPollsInMemory[voteData.pollGUID].answers = pollAnswers;
+	g_pollCraftData.savedPollsData[sPollGUID].answers = pollAnswers;
+
+	g_pollCraftData.savedPollsData[sPollGUID].voters = g_pollCraftData.savedPollsData[sPollGUID].voters or {};
+	--g_pollCraftData.savedPollsData[sPollGUID].voters[voteData.sVoterBTag] = true;
+	g_pollCraftData.savedPollsData[sPollGUID].iVotersCount = (pollData.iVotersCount or 0) + 1;
 
 	local pollResults = pollData.results or {};
 	for i = 1, #voteData.vote do
-		local currentVoteGUID = voteData.vote[i];
-		if pollResults[currentVoteGUID] == nil then
-			pollResults[currentVoteGUID] = 0;
+		local sCurrentVoteGUID = voteData.vote[i];
+		if pollResults[sCurrentVoteGUID] == nil then
+			pollResults[sCurrentVoteGUID] = 0;
 		end
-		pollResults[currentVoteGUID] = pollResults[currentVoteGUID] + 1;
+		pollResults[sCurrentVoteGUID] = pollResults[sCurrentVoteGUID] + 1;
 	end
-	currentPollsInMemory[voteData.pollGUID].results = pollResults;
+
+	g_pollCraftData.savedPollsData[sPollGUID].results = pollResults;
 end
 
 function RegisterResults(resultsData)
 
-	local pollGUID = resultsData.pollGUID;
+	local sPollGUID = resultsData.sPollGUID;
 
-	if currentPollsInMemory[pollGUID] == nil then
-		currentPollsInMemory[pollGUID] = {};
+	if g_pollCraftData.savedPollsData[sPollGUID] == nil then
+		g_pollCraftData.savedPollsData[sPollGUID] = {};
 	end
-	currentPollsInMemory[pollGUID].answers = resultsData.pollAnswers;
-	currentPollsInMemory[pollGUID].results = resultsData.results;
+	g_pollCraftData.savedPollsData[sPollGUID].answers = resultsData.pollAnswers;
+	g_pollCraftData.savedPollsData[sPollGUID].results = resultsData.results;
+	g_pollCraftData.savedPollsData[sPollGUID].voters = resultsData.voters;
+	g_pollCraftData.savedPollsData[sPollGUID].iVotersCount = resultsData.iVotersCount;
 end

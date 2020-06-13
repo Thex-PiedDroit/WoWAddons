@@ -1,68 +1,125 @@
 
+g_cerberus.RegisterAddon("PollCraft", { "S_sPollCraftSavedAddonVersion", "S_pollCraftData" });
 
-local _, playerBTag = BNGetInfo();
-function PollCraft_MyBTag()
-	if playerBTag == nil then
-		local _, newBTag = BNGetInfo();
-		playerBTag = newBTag;
+
+local sPlayerGUID = UnitGUID("player");
+function MyGUID()
+	if sPlayerGUID == nil then
+		sPlayerGUID = UnitGUID("player");
 	end
-	return playerBTag;
+	return sPlayerGUID;
 end
-local playerGUID = UnitGUID("player");
-function PollCraft_MyGUID()
-	if playerGUID == nil then
-		playerGUID = UnitGUID("player");
-	end
-	return playerGUID;
+local sPlayerName = UnitName("player");
+function MyName()
+	return sPlayerName;
 end
-local playerName = UnitName("player");
-function PollCraft_MyName()
-	return playerName;
+local sPlayerRealm = GetRealmName();
+function MyRealm()
+	return sPlayerRealm;
 end
-local playerRealm = GetRealmName();
-function PollCraft_MyRealm()
-	return playerRealm;
-end
-local playerFullName = playerName .. "-" .. playerRealm;
-function PollCraft_Me()
+local playerFullName = sPlayerName .. "-" .. sPlayerRealm;
+function Me()
 	return playerFullName;
 end
-
-
-local addonTextColour = "ff25de32";
-local pollCraftPrefix = "|c" .. addonTextColour .. "PollCraft: |r"
-function PollCraft_Print(message)
-	print(pollCraftPrefix .. message);
+local _, sPlayerBTag = BNGetInfo();
+function MyBTag()
+	if sPlayerBTag == nil then
+		local _, sNewBTag = BNGetInfo();
+		sPlayerBTag = sNewBTag or playerFullName;	-- Discovery accounts don't have a btag so use full name in that case
+	end
+	return sPlayerBTag;
 end
 
 
-function PollCraft_GetNameForPrint(targetName, targetRealm)
+function ColoriseText(sMessage, sColorCode)
+	return "|cff" .. sColorCode .. sMessage .. "|r";
+end
 
-	if targetRealm ~= PollCraft_MyRealm() then
-		targetName = targetName .. "-" .. targetRealm;
+g_cRedWarningColor = "f00606";
+
+g_cAddonTextColor = "25de32";
+g_sPollCraftPrefix = ColoriseText("PollCraft: ", g_cAddonTextColor);
+function PollCraft_Print(sMessage)
+	print(g_sPollCraftPrefix .. sMessage);
+end
+
+function GetInnerFramesMargin()
+	return 8;
+end
+
+function GetTextMarginFromUpperFramesBorders()
+	return -22;
+end
+
+function GetSizeDifferenceBetweenFrameAndEditBox()
+	return 12;
+end
+
+
+function GetNameForPrint(sTargetName, sTargetRealm)
+
+	if sTargetRealm ~= MyRealm() then
+		sTargetName = sTargetName .. "-" .. sTargetRealm;
 	end
 
-	return targetName;
+	return sTargetName;
 end
 
-function math.Clamp(number, min, max)
+function math.Clamp(fNumber, fMin, fMax)
 
-	return math.min(max, math.max(number, min));
+	return math.min(fMax, math.max(fNumber, fMin));
 end
 
 function table.Len(T)
-	local count = 0
+	local iCount = 0;
 	for _ in pairs(T) do
-		count = count + 1;
+		iCount = iCount + 1;
 	end
-	return count
+	return iCount;
+end
+
+function table.LenRecursive(T)
+
+	local count = 0;
+	for key, value in pairs(T) do
+		if type(value) == "table" then
+			count = count + table.LenRecursive(value);
+		else
+			count = count + 1;
+		end
+	end
+
+	return count;
 end
 
 function table.clone(T)
 
 	local copy = {};
-	for i = 1, #T do
-		table.insert(copy, T[i]);
+	for key, value in pairs(T) do
+		if type(value) == "table" then
+			copy[key] = table.clone(T);
+		else
+			copy[key] = value;
+		end
 	end
+
 	return copy;
+end
+
+function OpenTab(panel, tabContent)
+
+	local iTabToSet = -1;
+
+	for i = 1, #panel.tabFrames do
+
+		if panel.tabFrames[i] == tabContent then
+			panel.tabFrames[i]:Show();
+			iTabToSet = i;
+		else
+			panel.tabFrames[i]:Hide();
+		end
+	end
+
+	PanelTemplates_SetTab(panel, iTabToSet);
+	return iTabToSet;
 end

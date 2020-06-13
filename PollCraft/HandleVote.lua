@@ -2,9 +2,11 @@
 --[[
 voteData =
 {
-	pollGUID,
-	newAnswers {},	-- Answers added by the voter
-	vote {}		-- List of answerIDs
+	sPollGUID,
+	sVoterBTag,
+	sVoterFullName,
+	newAnswers = {},	-- Answers added by the voter
+	vote = {}		-- List of answerIDs
 }
 
 -- Answers each have "unique" IDs =>
@@ -14,56 +16,61 @@ voteData =
 ]]
 
 
-function SendVoteAway(self, args)
+Cerberus_HookThisFile();
+
+function SendVoteAway(self)
 
 	self:Disable();
 
 	local voteData = GetVoteData();
-	local pollData = GetPollData(voteData.pollGUID);
+	local pollData = GetPollData(voteData.sPollGUID);
 
-	SendPollMessage({ voteData = voteData }, "Vote", "WHISPER", pollData.pollMasterFullName, pollData.pollMasterRealm);
-end
-
-function BroadcastVote(voteData, excludedGuyFromBroadcast)
-
-	local pollData = GetPollData(voteData.pollGUID);
-	SendPollMessage({ voteData = voteData, isBroadcast = true, excludedGuyFromBroadcast = excludedGuyFromBroadcast }, "Vote", pollData.pollType);
+	SendPollMessage({ voteData = voteData }, "Vote", "WHISPER", pollData.sPollMasterFullName, pollData.sPollMasterRealm);
+	g_pollCraftData.savedPollsData[pollData.sPollGUID].bIVoted = true;
+	TickVoteCheckBoxForPoll(pollData.sPollGUID, true, pollData.sPollMasterFullName == Me());
 end
 
 
-function HandleVoteMessageReception(voteMessage, senderFullName, senderRealm)
+function HandleVoteMessageReception(voteMessage, sSenderFullName, sSenderRealm)
 
-	if voteMessage.isBroadcast and
-		((senderFullName ~= nil and senderFullName == PollCraft_Me())
-		or (voteMessage.excludedGuyFromBroadcast == PollCraft_Me())) then
+	if voteMessage.bIsBroadcast and
+		(sSenderFullName == Me() or voteMessage.sExcludedRecipient == Me()) then
 		return;
 	end
 
 	local voteData = voteMessage.voteData;
-	local pollData = GetPollData(voteData.pollGUID);
-
-	local registeredVote = false;
-	if not g_currentlyBusy then
-		RegisterVote(voteData);
-		AddVoteToResultsDisplay(voteData);
-		registeredVote = true;
+	local pollData = GetPollData(voteData.sPollGUID);
+	if pollData == nil then
+		return;
 	end
 
-	if pollData.pollMasterFullName == PollCraft_Me() then
-		if not registeredVote then
-			RegisterVote(voteData);
-		end
+	RegisterVote(voteData);
+	local bShouldAddVoteToDisplay = true;
+
+	if pollData.sPollMasterFullName == Me() then
+
+		local sSenderBTag = voteData.sVoterBTag;
+		pollData.voters = pollData.voters or {};
+		pollData.voters[sSenderBTag] = true;
+
 		local resultsMessageData =
 		{
-			pollGUID = voteData.pollGUID,
+			sPollGUID = voteData.sPollGUID,
 			pollAnswers = pollData.answers,
-			results = pollData.results
+			results = pollData.results,
+			iVotersCount = pollData.iVotersCount,
 		}
-		SendPollMessage({ resultsData = resultsMessageData }, "Results", "WHISPER", senderFullName, senderRealm);
-		BroadcastVote(voteData, senderFullName);
+
+		SendPollMessage({ resultsData = resultsMessageData }, "Results", "WHISPER", sSenderFullName, sSenderRealm);
+		SendPollMessage({ voteData = voteData, bIsBroadcast = true, sExcludedRecipient = sSenderFullName }, "Vote", pollData.sPollType);	-- Broadcast the vote to everyone else
+		bShouldAddVoteToDisplay = sSenderFullName ~= Me();	-- When the poll master votes, they will receive the result, which will update the full display.
 	end
 
-	if g_currentlyBusy then
+	if IsCurrentlyVotingForPoll(voteData.sPollGUID) then
 		LoadAdditionalAnswersForVoting(voteData.newAnswers);
+	elseif bShouldAddVoteToDisplay then
+		AddVoteToResultsDisplay(voteData);
 	end
+
+	UpdateVotersCountLabel(pollData);
 end

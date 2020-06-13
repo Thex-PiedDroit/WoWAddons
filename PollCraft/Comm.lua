@@ -1,80 +1,89 @@
 
-g_pollCraftComm = LibStub("AceComm-3.0");
+Cerberus_HookThisFile();
+
+local comm = LibStub("AceComm-3.0");
 local serializer = LibStub("AceSerializer-3.0");
 
 
-g_currentlyBusy = false;
+local function ReceiveMessage(_, sMessage)
 
+	local bSuccess, messageObject = serializer:Deserialize(sMessage);
 
-local function ReceiveMessage(prefix, message)
-
-	local success, messageObject = serializer:Deserialize(message);
-
-	if not success then
+	if not bSuccess then
 		PollCraft_Print("Could not deserialize a message. Error message:");
-		print(messageObject);
 		return;
 	end
 
 	local actualMessage = messageObject.message;
 
-	if actualMessage.specificTarget ~= nil and actualMessage.specificTarget ~= PollCraft_Me() then
-		return;		-- Because for some reason, blizzard decided that cross-realm WHISPERS do not work in parties and raid groups
+	if actualMessage.sSpecificTarget ~= nil and actualMessage.sSpecificTarget ~= Me() then
+		return;
 	end
 
-	local messageType = actualMessage.messageType;
+	local sMessageType = actualMessage.sMessageType;
 
-	if messageType == "NewPoll" then
-		if messageObject.senderFullName ~= nil and messageObject.senderFullName == PollCraft_Me() then
+	if sMessageType == "NewPoll" then
+		AddPollDataToMemory(actualMessage.poll);
+		LoadAndOpenVoteFrame(actualMessage.poll, messageObject.sSenderFullName, messageObject.sSenderRealm);
+
+	elseif sMessageType == "Vote" then
+		HandleVoteMessageReception(actualMessage, messageObject.sSenderFullName, messageObject.sSenderRealm);
+
+	elseif sMessageType == "Results" or sMessageType == "PollAbort" then
+		local resultsData = actualMessage.resultsData;
+		local pollData = GetPollData(resultsData.sPollGUID);
+		if pollData == nil then
 			return;
 		end
 
-		LoadAndOpenReceivePollFrame(actualMessage.poll, messageObject.senderFullName, messageObject.senderRealm);
-
-	elseif messageType == "Busy" then
-		PollCraft_Print(PollCraft_GetNameForPrint(messageObject.senderName, messageObject.senderRealm) .. " could not receive your poll because they were busy.");
-
-	elseif messageType == "Vote" then
-		HandleVoteMessageReception(actualMessage, messageObject.senderFullName, messageObject.senderRealm);
-
-	elseif messageType == "Results" then
-		local resultsData = actualMessage.resultsData;
 		RegisterResults(resultsData);
-		LoadAndOpenPollResultsFrame(GetPollData(resultsData.pollGUID));
+
+		if sMessageType == "PollAbort" then
+			if g_currentPollsMotherFrame.sCurrentPollGUID == resultsData.sPollGUID then
+				LoadPollResultsFrame(pollData);
+				g_currentPollsMotherFrame.voteFrame:Hide();
+				g_currentPollsMotherFrame.resultsFrame:Show();
+				g_currentPollsMotherFrame.resultsFrame.pollAbortedLabel:Show();
+			end
+
+			RemovePollDataFromMemory(resultsData.sPollGUID, messageObject.sSenderFullName ~= Me());
+		else
+			LoadAndOpenPollResultsFrame(pollData);
+		end
 	end
 end
 
-g_pollCraftComm:RegisterComm("PollCraft", ReceiveMessage);
+comm:RegisterComm("PollCraft", ReceiveMessage);
 
 
-function g_pollCraftComm:SendMessage(msg, channel, target)
+function comm:SendMessage(message, sChannel, sTarget)
 
 	local messageObject =
 	{
-		senderBTag = PollCraft_MyBTag();
-		senderName = PollCraft_MyName();
-		senderRealm = PollCraft_MyRealm();
-		senderFullName = PollCraft_Me();
-		message = msg;
+		sSenderBTag = MyBTag(),
+		sSenderName = MyName(),
+		sSenderRealm = MyRealm(),
+		sSenderFullName = Me(),
+		message = message
 	};
 
-	local serializedMessage = serializer:Serialize(messageObject);
+	local sSerializedMessage = serializer:Serialize(messageObject);
 
-	if target == PollCraft_Me() then
-		ReceiveMessage("PollCraft", serializedMessage);
+	if sTarget == Me() then
+		ReceiveMessage(nil, sSerializedMessage);
 	else
-		self:SendCommMessage("PollCraft", serializedMessage, channel, target);
+		self:SendCommMessage("PollCraft", sSerializedMessage, sChannel, sTarget);
 	end
 end
 
-function SendPollMessage(message, messageType, channel, target, targetRealm)
+function SendPollMessage(message, sMessageType, sChannel, sTarget, sTargetRealm)
 
-	message.messageType = messageType;
+	message.sMessageType = sMessageType;
 
-	if channel == "WHISPER" and targetRealm ~= PollCraft_MyRealm() then
-		message.specificTarget = target;	-- Because for some reason, blizzard decided that cross-realm WHISPERS do not work in parties and raid groups
-		channel = "RAID";
+	if sChannel == "WHISPER" and sTargetRealm ~= MyRealm() then
+		message.sSpecificTarget = sTarget;	-- Because for some reason, blizzard decided that cross-realm WHISPERS do not work in parties and raid groups
+		sChannel = "RAID";
 	end
 
-	g_pollCraftComm:SendMessage(message, channel, target);
+	comm:SendMessage(message, sChannel, sTarget);
 end
