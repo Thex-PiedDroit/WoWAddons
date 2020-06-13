@@ -395,10 +395,10 @@ end
 
 			settings.m_default =
 			{
-				m_sGods = charOverrides.m_default.m_sGods or settings.m_default.m_sGods,
-				m_sSoundChannel = charOverrides.m_default.m_sSoundChannel or settings.m_default.m_sSoundChannel,
-				m_iMinDelay = charOverrides.m_default.m_iMinDelay or settings.m_default.m_iMinDelay,
-				m_iMaxDelay = charOverrides.m_default.m_iMaxDelay or settings.m_default.m_iMaxDelay,
+				m_sGods = charOverrides.m_default.m_sGods or settings.m_default.m_sGods or l_ktaDefaultSettings.m_default.m_sGods,
+				m_sSoundChannel = charOverrides.m_default.m_sSoundChannel or settings.m_default.m_sSoundChannel or l_ktaDefaultSettings.m_default.m_sSoundChannel,
+				m_iMinDelay = charOverrides.m_default.m_iMinDelay or settings.m_default.m_iMinDelay or l_ktaDefaultSettings.m_default.m_iMinDelay,
+				m_iMaxDelay = charOverrides.m_default.m_iMaxDelay or settings.m_default.m_iMaxDelay or l_ktaDefaultSettings.m_default.m_iMaxDelay,
 			};
 		end
 
@@ -406,13 +406,13 @@ end
 		{
 			m_default = settings.m_default,
 
-			m_sGods = charOverrides.m_sGods or settings.m_sGods,
-			m_sSoundChannel = charOverrides.m_sSoundChannel or settings.m_sSoundChannel,
-			m_iMinDelay = charOverrides.m_iMinDelay or settings.m_iMinDelay,
-			m_iMaxDelay = charOverrides.m_iMaxDelay or settings.m_iMaxDelay,
+			m_sGods = charOverrides.m_sGods or settings.m_sGods or l_ktaDefaultSettings.m_sGods,
+			m_sSoundChannel = charOverrides.m_sSoundChannel or settings.m_sSoundChannel or l_ktaDefaultSettings.m_sSoundChannel,
+			m_iMinDelay = charOverrides.m_iMinDelay or settings.m_iMinDelay or l_ktaDefaultSettings.m_iMinDelay,
+			m_iMaxDelay = charOverrides.m_iMaxDelay or settings.m_iMaxDelay or l_ktaDefaultSettings.m_iMaxDelay,
 
-			m_bDeactivated = (charOverrides.m_bDeactivated ~= nil and charOverrides.m_bDeactivated) or (charOverrides.m_bDeactivated == nil and settings.m_bDeactivated),
-			m_bMuteDuringCombat = (charOverrides.m_bMuteDuringCombat ~= nil and charOverrides.m_bMuteDuringCombat) or (charOverrides.m_bMuteDuringCombat == nil and settings.m_bMuteDuringCombat),
+			m_bDeactivated = (charOverrides.m_bDeactivated ~= nil and charOverrides.m_bDeactivated) or (charOverrides.m_bDeactivated == nil and settings.m_bDeactivated) or (settings.m_bDeactivated == nil and l_ktaDefaultSettings.m_bDeactivated),
+			m_bMuteDuringCombat = (charOverrides.m_bMuteDuringCombat ~= nil and charOverrides.m_bMuteDuringCombat) or (charOverrides.m_bMuteDuringCombat == nil and settings.m_bMuteDuringCombat) or (settings.m_bMuteDuringCombat == nil and l_ktaDefaultSettings.m_bMuteDuringCombat),
 
 			m_minimapButton = settings.m_minimapButton,
 		};
