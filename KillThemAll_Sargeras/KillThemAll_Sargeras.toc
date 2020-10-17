@@ -1,4 +1,4 @@
-## Interface: 80200
+## Interface: 90001
 ## Title: |cff00ccffKillThemAll_Sargeras|r
 ## Version: 1.2.1
 ## Notes: Adds Sargeras, the Dark Titan to KillThemAll

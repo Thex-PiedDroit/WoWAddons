@@ -1,4 +1,4 @@
-## Interface: 80200
+## Interface: 90001
 ## Title: PersonalResourceClickThrough
 ## Version: 1.2
 ## Notes: Makes the personal resource click-through

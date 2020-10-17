@@ -44,7 +44,7 @@ end
 
 function CreateBackdroppedFrame(sName, parent, size)
 
-	local newFrame = CreateFrame("Frame", l_sPrefix .. sName, parent);
+	local newFrame = CreateFrame("Frame", l_sPrefix .. sName, parent, BackdropTemplateMixin and "BackdropTemplate");
 	newFrame:SetSize(size.x, size.y);
 
 	CreateBackdrop(newFrame, 0.5);
