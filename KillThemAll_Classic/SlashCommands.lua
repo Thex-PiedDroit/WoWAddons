@@ -214,7 +214,7 @@ function SlashCmdList.KillThemAll(sMessage)
 		if argumentsToPass == nil then
 			argumentsToPass = args;
 		end
-		command.Func(argumentsToPass);
+		command.m_Func(argumentsToPass);
 	else
 		KTA_Print("Unknown command: " .. sCmd);
 		PrintAllCommands();
