@@ -196,7 +196,7 @@ end
 
 function AddGods(godsNames, bSilent)
 
-	SetGods(TableCat(GodsToStringTable(g_currentGods, false), godsNames), bSilent);
+	SetGods(TableCombine(GodsToStringTable(g_currentGods, false), godsNames), bSilent);
 end
 
 function MakeGodsDefault(godsNames, bSilent)

@@ -104,6 +104,8 @@ function InitSettingsFrames()
 
 
 	-- HIDE MINIMAP BUTTON
+	InitMinimapButton(mainFrame);
+
 	local hideMinimapCheckButton = CreateCheckButton("HideMinimapButtonCheckButton", mainFrame, l_fCheckButtonsSize);
 	hideMinimapCheckButton:SetPoint("TOP", muteDuringCombatCheckButton, "BOTTOM", 0.0, -l_fMarginYBetweenElements);
 	hideMinimapCheckButton:SetChecked(g_ktaCurrentSettings.m_minimapButton.hide);
@@ -168,7 +170,6 @@ function InitSettingsFrames()
 	InterfaceOptions_AddCategory(mainFrame);
 
 
-	InitMinimapButton(mainFrame);
 	l_interfaceSettingsFrame.panel = mainFrame;
 
 
