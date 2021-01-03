@@ -138,6 +138,11 @@ function SlashCmdList.KillThemAll(sMessage)
 		return;
 	end
 
+	sMessage, _ = SecureCmdOptionParse(sMessage);	-- Test for any macro conditionals
+	if sMessage == nil then
+		return;	-- Conditionals were not met
+	end
+
 	print(sMessage);	-- For input feedback
 
 

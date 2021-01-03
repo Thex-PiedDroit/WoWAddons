@@ -107,6 +107,23 @@ function TableCat(table1, table2)
 	return newTable;
 end
 
+function TableCombine(table1, table2)
+
+	local newTable = {};
+	for i = 1, #table1, 1 do
+		if not TableContainsUniqueItem(newTable, table1[i]) then
+			table.insert(newTable, table1[i]);
+		end
+	end
+	for i = 1, #table2, 1 do
+		if not TableContainsUniqueItem(newTable, table2[i]) then
+			table.insert(newTable, table2[i]);
+		end
+	end
+
+	return newTable;
+end
+
 function GetPunctuatedString(sStringTable)
 
 	local str = "";
