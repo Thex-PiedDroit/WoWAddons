@@ -16,7 +16,7 @@ IF NOT EXIST "%gamePath%" (
 
 :MakeLink
 set /p addon=Which addon would you like to link? 
-set "addonPath=%CD%\%addon%"
+set "addonPath=%CD%\..\WoW\%addon%"
 
 IF NOT EXIST "%addonPath%" (
 	echo The addon doesn't exist.
