@@ -6,6 +6,8 @@ cd /d "%~dp0" && ( if exist "%temp%\getadmin.vbs" del "%temp%\getadmin.vbs" ) &&
 set "gamePath=C:\Games\World of Warcraft\"
 
 IF NOT EXIST "%gamePath%" set "gamePath=D:\Games\World of Warcraft\"
+IF NOT EXIST "%gamePath%" set "gamePath=C:\Program Files (x86)\World of Warcraft\"
+IF NOT EXIST "%gamePath%" set "gamePath=D:\Program Files (x86)\World of Warcraft\"
 IF NOT EXIST "%gamePath%" (
 	echo Game directory not found.
 	pause
