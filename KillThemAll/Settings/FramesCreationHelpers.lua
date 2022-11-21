@@ -71,7 +71,7 @@ end
 
 function CreateCheckButton(sName, parent, fSize, OnCheckCallback, callbackArguments)
 
-	local checkButton = CreateFrame("CheckButton", l_sPrefix .. sName, parent, "OptionsCheckButtonTemplate");
+	local checkButton = CreateFrame("CheckButton", l_sPrefix .. sName, parent, "UICheckButtonTemplate");
 	fSize = fSize or 20.0;
 	checkButton:SetSize(fSize, fSize);
 

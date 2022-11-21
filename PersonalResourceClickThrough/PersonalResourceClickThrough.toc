@@ -1,6 +1,6 @@
-## Interface: 90001
+## Interface: 100002
 ## Title: PersonalResourceClickThrough
-## Version: 1.2.2
+## Version: 1.2.3
 ## Notes: Makes the personal resource click-through
 ## Author: Thex
 ## DefaultState: enabled
