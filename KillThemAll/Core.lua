@@ -97,7 +97,7 @@ end
 
 function ToggleDeactivated()
 
-	SetOverrideValue("m_bDeactivated", not g_ktaCurrentSettings.m_bDeactivated);
+	UpdateValue("m_bDeactivated", not g_ktaCurrentSettings.m_bDeactivated);
 	CallEventListener(g_interfaceEventsListener, "OnToggleDeactivated");
 end
 
@@ -173,7 +173,6 @@ end
 function SetGods(godsNames, bSilent, bFromLoading)
 
 	bSilent = bSilent or false;
-
 
 	if TableContains(godsNames, "ALL") then
 		SetAllGods();
@@ -285,7 +284,7 @@ end
 
 function SetSoundChannel(sSoundChannel, bSilent, bFromInterface)
 
-	SetOverrideValue("m_sSoundChannel", TryParseSoundChannel(sSoundChannel, g_ktaCurrentSettings.m_sSoundChannel, bSilent));
+	UpdateValue("m_sSoundChannel", TryParseSoundChannel(sSoundChannel, g_ktaCurrentSettings.m_sSoundChannel, bSilent));
 
 	if not bSilent then
 		KTA_Print("The soundfiles will now be played on the channel " .. g_ktaCurrentSettings.m_sSoundChannel .. ".");
@@ -326,8 +325,8 @@ function SetDelay(sMinDelayStr, sMaxDelayStr, bSilent)
 		return false;
 	end
 
-	SetOverrideValue("m_iMinDelay", iMinValue);
-	SetOverrideValue("m_iMaxDelay", iMaxValue);
+	UpdateValue("m_iMinDelay", iMinValue);
+	UpdateValue("m_iMaxDelay", iMaxValue);
 
 	if not bSilent then
 		KTA_Print("Delay set between " .. iMinValue .. " and " .. iMaxValue .. " seconds.");
@@ -431,7 +430,6 @@ function l_events:ADDON_LOADED(sAddonName)
 		return;
 	end
 
-	HookGodsChangedSettingsListener();
 	LoadSettings();
 	InitSettingsFrames();
 

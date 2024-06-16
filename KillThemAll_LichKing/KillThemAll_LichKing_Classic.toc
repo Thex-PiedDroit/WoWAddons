@@ -1,4 +1,4 @@
-## Interface: 100207
+## Interface: 40400
 ## Title: |cff00ccffKillThemAll_LichKing|r
 ## Version: 1.4.4
 ## Notes: Adds The Lich King to KillThemAll

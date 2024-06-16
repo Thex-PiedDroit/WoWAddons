@@ -1,6 +1,6 @@
-## Interface: 90001
+## Interface: 100207
 ## Title: |cff00ccffKillThemAll_NZoth|r
-## Version: 1.0.2
+## Version: 1.0.4
 ## Notes: Adds N'Zoth to KillThemAll
 ## Author: TwoSouls
 ## DefaultState: enabled

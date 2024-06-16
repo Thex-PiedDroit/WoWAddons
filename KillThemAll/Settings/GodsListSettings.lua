@@ -49,6 +49,26 @@ local l_iGodsCountPerRow = 3;
 
 local l_iGodsCountInList = 0;
 
+local function IsGodInCurrentList(god)
+	return TableContainsUniqueItem(g_currentGods, god);
+end
+
+local function ToggleGod(god)
+	local newGodsList = g_currentGods;
+
+	if TableContainsUniqueItem(newGodsList, god, true) then
+		local bIsGodWatching, iGodIndex = TableContainsUniqueItem(newGodsList, god);
+
+		if bIsGodWatching then
+			table.remove(newGodsList, iGodIndex);
+		end
+	else
+		table.insert(newGodsList, god);
+	end
+
+	UpdateValue("m_sGods", GodsToStringTable(newGodsList, false) or "NONE");
+end;
+
 --[[global]] AddGodToSettingsList = function(god)
 
 	local iRowsCountMinusOne = math.floor(l_iGodsCountInList / l_iGodsCountPerRow);
@@ -68,11 +88,7 @@ local l_iGodsCountInList = 0;
 	table.insert(g_godsListSettings.hoverFrames, godCheckButton);
 
 	godCheckButton:SetScript("OnClick", function()
-		if TableContainsUniqueItem(g_currentGods, god, true) then
-			RemoveGods({ god.m_sDataName }, true);
-		else
-			AddGods({ god.m_sDataName }, true);
-		end
+		ToggleGod(god);
 	end);
 
 	local iGodIndex = l_iGodsCountInList + 1;
@@ -81,7 +97,7 @@ local l_iGodsCountInList = 0;
 	end
 
 	AddListenerEvent(g_interfaceEventsListener, "OnGodsChanged", function()
-		godCheckButton:SetChecked(TableContainsUniqueItem(g_currentGods, god));
+		godCheckButton:SetChecked(IsGodInCurrentList(god));
 	end);
 
 	g_godsListSettings.godsCheckButtonsList[iGodIndex] = godCheckButton;

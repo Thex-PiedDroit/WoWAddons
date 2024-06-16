@@ -4,6 +4,6 @@
 // Please put Cerberus.lua in your addon's folder and add it to that addon's toc file
 
 ## Title: Cerberus
-## Version: 1.2
+## Version: 1.2.2
 ## Notes: This should not be in your Interface/addons folder!
 ## Author: Thex

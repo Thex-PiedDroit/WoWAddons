@@ -44,10 +44,8 @@ function InitMinimapButton(settingsPanel)
 		GameTooltip:SetOwner(self, "ANCHOR_NONE");
 		GameTooltip:SetPoint("TOPLEFT", self, "BOTTOMLEFT");
 		GameTooltip:ClearLines();
-		dataobj.OnTooltipShow(GameTooltip);
+		minimapLDB.OnTooltipShow(GameTooltip);
 		GameTooltip:Show();
-		dataobj.hide = true;
-		dataobj:Hide();
 	end
 	function minimapLDB:OnLeave()
 		GameTooltip:Hide();

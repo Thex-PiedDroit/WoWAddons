@@ -1,5 +1,5 @@
 
-g_cerberus.RegisterAddon("KillThemAll", { "S_ktaGlobalSettings", "S_ktaCharSpecificOverrides", "S_sAddonVersion" });
+Cerberus_HookThisFile();
 
 g_ktaCurrentCharSettingsOverrides = nil;
 g_ktaCurrentSettings = {};
@@ -35,13 +35,13 @@ local l_ktaDefaultSettings =
 {
 	m_default =
 	{
-		m_sGods = "YSHAARJ",
+		m_sGods = g_allSoundLibraries[1].m_sDataName,
 		m_sSoundChannel = "Dialog",
 		m_iMinDelay = 300,
 		m_iMaxDelay = 1200,
 	},
 
-	m_sGods = "YSHAARJ",
+	m_sGods = g_allSoundLibraries[1].m_sDataName,
 	m_sSoundChannel = "Dialog",
 	m_iMinDelay = 300,
 	m_iMaxDelay = 1200,
@@ -99,18 +99,35 @@ function RevertAllSettingsToGlobals()
 	end
 end
 
-function SetOverrideValue(sVariableName, value)
+local function SetOverrideValue(sVariableName, value)
 
-	if (g_ktaCurrentCharSettingsOverrides == nil or g_ktaCurrentCharSettingsOverrides[sVariableName] == nil) and g_ktaCurrentSettings[sVariableName] == value then
+	local hardValue = value;
+	if sVariableName == "m_sGods" then
+		hardValue = TableToString(hardValue) or "NONE";	-- I hate this but i can't be bothered
+	end
+
+	if (g_ktaCurrentCharSettingsOverrides == nil or g_ktaCurrentCharSettingsOverrides[sVariableName] == nil) and g_ktaCurrentSettings[sVariableName] == hardValue then
 		return;		-- This happens on load, when we're setting the gods and delay for the first time
 	end
 
 	g_ktaCurrentCharSettingsOverrides = g_ktaCurrentCharSettingsOverrides or {};
 
-	g_ktaCurrentCharSettingsOverrides[sVariableName] = value;
-	g_ktaCurrentSettings[sVariableName] = value;
+	g_ktaCurrentCharSettingsOverrides[sVariableName] = hardValue;
+	g_ktaCurrentSettings[sVariableName] = hardValue;
 
 	CallEventListener(g_interfaceEventsListener, "OnVariableOverrideStateChanged", sVariableName);
+
+	if sVariableName == "m_sGods" then
+		SetGods(value, true);
+	elseif sVariableName ==  "m_iMinDelay" or sVariableName ==  "m_iMaxDelay" then
+		SetDelay(g_ktaCurrentSettings.m_iMinDelay, g_ktaCurrentSettings.m_iMaxDelay, true);
+	elseif sVariableName == "m_sSoundChannel" then
+		SetSoundChannel(g_ktaCurrentSettings.m_sSoundChannel, true, false);
+	elseif sVariableName ==  "m_bDeactivated" then
+		CallEventListener(g_interfaceEventsListener, "OnToggleDeactivated");
+	elseif sVariableName ==  "m_bMuteDuringCombat" then
+		CallEventListener(g_interfaceEventsListener, "OnToggleMuteDuringCombat");
+	end
 end
 
 function SetOverrideDefaultValue(sVariableName, value)
@@ -167,7 +184,7 @@ end
 
 function RemoveVariableOverride(sVariableName)
 
-	if g_ktaCurrentCharSettingsOverrides == nil then
+	if g_ktaCurrentCharSettingsOverrides == nil or g_ktaCurrentCharSettingsOverrides[sVariableName] == nil then
 		return;
 	end
 
@@ -179,7 +196,6 @@ function RemoveVariableOverride(sVariableName)
 	end
 
 	CallEventListener(g_interfaceEventsListener, "OnVariableOverrideStateChanged", sVariableName);
-
 
 	if sVariableName == "m_sGods" then
 		SetGods(GetWords(g_ktaCurrentSettings.m_sGods), true);
@@ -213,6 +229,20 @@ function RemoveDefaultVariableOverride(sVariableName)
 	end
 end
 
+function UpdateValue(sVariableName, value)
+
+	local hardValue = value;
+	if sVariableName == "m_sGods" then
+		hardValue = TableToString(hardValue) or "NONE";	-- I hate this but i can't be bothered
+	end
+
+	if hardValue ~= S_ktaGlobalSettings[sVariableName] then
+		SetOverrideValue(sVariableName, value);
+	else
+		RemoveVariableOverride(sVariableName, value);
+	end
+end
+
 function ClearMemory()
 
 	if S_ktaGlobalSettings ~= nil then
@@ -229,14 +259,6 @@ function ClearMemory()
 
 	KTA_Print("All saved settings have been erased.");
 end
-
-function HookGodsChangedSettingsListener()
-
-	AddListenerEvent(g_interfaceEventsListener, "OnGodsChanged", function()
-		SetOverrideValue("m_sGods", TableToString(GodsToStringTable(g_currentGods, false)) or "NONE");
-	end);
-end
-
 
 
 local TryRecoverPreviousVersion = nil; --[[function()]]

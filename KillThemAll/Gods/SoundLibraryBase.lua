@@ -1,5 +1,5 @@
 
-Cerberus_HookThisFile();
+g_cerberus.RegisterAddon("KillThemAll", { "S_ktaGlobalSettings", "S_ktaCharSpecificOverrides", "S_sAddonVersion" });
 
 g_soundLibrary =
 {

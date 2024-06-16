@@ -1,6 +1,6 @@
-## Interface: 90001
+## Interface: 100207
 ## Title: |cff00ccffKillThemAll_Sargeras|r
-## Version: 1.2.2
+## Version: 1.2.4
 ## Notes: Adds Sargeras, the Dark Titan to KillThemAll
 ## Author: Смердокрыл
 ## DefaultState: enabled

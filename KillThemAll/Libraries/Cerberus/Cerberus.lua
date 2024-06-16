@@ -24,17 +24,8 @@ g_cerberus = g_cerberus or {};
 local sCurrentlyLoadingAddonName = nil;
 
 local function GetCallingLine(bFromRegistration)
-	local sCallingLine = debugstack((bFromRegistration and 4) or 3);
-	local iAddonFolderPos = 1
-	local iAddonFolderPos = string.find(sCallingLine, "AddOns/");
-	if iAddonFolderPos == nil then
-		iAddonFolderPos = string.find(sCallingLine, "dOns/");
-	end
-	local iEndOfLinePos = string.find(sCallingLine, "\n");
-	sCallingLine = strsub(sCallingLine, iAddonFolderPos, iEndOfLinePos);
-	sCallingLine = strtrim(sCallingLine, "AddOns/");
 
-	return sCallingLine;
+	return debugstack((bFromRegistration and 4) or 3);
 end
 
 _G["Cerberus_HookThisFile"] = function(bFromRegistration)

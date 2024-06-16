@@ -89,7 +89,7 @@ function InitSettingsFrames()
 	HookTooltipToElement(muteDuringCombatCheckButton, function() return GetSettingGlobalValueTextForTooltip(tostring(S_ktaGlobalSettings.m_bMuteDuringCombat)); end);
 
 	muteDuringCombatCheckButton:SetScript("OnClick", function()
-		SetOverrideValue("m_bMuteDuringCombat", not g_ktaCurrentSettings.m_bMuteDuringCombat);
+		UpdateValue("m_bMuteDuringCombat", not g_ktaCurrentSettings.m_bMuteDuringCombat);
 	end);
 
 	AddListenerEvent(g_interfaceEventsListener, "OnToggleMuteDuringCombat", function()
@@ -369,7 +369,6 @@ end
 	local hoverFrames = l_settingsOverrideStuff[sAssociatedVariableName].m_hoverFrames;
 
 	local bOverridden = g_ktaCurrentCharSettingsOverrides ~= nil and g_ktaCurrentCharSettingsOverrides[sAssociatedVariableName] ~= nil;
-
 	if bOverridden then
 		textLabel:SetTextColor(unpack(l_overriddenValueLabelColor));
 		buttonsFrame:Show();
