@@ -1,4 +1,4 @@
-## Interface: 100207
+## Interface: 40400
 ## Title: |cff00ccffKillThemAll|r
 ## Version: 1.6.4
 ## Notes: Randomly plays Old Gods whispers audio files
@@ -11,10 +11,8 @@ Libraries\LibDBIcon-1.0\LibDBIcon-1.0\lib.xml
 Libraries\Cerberus\Cerberus.lua
 
 Gods\SoundLibraryBase.lua
-Gods\Yshaarj.lua
 Gods\Cthun.lua
 Gods\YoggSaron.lua
-Gods\IlGynoth.lua
 Settings.lua
 Settings\FramesCreationHelpers.lua
 Settings\MinimapButton.lua

@@ -1,4 +1,4 @@
-## Interface: 100207
+## Interface: 40400
 ## Title: |cff00ccffKillThemAll_Ashbringer|r
 ## Version: 1.1.4
 ## Notes: Adds Corrupted Ashbringer to KillThemAll
