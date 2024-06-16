@@ -13,19 +13,13 @@ IF NOT EXIST "%gamePath%" (
 	exit
 )
 
-:MakeLink
-set /p addon=Which addon would you like to link? 
-set "addonPath=%CD%\%addon%"
+:DeleteLink
+set /p addon=Which addon's link would you like to delete? 
+set "addonPath=%gamePath%_classic_era_\Interface\AddOns\%addon%"
 
-IF NOT EXIST "%addonPath%" (
-	echo The addon doesn't exist.
-	goto MakeLink
-)
+IF EXIST "%addonPath%" (
+	rmdir /Q "%addonPath%"
+	echo Successfully deleted.
+) ELSE echo The link to this addon does not exist.
 
-set "linkPath=%gamePath%_classic_\Interface\AddOns\%addon%"
-
-IF NOT EXIST "%linkPath%" (
-	mklink /D "%linkPath%" "%addonPath%"
-) ELSE echo A link for this addon already exists.
-
-goto MakeLink
+goto DeleteLink

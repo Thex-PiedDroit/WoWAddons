@@ -22,7 +22,7 @@ IF NOT EXIST "%addonPath%" (
 	goto MakeLink
 )
 
-set "linkPath=%gamePath%_classic_\Interface\AddOns\%addon%"
+set "linkPath=%gamePath%_classic_era_\Interface\AddOns\%addon%"
 
 IF NOT EXIST "%linkPath%" (
 	mklink /D "%linkPath%" "%addonPath%"
